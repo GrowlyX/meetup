@@ -1,5 +1,6 @@
 package com.solexgames.meetup.util;
 
+import com.solexgames.core.util.Color;
 import org.bukkit.ChatColor;
 
 import java.util.HashMap;
@@ -10,8 +11,8 @@ public final class CC {
 
 	private static final Map<String, ChatColor> MAP;
 
-	public static final String PRIMARY = ChatColor.GOLD.toString();
-	public static final String SECONDARY = ChatColor.YELLOW.toString();
+	public static final String PRIMARY = Color.MAIN_COLOR;
+	public static final String SECONDARY = Color.SECONDARY_COLOR;
 
 	public static final String B_PRIMARY = PRIMARY + ChatColor.BOLD;
 	public static final String B_SECONDARY = SECONDARY + ChatColor.BOLD;

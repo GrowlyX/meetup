@@ -27,8 +27,10 @@ public class SpectateCommand extends BaseCommand {
 			} else {
 				UHCMeetup.getInstance().getSpectatorHandler().removeSpectator(gamePlayer);
 			}
+
 			return;
 		}
+
 		final Clickable clickable = new Clickable("");
 
 		if (spectating) {
@@ -38,6 +40,7 @@ public class SpectateCommand extends BaseCommand {
 			clickable.add(CC.GRAY + "Are you sure you want to stop spectating? ", null, null, null);
 			clickable.add(CC.RED + "[Click here to stop spectating]", null, "/spec", ClickEvent.Action.RUN_COMMAND);
 		}
+
 		player.spigot().sendMessage(clickable.asComponents());
 	}
 }

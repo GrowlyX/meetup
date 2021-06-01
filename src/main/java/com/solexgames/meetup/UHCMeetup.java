@@ -1,14 +1,21 @@
 package com.solexgames.meetup;
 
 import co.aikar.commands.PaperCommandManager;
+import com.solexgames.core.CorePlugin;
+import com.solexgames.lib.commons.redis.JedisBuilder;
+import com.solexgames.lib.commons.redis.JedisManager;
 import com.solexgames.meetup.board.BoardManager;
 import com.solexgames.meetup.handler.*;
 import com.solexgames.meetup.scoreboard.ScoreboardAdapter;
+import com.solexgames.meetup.task.ServerUpdateTask;
+import com.solexgames.meetup.util.JedisUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public final class UHCMeetup extends JavaPlugin {
@@ -23,6 +30,7 @@ public final class UHCMeetup extends JavaPlugin {
     private SpectatorHandler spectatorHandler;
 
     private BoardManager boardManager;
+    private JedisManager jedisManager;
 
     @Override
     public void onEnable() {
@@ -35,11 +43,18 @@ public final class UHCMeetup extends JavaPlugin {
         this.loadoutHandler = new LoadoutHandler();
         this.spectatorHandler = new SpectatorHandler();
 
+        this.jedisManager = new JedisBuilder()
+                .withChannel("meetup:bukkit")
+                .withSettings(CorePlugin.getInstance().getDefaultJedisSettings())
+                .build();
+
+        this.jedisManager.publish(JedisUtil.getServerUpdateJson());
+
+        new ServerUpdateTask().runTaskTimerAsynchronously(this, 20L, TimeUnit.SECONDS.toMillis(5L));
+
         final PaperCommandManager manager = new PaperCommandManager(this);
 
-//        new ScoreboardHandler(this, new ScoreboardAdapter(), 5L);
-
-        setBoardManager(new BoardManager(new ScoreboardAdapter()));
+        this.setBoardManager(new BoardManager(new ScoreboardAdapter()));
     }
 
     @Override
@@ -52,7 +67,7 @@ public final class UHCMeetup extends JavaPlugin {
     public void setBoardManager(BoardManager boardManager) {
         this.boardManager = boardManager;
 
-        long interval = this.boardManager.getAdapter().getInterval();
+        final long interval = this.boardManager.getAdapter().getInterval();
 
         this.getServer().getScheduler().runTaskTimerAsynchronously(this, this.boardManager, 0L, interval);
     }
@@ -60,12 +75,13 @@ public final class UHCMeetup extends JavaPlugin {
     public void setWorldProperties() {
         Bukkit.getWorlds().forEach(world -> world.getEntities().forEach(Entity::remove));
 
-        World meetupWorld = Bukkit.getWorld("meetupworld");
-        meetupWorld.setGameRuleValue("doMobSpawning", "false");
-        meetupWorld.setGameRuleValue("doDaylightCycle", "false");
-        meetupWorld.setGameRuleValue("naturalRegeneration", "false");
-        meetupWorld.setGameRuleValue("doFireTick", "false");
-        meetupWorld.setGameRuleValue("difficulty", "0");
-        meetupWorld.setTime(0);
+        final World meetup_game = Bukkit.getWorld("meetup_game");
+
+        meetup_game.setGameRuleValue("doMobSpawning", "false");
+        meetup_game.setGameRuleValue("doDaylightCycle", "false");
+        meetup_game.setGameRuleValue("naturalRegeneration", "false");
+        meetup_game.setGameRuleValue("doFireTick", "false");
+        meetup_game.setGameRuleValue("difficulty", "0");
+        meetup_game.setTime(0);
     }
 }

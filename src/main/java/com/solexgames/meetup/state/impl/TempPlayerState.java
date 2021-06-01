@@ -1,4 +1,4 @@
-package com.solexgames.meetup.state.impl.player;
+package com.solexgames.meetup.state.impl;
 
 /**
  * @author GrowlyX

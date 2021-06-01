@@ -25,7 +25,7 @@ public class WorldGenTask extends BukkitRunnable {
 	private final GameHandler gameHandler;
 
 	public WorldGenTask(GameHandler gameHandler) {
-		this.deleteDirectory(new File("meetupworld"));
+		this.deleteDirectory(new File("meetup_game"));
 
 		this.gameHandler = gameHandler;
 
@@ -37,13 +37,14 @@ public class WorldGenTask extends BukkitRunnable {
 		if (this.isGenerating) {
 			return;
 		}
+
 		this.generateNewWorld();
 	}
 
 	private void generateNewWorld() {
 		this.isGenerating = true;
 
-		WorldCreator worldCreator = new WorldCreator("meetupworld");
+		final WorldCreator worldCreator = new WorldCreator("meetup_game");
 		worldCreator.generateStructures(false);
 
 		try {
@@ -52,7 +53,7 @@ public class WorldGenTask extends BukkitRunnable {
 			UHCMeetup.getInstance().getLogger().info("World NPE when trying to generate map.");
 			UHCMeetup.getInstance().getServer().unloadWorld(this.world, false);
 
-			this.deleteDirectory(new File("meetupworld"));
+			this.deleteDirectory(new File("meetup_game"));
 
 			this.isGenerating = false;
 			return;
@@ -67,7 +68,7 @@ public class WorldGenTask extends BukkitRunnable {
 			for (int j = -100; j <= 100; j++) {
 				boolean isCenter = i >= -50 && i <= 50 && j >= -50 && j <= 50;
 				if (isCenter) {
-					Block block = this.world.getHighestBlockAt(i, j).getLocation().add(0, -1, 0).getBlock();
+					final Block block = this.world.getHighestBlockAt(i, j).getLocation().add(0, -1, 0).getBlock();
 					if (block.getType() == Material.STATIONARY_WATER || block.getType() == Material.WATER || block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) {
 						++waterCount;
 					}
@@ -92,7 +93,7 @@ public class WorldGenTask extends BukkitRunnable {
 		// Actually got this far...we have a valid world, generate the rest
 		if (flag) {
 			Bukkit.getServer().unloadWorld(this.world, false);
-			this.deleteDirectory(new File("meetupworld"));
+			this.deleteDirectory(new File("meetup_game"));
 			this.isGenerating = false;
 			return;
 		} else {
@@ -101,7 +102,8 @@ public class WorldGenTask extends BukkitRunnable {
 		}
 
 		// Create Lock
-		File lock = new File("meetupworld", "gen.lock");
+		final File lock = new File("meetup_game", "gen.lock");
+
 		try {
 			lock.createNewFile();
 		} catch (IOException e) {
@@ -112,13 +114,16 @@ public class WorldGenTask extends BukkitRunnable {
 
 		gameHandler.handleSetWhitelistedBlocks();
 		gameHandler.handleLoadChunks();
-		new Border(Bukkit.getWorld("meetupworld"), 100);
+
+		new Border(Bukkit.getWorld("meetup_game"), 100);
+
 		UHCMeetup.getInstance().setWorldProperties();
 	}
 
 	private boolean deleteDirectory(File path) {
 		if (path.exists()) {
-			File[] files = path.listFiles();
+			final File[] files = path.listFiles();
+
 			if (files != null) {
 				for (File file : files) {
 					if (file.isDirectory()) {
@@ -129,6 +134,7 @@ public class WorldGenTask extends BukkitRunnable {
 				}
 			}
 		}
+
 		return (path.delete());
 	}
 

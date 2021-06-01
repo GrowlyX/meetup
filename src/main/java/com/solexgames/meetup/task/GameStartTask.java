@@ -26,8 +26,8 @@ public class GameStartTask extends BukkitRunnable {
 		final Game game = UHCMeetup.getInstance().getGameHandler().getGame();
 
 		if (UHCMeetup.getInstance().getGameHandler().getRemainingPlayers().size() < UHCMeetup.getInstance().getGameHandler().getMinPlayers()) {
-			// todo: broadcast message
 			game.setGameStartTime(60);
+			// TODO: 6/1/2021 shutdown server and send game regeneration packet to redis
 			this.cancel();
 			// back to lobby?
 			return;

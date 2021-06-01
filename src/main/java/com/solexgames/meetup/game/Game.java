@@ -2,7 +2,7 @@ package com.solexgames.meetup.game;
 
 import com.solexgames.meetup.cache.PlayerCache;
 import com.solexgames.meetup.state.StateBasedModel;
-import com.solexgames.meetup.state.impl.player.TempPlayer;
+import com.solexgames.meetup.state.impl.TempPlayer;
 import com.solexgames.meetup.util.CC;
 import lombok.Getter;
 import lombok.Setter;

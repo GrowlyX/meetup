@@ -6,6 +6,7 @@ import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.util.CC;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,15 +25,19 @@ public class SpectatorHandler {
 
 	public SpectatorHandler() {
 		this.spectateMenuItem = new ItemBuilder(Material.ITEM_FRAME)
-				.setDisplayName(CC.SEC + "Spectate Menu")
-				.addLore(CC.SEC + "See a list of players")
-				.addLore(CC.SEC + "that you're able to")
-				.addLore(CC.SEC + "teleport to and spectate.")
+				.setDisplayName(CC.B_PRI + "Spectate Menu")
+				.addLore(
+						CC.GRAY + "See a list of players",
+						CC.GRAY + "that you're able to",
+						CC.GRAY + "teleport to and spectate."
+				)
 				.create();
 		this.navigationCompassItem = new ItemBuilder(Material.COMPASS)
 				.setDisplayName(CC.AQUA + "Navigation Compass")
-				.addLore(CC.PRI + "Left-Click: " + CC.SEC + "Teleport to the block you're looking at!")
-				.addLore(CC.PRI + "Right-Click: " + CC.SEC + "Teleport through walls!")
+				.addLore(
+						CC.GRAY + "Left-Click: " + CC.SEC + "Teleport to the block you're looking at!",
+						CC.GRAY + "Right-Click: " + CC.SEC + "Teleport through walls!"
+				)
 				.create();
 	}
 

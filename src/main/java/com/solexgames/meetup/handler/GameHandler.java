@@ -103,7 +103,7 @@ public class GameHandler {
 		Bukkit.getScheduler().runTaskLater(UHCMeetup.getInstance(), () -> {
 			for (int x = -110; x < 110; x++) {
 				for (int z = -110; z < 110; z++) {
-					Location location = new Location(Bukkit.getWorld("meetupworld"), x, 60, z);
+					Location location = new Location(Bukkit.getWorld("meetup_game"), x, 60, z);
 
 					if (!location.getChunk().isLoaded()) {
 						location.getWorld().loadChunk(x, z);
