@@ -1,3 +1,4 @@
 name: UHCMeetup
 version: ${project.version}
-main: com.solexgames.uhc.UHCMeetup
+main: com.solexgames.meetup.UHCMeetup
+author: SolexGames

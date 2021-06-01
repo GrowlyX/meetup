@@ -1,0 +1,9 @@
+when a player joins when in lobby and we need more ppl:
+- The game requires x more player(s) to start.
+
+Begin game start task (1 minute)
+After game start:
+- Border task (2 minutes)
+- 100, 75, 50, 25, 10
+After game countdown, start border task (100 blocks, 2 minutes)
+border 75, 2 minutes
