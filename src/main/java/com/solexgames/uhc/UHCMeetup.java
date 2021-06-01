@@ -11,10 +11,10 @@ import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
-public final class UHCPlugin extends JavaPlugin {
+public final class UHCMeetup extends JavaPlugin {
 
     @Getter
-    private static UHCPlugin instance;
+    private static UHCMeetup instance;
 
     private GameHandler gameHandler;
     private MongoHandler mongoHandler;

@@ -4,7 +4,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.solexgames.uhc.UHCPlugin;
+import com.solexgames.uhc.UHCMeetup;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.Document;
@@ -26,8 +26,8 @@ public class MongoHandler {
 
     public MongoHandler() {
         try {
-            this.client = new MongoClient(new MongoClientURI(UHCPlugin.getInstance().getConfig().getString("mongodb.url")));
-            this.database = this.client.getDatabase(UHCPlugin.getInstance().getConfig().getString("mongodb.database"));
+            this.client = new MongoClient(new MongoClientURI(UHCMeetup.getInstance().getConfig().getString("mongodb.url")));
+            this.database = this.client.getDatabase(UHCMeetup.getInstance().getConfig().getString("mongodb.database"));
 
             this.playerCollection = this.database.getCollection("UHCMeetup");
         } catch (Exception exception) {

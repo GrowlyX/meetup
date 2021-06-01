@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import com.solexgames.core.CorePlugin;
-import com.solexgames.uhc.UHCPlugin;
+import com.solexgames.uhc.UHCMeetup;
 import com.solexgames.uhc.factory.GsonFactory;
 import com.solexgames.uhc.model.Loadout;
 import lombok.Getter;
@@ -42,10 +42,10 @@ public class GamePlayer {
     }
 
     public void savePlayerData(boolean remove) {
-        CompletableFuture.runAsync(() -> UHCPlugin.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("uuid", this.player.getUniqueId().toString()), this.getDocument(), new ReplaceOptions().upsert(true)));
+        CompletableFuture.runAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("uuid", this.player.getUniqueId().toString()), this.getDocument(), new ReplaceOptions().upsert(true)));
 
         if (remove) {
-            UHCPlugin.getInstance().getPlayerHandler().remove(this.getPlayer());
+            UHCMeetup.getInstance().getPlayerHandler().remove(this.getPlayer());
         }
     }
 
@@ -64,13 +64,13 @@ public class GamePlayer {
     }
 
     private void loadPlayerData() {
-        CompletableFuture.supplyAsync(() -> UHCPlugin.getInstance().getMongoHandler().getPlayerCollection().find(Filters.eq("uuid", this.player.getUniqueId().toString())).first())
+        CompletableFuture.supplyAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().find(Filters.eq("uuid", this.player.getUniqueId().toString())).first())
                 .thenAccept(document -> {
                     if (document == null) {
 //                        this.layout = new Loadout(this.uuid);
 //                        this.layout.setupDefaultInventory();
 
-                        UHCPlugin.getInstance().getServer().getScheduler()
+                        UHCMeetup.getInstance().getServer().getScheduler()
                                 .runTaskLaterAsynchronously(CorePlugin.getInstance(), () -> this.savePlayerData(false), 20L);
                     } else {
                         if (document.getInteger("kills") != null) {

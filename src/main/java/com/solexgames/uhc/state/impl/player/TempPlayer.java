@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 @RequiredArgsConstructor
 public class TempPlayer {
 
-    private final Player player;
     private TempPlayerState state;
 
     private int kills;
