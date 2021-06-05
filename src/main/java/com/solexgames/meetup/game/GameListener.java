@@ -8,7 +8,6 @@ import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.player.PlayerState;
 import com.solexgames.meetup.scenario.impl.NoCleanScenario;
 import com.solexgames.meetup.scenario.impl.TimeBombScenario;
-import com.solexgames.meetup.task.GameStartTask;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtils;
 import com.solexgames.meetup.util.PlayerUtil;
@@ -25,7 +24,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -49,11 +47,13 @@ public class GameListener implements Listener {
 		final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
 		final GameHandler gameHandler = UHCMeetup.getInstance().getGameHandler();
 
+		PlayerUtil.resetPlayer(player);
+
 		switch (gameHandler.getGame().getState()) {
 			case WAITING:
 				final World lobbyWorld = Bukkit.getWorld("world"); // lobby
 
-				player.teleport(new Location(lobbyWorld, 0, lobbyWorld.getHighestBlockYAt(0, 0) + 6, 0));
+				player.teleport(new Location(lobbyWorld, 0.5, lobbyWorld.getHighestBlockYAt(0, 0) + 6, 0.5));
 
 				gamePlayer.setState(PlayerState.WAITING);
 
@@ -70,25 +70,24 @@ public class GameListener implements Listener {
 
 				break;
 			case STARTING:
-				player.teleport(MeetupUtils.getScatterLocation());
-
-				PlayerUtil.sitPlayer(player);
-
-				// TODO: 05/06/2021 Load kit with the player's layout
-				UHCMeetup.getInstance().getKitManager().handleItems(player);
-
 				gamePlayer.setState(PlayerState.PLAYING);
 
+				player.teleport(MeetupUtils.getScatterLocation());
+				PlayerUtil.sitPlayer(player);
+
+				// TODO: 05/06/2021 load kit with layout
+				UHCMeetup.getInstance().getKitManager().handleItems(player);
 				break;
 			case IN_GAME:
 				final World gameWorld = Bukkit.getWorld("meetup_game");
 
 				player.sendMessage(CC.SEC + "You've been made a spectator as you've joined too late into the game.");
-				player.teleport(new Location(gameWorld, 0, gameWorld.getHighestBlockYAt(0, 0) + 15, 0));
+				player.teleport(new Location(gameWorld, 0.5, gameWorld.getHighestBlockYAt(0, 0) + 15, 0.5));
 
-				UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, null);
+				UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, null, false);
 
-				gamePlayer.setState(PlayerState.PLAYING);
+				gamePlayer.setState(PlayerState.SPECTATING);
+
 				break;
 		}
 
@@ -104,6 +103,13 @@ public class GameListener implements Listener {
 
 		if (gamePlayer != null) {
 			gamePlayer.savePlayerData(true);
+
+			// combat logger
+			if (gamePlayer.isPlaying() && UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
+				Bukkit.broadcastMessage(player.getDisplayName() + CC.SEC + " disconnected and was disqualified.");
+
+				UHCMeetup.getInstance().getGameHandler().checkWinners();
+			}
 		}
 
 		event.setQuitMessage(null);
@@ -130,7 +136,7 @@ public class GameListener implements Listener {
 
 		gamePlayer.setDeaths(gamePlayer.getDeaths() + 1);
 
-		UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "died");
+		UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "died", true);
 
 		if (killer != null) {
 			final GamePlayer playerKiller = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(killer);

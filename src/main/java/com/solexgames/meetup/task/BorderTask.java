@@ -42,6 +42,7 @@ public class BorderTask extends BukkitRunnable {
 		} else if (this.seconds.contains(game.getBorderTime())) {
 			Bukkit.broadcastMessage(CC.SEC + "The border will shrink to " + CC.PRI + game.getNextBorder() + CC.SEC + " in " + CC.PRI + TimeUtil.secondsToRoundedTime(game.getBorderTime()) + CC.SEC + ".");
 		}
+
 		game.decrementBorderTime();
 	}
 }

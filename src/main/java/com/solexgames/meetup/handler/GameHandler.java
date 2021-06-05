@@ -73,12 +73,6 @@ public class GameHandler {
 
 			gamePlayer.setPlayed(gamePlayer.getPlayed() + 1);
 
-			// TODO: 05/06/2021 load kit with layout
-			UHCMeetup.getInstance().getKitManager().handleItems(player);
-
-			gamePlayer.setState(PlayerState.PLAYING);
-
-			PlayerUtil.resetPlayer(player);
 			PlayerUtil.unsitPlayer(player);
 		});
 
@@ -94,13 +88,25 @@ public class GameHandler {
 	public void handleStarting() {
 		this.game.setState(GameState.STARTING);
 
-		this.getRemainingPlayers().forEach(gamePlayer -> gamePlayer.getPlayer().teleport(MeetupUtils.getScatterLocation()));
+		this.getRemainingPlayers().forEach(gamePlayer -> {
+			final Player player = gamePlayer.getPlayer();
+
+			gamePlayer.setState(PlayerState.PLAYING);
+
+			PlayerUtil.resetPlayer(player);
+			PlayerUtil.sitPlayer(player);
+
+			// TODO: 05/06/2021 load kit with layout
+			UHCMeetup.getInstance().getKitManager().handleItems(player);
+
+			player.teleport(MeetupUtils.getScatterLocation());
+		});
 
 		new GameStartTask();
 	}
 
 	public void checkWinners() {
-		if (this.game.isState(GameState.IN_GAME)) {
+		if (this.game.isState(GameState.STARTING)) {
 			return;
 		}
 

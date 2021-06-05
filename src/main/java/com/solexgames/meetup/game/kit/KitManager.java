@@ -49,7 +49,7 @@ public class KitManager {
 
 	public void handleItems(Player player) {
 		PlayerInventory inventory = player.getInventory();
-
+		
 		inventory.setHelmet(new ItemBuilder(getRandomMaterial("helmet"))
 				.setEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, getLevel()).create());
 
@@ -100,10 +100,6 @@ public class KitManager {
 			sword.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 1);
 		}
 
-		inventory.setItem(0, sword);
-		inventory.setItem(1, new ItemStack(Material.WATER_BUCKET));
-		inventory.setItem(2, new ItemStack(Material.FISHING_ROD));
-
 		final ItemStack bow = new ItemStack(Material.BOW);
 
 		bow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, this.random.nextInt(3) + 1);
@@ -120,68 +116,28 @@ public class KitManager {
 			bow.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
 		}
 
-		inventory.setItem(3, bow);
-		inventory.setItem(4, new ItemStack(Material.WATER_BUCKET));
-		inventory.setItem(5, new ItemStack(Material.LAVA_BUCKET));
-
 		final ItemStack head = MeetupUtils.getGoldenHead();
 		head.setAmount(this.random.nextInt(4) + 1);
 
-		inventory.setItem(6, head);
+		inventory.setItem(0, sword);
+		inventory.setItem(1, new ItemStack(Material.FISHING_ROD));
+		inventory.setItem(2, bow);
+		inventory.setItem(3, new ItemStack(Material.COOKED_BEEF, 64));
+		inventory.setItem(4, new ItemStack(Material.GOLDEN_APPLE, this.random.nextInt(7) + 1));
+		inventory.setItem(5, head);
+		inventory.setItem(6, new ItemStack(Material.DIAMOND_AXE));
+		inventory.setItem(7, new ItemStack(Material.FLINT_AND_STEEL));
+		inventory.setItem(8, new ItemStack(Material.COBBLESTONE, 64));
 
-		inventory.setItem(7, new ItemStack(Material.GOLDEN_APPLE, this.random.nextInt(7) + 1));
-
-		inventory.setItem(8, new ItemStack(this.random.nextInt(3) == 1
-				? Material.WOOD : Material.COBBLESTONE, 64));
-
-		inventory.setItem(9, new ItemStack(Material.COOKED_BEEF, this.random.nextInt(32)));
-		inventory.setItem(16, new ItemStack(Material.ARROW, 64));
-
-		inventory.setItem(18, new ItemStack(Material.ANVIL, this.random.nextInt(2) + 1));
-
-		inventory.addItem(new ItemStack(Material.DIAMOND_PICKAXE));
-
-		if (this.random.nextInt(2) == 1) {
-			inventory.addItem(new ItemStack(Material.FLINT_AND_STEEL));
-		}
-
-		if (this.random.nextInt(2) == 1) {
-			inventory.addItem(new ItemStack(Material.WEB, 6));
-		}
-
-		if (this.random.nextInt(2) == 1) {
-			inventory.addItem(new ItemStack(Material.ENCHANTMENT_TABLE));
-		}
-
-		if (this.random.nextInt(5) == 3) {
-			// horse egg
-			inventory.addItem(new ItemStack(Material.getMaterial(383), 1, (short) 100));
-		}
-
-		if (this.random.nextInt(6) == 3) {
-			inventory.addItem(new ItemStack(Material.ENDER_PEARL));
-		}
-
-		boolean hasAllPotions = false;
-
-		if (this.random.nextInt(15) == 8) {
-			inventory.addItem(new ItemStack(Material.POTION, 1, (short) 8194));
-			inventory.addItem(new ItemStack(Material.POTION, 1, (short) 8227));
-
-			hasAllPotions = true;
-		}
-
-		if (!hasAllPotions) {
-			if (this.random.nextInt(5) == 3) {
-				inventory.addItem(new ItemStack(Material.POTION, 1, (short) 8194));
-			}
-
-			if (this.random.nextInt(5) == 3) {
-				inventory.addItem(new ItemStack(Material.POTION, 1, (short) 8227));
-			}
-		}
-
-		inventory.addItem(new ItemStack(Material.EXP_BOTTLE, 64));
+		inventory.setItem(9, new ItemStack(Material.ARROW, 64));
+		inventory.setItem(10, new ItemStack(Material.LAVA_BUCKET));
+		inventory.setItem(11, new ItemStack(Material.LAVA_BUCKET));
+		inventory.setItem(12, new ItemStack(Material.WATER_BUCKET));
+		inventory.setItem(13, new ItemStack(Material.WATER_BUCKET));
+		inventory.setItem(14, new ItemStack(Material.DIAMOND_PICKAXE));
+		inventory.setItem(15, new ItemStack(Material.ENCHANTMENT_TABLE));
+		inventory.setItem(16, new ItemStack(Material.ANVIL, this.random.nextInt(2) + 1));
+		inventory.setItem(17, new ItemStack(Material.EXP_BOTTLE, 64));
 
 		player.updateInventory();
 	}

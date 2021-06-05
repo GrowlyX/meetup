@@ -6,6 +6,7 @@ import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.player.PlayerState;
 import com.solexgames.meetup.util.CC;
+import com.solexgames.meetup.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -42,9 +43,7 @@ public class SpectatorHandler {
 				.create();
 	}
 
-	public void setSpectator(GamePlayer gamePlayer, String reason) {
-		// todo: add to invisible team
-
+	public void setSpectator(GamePlayer gamePlayer, String reason, boolean title) {
 		final Player player = gamePlayer.getPlayer();
 
 		player.setAllowFlight(true);
@@ -54,19 +53,21 @@ public class SpectatorHandler {
 		player.getInventory().setItem(0, this.spectateMenuItem);
 		player.getInventory().setItem(1, this.navigationCompassItem);
 		player.setGameMode(GameMode.CREATIVE);
-		player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false));
 		player.updateInventory();
 
 		if (reason != null) {
 			gamePlayer.getPlayer().sendMessage(CC.SEC + "You're now a spectator: " + CC.RED + reason);
 		}
 
+		if (title) {
+			PlayerUtil.sendTitle(player, "&c&lDEAD", "You are now a spectator!", 0, 80, 20);
+		}
+
 		gamePlayer.setState(PlayerState.SPECTATING);
 	}
 
 	public void removeSpectator(GamePlayer gamePlayer) {
-		// todo: remove from invisible team
-
 		final Player player = gamePlayer.getPlayer();
 
 		player.getInventory().clear();

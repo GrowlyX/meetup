@@ -30,7 +30,7 @@ public class GameStartTask extends BukkitRunnable {
 		if (UHCMeetup.getInstance().getGameHandler().getRemainingPlayers().size() < UHCMeetup.getInstance().getGameHandler().getMinPlayers()) {
 			game.setGameStartTime(60);
 			// TODO: 6/1/2021 shutdown server and send game regeneration packet to redis
-			this.cancel();
+//			this.cancel();
 			// back to lobby?
 			return;
 		}
@@ -60,6 +60,6 @@ public class GameStartTask extends BukkitRunnable {
 		Bukkit.getOnlinePlayers().stream()
 				.map(player -> UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player))
 				.filter(gamePlayer -> !gamePlayer.getState().equals(PlayerState.SPECTATING))
-				.forEach(gamePlayer -> PlayerUtil.sendTitle(gamePlayer.getPlayer(), title, subTitle, 20, 20 * 5, 20));
+				.forEach(gamePlayer -> PlayerUtil.sendTitle(gamePlayer.getPlayer(), title, subTitle, 0, 20 * 5, 20));
 	}
 }

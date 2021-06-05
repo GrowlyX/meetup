@@ -50,7 +50,7 @@ public class ScoreboardAdapter implements BoardAdapter {
 				board.add(CC.PRI + game.getGameStartTime());
 				break;
 			case IN_GAME:
-				board.add("Border: " + CC.PRI + game.getBorder() + game.getFormattedBorderStatus());
+				board.add("Border: " + CC.PRI + game.getNextBorder() + game.getFormattedBorderStatus());
 				board.add("Players: " + CC.PRI + gameHandler.getRemainingPlayers().size());
 				board.add("Ping: " + CC.PRI + PlayerUtil.getPing(player) + " ms");
 				board.add("Kills: " + CC.PRI + gamePlayer.getGameKills());

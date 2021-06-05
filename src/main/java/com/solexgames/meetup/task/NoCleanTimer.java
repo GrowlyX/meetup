@@ -30,6 +30,11 @@ public class NoCleanTimer extends BukkitRunnable {
 
 	@Override
 	public void run() {
+		if (this.gamePlayer.getPlayer() == null) {
+			this.cancel();
+			return;
+		}
+
 		if (Arrays.asList(15, 10, 5, 4, 3, 2, 1).contains(this.time)) {
 			this.gamePlayer.getPlayer().sendMessage(CC.RED + "No clean will expire in " + TimeUtil.secondsToRoundedTime(this.time) + ".");
 		} else if (time == 0) {
@@ -45,6 +50,7 @@ public class NoCleanTimer extends BukkitRunnable {
 
 		if (this.gamePlayer.getPlayer() != null) {
 			this.gamePlayer.getPlayer().sendMessage(CC.B_RED + "Your no clean timer has expired.");
+			this.gamePlayer.setNoCleanTimer(null);
 		}
 	}
 }

@@ -23,7 +23,7 @@ public class SpectateCommand extends BaseCommand {
 		// on confirm
 		if (true) {
 			if (spectating) {
-				UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "chose to watch");
+				UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "chose to watch", true);
 			} else {
 				UHCMeetup.getInstance().getSpectatorHandler().removeSpectator(gamePlayer);
 			}
