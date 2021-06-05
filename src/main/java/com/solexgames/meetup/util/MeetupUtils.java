@@ -22,7 +22,12 @@ public class MeetupUtils {
 	public static ItemStack getGoldenHead() {
 		return new ItemBuilder(Material.GOLDEN_APPLE)
 				.setDurability(0)
-				.setDisplayName("&6Golden Head").create();
+				.setDisplayName("&6Golden Head")
+				.addLore(
+						"&7Consume this special apple",
+						"&7to receive health boosting effects!"
+				)
+				.create();
 	}
 
 	public static void deleteWorld() {
@@ -31,14 +36,14 @@ public class MeetupUtils {
 		if (world != null) {
 			Bukkit.getServer().unloadWorld(world, false);
 
-			deleteFile(world.getWorldFolder());
+			MeetupUtils.deleteFile(world.getWorldFolder());
 		}
 	}
 
 	public static boolean deleteFile(File file) {
 		if (file.isDirectory()) {
-			for (File subfile : file.listFiles()) {
-				if (!deleteFile(subfile)) {
+			for (File subFile : file.listFiles()) {
+				if (!deleteFile(subFile)) {
 					return false;
 				}
 			}

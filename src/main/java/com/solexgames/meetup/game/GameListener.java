@@ -52,7 +52,7 @@ public class GameListener implements Listener {
 
 		switch (gameHandler.getGame().getState()) {
 			case WAITING:
-				final World lobbyWorld = Bukkit.getWorld("world"); // lobby
+				final World lobbyWorld = Bukkit.getWorld("world");
 
 				player.teleport(new Location(lobbyWorld, 0.5, lobbyWorld.getHighestBlockYAt(0, 0) + 6, 0.5));
 
@@ -62,7 +62,7 @@ public class GameListener implements Listener {
 				final int minPlayers = gameHandler.getMinimumPlayers();
 
 				if (waiting >= minPlayers) {
-					gameHandler.handleStarting();
+					Bukkit.getScheduler().runTaskLater(UHCMeetup.getInstance(), gameHandler::handleStarting, 20L);
 				} else {
 					final int more = minPlayers - waiting;
 					Bukkit.broadcastMessage(CC.SEC + "The game requires " + CC.PRI + more + CC.SEC + " player" + (more == 1 ? "" : "s") + " to start.");
@@ -177,10 +177,8 @@ public class GameListener implements Listener {
 	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
 		final ItemStack item = event.getItem();
 
-		if (item == null
-				|| item.getType() != Material.GOLDEN_APPLE
-				|| item.getItemMeta() == null
-				|| !item.getItemMeta().hasDisplayName()
+		if (item == null || item.getType() != Material.GOLDEN_APPLE
+				|| item.getItemMeta() == null || !item.getItemMeta().hasDisplayName()
 				|| !item.getItemMeta().getDisplayName().equalsIgnoreCase(Color.translate("&6Golden Head"))) {
 			return;
 		}

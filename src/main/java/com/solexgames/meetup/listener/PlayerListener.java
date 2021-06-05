@@ -133,6 +133,7 @@ public class PlayerListener implements Listener {
 		}
 	}
 
+	@EventHandler
 	public void onWeather(WeatherChangeEvent event) {
 		event.setCancelled(true);
 	}

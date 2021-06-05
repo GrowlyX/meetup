@@ -54,7 +54,7 @@ public class GamePlayer {
         CompletableFuture.runAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("uuid", this.uuid.toString()), this.getDocument(), new ReplaceOptions().upsert(true)));
 
         if (remove) {
-            UHCMeetup.getInstance().getPlayerHandler().remove(this.getPlayer().getUniqueId());
+            UHCMeetup.getInstance().getPlayerHandler().remove(this.getUuid());
         }
     }
 

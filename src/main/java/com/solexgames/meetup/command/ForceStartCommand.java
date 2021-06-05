@@ -19,13 +19,13 @@ import org.bukkit.entity.Player;
 public class ForceStartCommand extends BaseCommand {
 
 	@CommandAlias("forcestart|fs")
-	@CommandPermission("meetup.admin")
+	@CommandPermission("uhcmeetup.command.forcestart")
 	public void execute(CommandSender sender) {
 		final GameHandler gameHandler = UHCMeetup.getInstance().getGameHandler();
 		final Game game = gameHandler.getGame();
 
 		if (!game.isState(GameState.STARTING) || game.getGameStartTime() < 10) {
-			sender.sendMessage(CC.RED + "You can't do this anymore.");
+			sender.sendMessage(CC.RED + "I'm sorry, but you can't do this anymore.");
 			return;
 		}
 
