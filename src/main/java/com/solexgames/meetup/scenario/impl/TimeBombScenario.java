@@ -9,9 +9,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,5 +56,10 @@ public class TimeBombScenario extends Scenario {
 				this.time--;
 			}
 		}.runTaskTimer(UHCMeetup.getInstance(), 0L, 20L);
+	}
+
+	@Override
+	public List<Listener> getListeners() {
+		return new ArrayList<>();
 	}
 }

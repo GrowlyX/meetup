@@ -4,6 +4,8 @@ import com.solexgames.meetup.UHCMeetup;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
+import java.util.List;
+
 /**
  * @author puugz
  * @since 05/06/2021 12:12
@@ -11,8 +13,9 @@ import org.bukkit.event.Listener;
 public abstract class Scenario {
 
 	public Scenario() {
-		if (this instanceof Listener) {
-			Bukkit.getPluginManager().registerEvents((Listener) this, UHCMeetup.getInstance());
-		}
+		this.getListeners().forEach(listener -> Bukkit.getPluginManager().registerEvents(listener, UHCMeetup.getInstance()));
 	}
+
+	public abstract List<Listener> getListeners();
+
 }
