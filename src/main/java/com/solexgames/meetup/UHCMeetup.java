@@ -4,6 +4,7 @@ import co.aikar.commands.PaperCommandManager;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.lib.commons.redis.JedisBuilder;
 import com.solexgames.lib.commons.redis.JedisManager;
+import com.solexgames.lib.commons.redis.JedisSettings;
 import com.solexgames.meetup.board.BoardManager;
 import com.solexgames.meetup.command.LoadoutCommand;
 import com.solexgames.meetup.command.ResetLoadoutCommand;
@@ -80,14 +81,17 @@ public final class UHCMeetup extends JavaPlugin {
     }
 
     private void setupJedis() {
-        this.jedisManager = new JedisBuilder()
-                .withChannel("meetup")
-                .withSettings(CorePlugin.getInstance().getDefaultJedisSettings())
-                .build();
-
-        this.jedisManager.publish(JedisUtil.getServerUpdateJson());
-
-        new ServerUpdateTask().runTaskTimerAsynchronously(this, 20L, TimeUnit.SECONDS.toMillis(5L));
+//        this.jedisManager = new JedisBuilder()
+//                .withChannel("meetup")
+//                .withSettings(new JedisSettings(
+//                        CorePlugin.getInstance().getDatabaseConfig().getString("redis.host"),
+//                        CorePlugin.getInstance().getDatabaseConfig().getInt("redis.port"),
+//                        CorePlugin.getInstance().getDatabaseConfig().getBoolean("redis.authentication.enabled"),
+//                        CorePlugin.getInstance().getDatabaseConfig().getString("redis.authentication.password")
+//                ))
+//                .build();
+//
+//        new ServerUpdateTask().runTaskTimerAsynchronously(this, 20L, TimeUnit.SECONDS.toMillis(5L));
     }
 
     private void registerListeners() {

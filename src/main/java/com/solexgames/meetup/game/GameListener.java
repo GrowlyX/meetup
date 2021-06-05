@@ -11,6 +11,7 @@ import com.solexgames.meetup.scenario.impl.TimeBombScenario;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtils;
 import com.solexgames.meetup.util.PlayerUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -121,8 +122,12 @@ public class GameListener implements Listener {
 
 		final List<ItemStack> items = new ArrayList<>();
 
-		Stream.of(player.getInventory().getArmorContents()).filter(stack -> stack != null && stack.getType() != Material.AIR).forEach(items::add);
-		Stream.of(player.getInventory().getContents()).filter(stack -> stack != null && stack.getType() != Material.AIR).forEach(items::add);
+		Stream.of(player.getInventory().getArmorContents())
+				.filter(stack -> stack != null && stack.getType() != Material.AIR)
+				.forEach(items::add);
+		Stream.of(player.getInventory().getContents())
+				.filter(stack -> stack != null && stack.getType() != Material.AIR)
+				.forEach(items::add);
 
 		UHCMeetup.getInstance().getScenario(TimeBombScenario.class).handleTimeBomb(player, event.getDrops(), items);
 
@@ -140,7 +145,13 @@ public class GameListener implements Listener {
 			playerKiller.setGameKills(playerKiller.getGameKills() + 1);
 			playerKiller.setKills(playerKiller.getKills() + 1);
 
+			event.setDeathMessage(player.getDisplayName() + CC.GRAY + "[" + CC.RED + gamePlayer.getGameKills() + CC.GRAY + "]" + CC.SEC + " was slain by " + killer.getDisplayName() + CC.GRAY + "[" + CC.RED + playerKiller.getGameKills() + CC.GRAY + "]" + CC.SEC + " using " + CC.RED + StringUtils.capitalize(killer.getItemInHand().getType().name().replace("_", " ").toLowerCase()) + CC.SEC + ".");
+
 			UHCMeetup.getInstance().getScenario(NoCleanScenario.class).handleNoClean(playerKiller);
+		}
+
+		if (killer == null) {
+			event.setDeathMessage(player.getDisplayName() + CC.GRAY + "[" + CC.RED + gamePlayer.getGameKills() + CC.GRAY + "]" + CC.SEC + " was killed.");
 		}
 
 		UHCMeetup.getInstance().getGameHandler().checkWinners();
