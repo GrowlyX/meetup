@@ -52,8 +52,8 @@ public class SpectatorHandler {
 		player.getInventory().clear();
 		player.getInventory().setArmorContents(null);
 
-		player.getInventory().setItem(0, this.spectateMenuItem);
-		player.getInventory().setItem(1, this.navigationCompassItem);
+		player.getInventory().setItem(0, this.spectateMenuItem.clone());
+		player.getInventory().setItem(1, this.navigationCompassItem.clone());
 
 		player.setGameMode(GameMode.CREATIVE);
 		player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false));
