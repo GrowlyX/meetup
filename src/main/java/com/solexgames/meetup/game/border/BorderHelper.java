@@ -14,13 +14,13 @@ import java.util.List;
 final class BorderHelper {
 
 	@Getter
-	private static List<Material> blockedWallBlocks = Arrays.asList(Material.LOG, Material.LOG_2, Material.LEAVES, Material.LEAVES_2,
+	private static final List<Material> blockedWallBlocks = Arrays.asList(Material.LOG, Material.LOG_2, Material.LEAVES, Material.LEAVES_2,
 			Material.AIR, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA,
 			Material.HUGE_MUSHROOM_1, Material.HUGE_MUSHROOM_2, Material.DOUBLE_PLANT, Material.LONG_GRASS,
 			Material.VINE, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.CACTUS, Material.DEAD_BUSH,
 			Material.SUGAR_CANE_BLOCK, Material.ICE, Material.SNOW);
 
-	static void addBedrockBorder(String world, int radius, int blocksHigh) {
+	public static void addBedrockBorder(String world, int radius, int blocksHigh) {
 		for (int i = 0; i < blocksHigh; i++) {
 			Bukkit.getScheduler().runTaskLater(UHCMeetup.getInstance(), () -> addBedrockBorder(world, radius), i);
 		}

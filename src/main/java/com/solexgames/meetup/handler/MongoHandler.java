@@ -31,7 +31,7 @@ public class MongoHandler {
 
             this.playerCollection = this.database.getCollection("UHCMeetup");
         } catch (Exception exception) {
-            System.out.println("[Meetup] Couldn't connect to the mongo database.");
+            System.out.println("[UHCMeetup] Couldn't connect to the mongo database.");
             Bukkit.shutdown();
         }
     }

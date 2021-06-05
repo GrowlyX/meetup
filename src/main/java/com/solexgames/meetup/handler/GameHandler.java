@@ -2,15 +2,24 @@ package com.solexgames.meetup.handler;
 
 import com.solexgames.meetup.UHCMeetup;
 import com.solexgames.meetup.game.Game;
+import com.solexgames.meetup.game.GameListener;
 import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.player.GamePlayer;
+import com.solexgames.meetup.player.PlayerState;
 import com.solexgames.meetup.task.BorderTask;
+import com.solexgames.meetup.task.EndTask;
 import com.solexgames.meetup.task.GameStartTask;
 import com.solexgames.meetup.task.WorldGenTask;
+import com.solexgames.meetup.util.CC;
+import com.solexgames.meetup.util.MeetupUtils;
+import com.solexgames.meetup.util.PlayerUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +38,7 @@ public class GameHandler {
 	private final List<Material> whitelistedBlocks = new ArrayList<>();
 
 	private int minPlayers = 2;
+	private boolean broadcasted;
 
 	// todo:
 	// private final List<GamePlayer> remaining;
@@ -36,24 +46,44 @@ public class GameHandler {
 
 	public void setupGame() {
 		this.game = new Game();
-		new WorldGenTask(this).runTaskTimer(UHCMeetup.getInstance(), 0L, 20L);
-	}
 
-	public boolean isRunning() {
-		return this.game.getState().equals(GameState.IN_GAME);
+		new WorldGenTask(this).runTaskTimer(UHCMeetup.getInstance(), 0L, 20L);
 	}
 
 	public List<GamePlayer> getRemainingPlayers() {
 		return UHCMeetup.getInstance().getPlayerHandler().getPlayerTypeMap().values().stream()
-				.filter(gamePlayer -> !gamePlayer.isSpectating())
+				.filter(gamePlayer -> !gamePlayer.getState().equals(PlayerState.SPECTATING))
+				.filter(gamePlayer -> gamePlayer.getPlayer() != null || gamePlayer.getPlayer().isOnline())
 				.collect(Collectors.toList());
 	}
 
-	public void begin() {
+	public List<GamePlayer> getSpectators() {
+		return UHCMeetup.getInstance().getPlayerHandler().getPlayerTypeMap().values().stream()
+				.filter(GamePlayer::isSpectating)
+				.filter(gamePlayer -> gamePlayer.getPlayer() != null || gamePlayer.getPlayer().isOnline())
+				.collect(Collectors.toList());
+	}
+
+	public void handleStart() {
 		this.game.setState(GameState.IN_GAME);
 
 		final List<GamePlayer> gamePlayers = this.getRemainingPlayers();
-		gamePlayers.forEach(gamePlayer -> gamePlayer.setPlayed(gamePlayer.getPlayed() + 1));
+		gamePlayers.forEach(gamePlayer -> {
+			final Player player = gamePlayer.getPlayer();
+
+			gamePlayer.setPlayed(gamePlayer.getPlayed() + 1);
+
+			// TODO: 05/06/2021 load kit with layout
+			UHCMeetup.getInstance().getKitManager().handleItems(player);
+
+			gamePlayer.setState(PlayerState.PLAYING);
+
+			PlayerUtil.resetPlayer(player);
+			PlayerUtil.unsitPlayer(player);
+		});
+
+		UHCMeetup.getInstance().getGameHandler().getSpectators()
+				.forEach(gamePlayer -> gamePlayer.getPlayer().sendMessage(CC.SEC + "You've been made a spectator as you're not playing."));
 
 		this.game.setRemaining(gamePlayers.size());
 		this.game.setInitial(gamePlayers.size());
@@ -61,13 +91,36 @@ public class GameHandler {
 		new BorderTask();
 	}
 
-	public void start() {
+	public void handleStarting() {
 		this.game.setState(GameState.STARTING);
+
+		this.getRemainingPlayers().forEach(gamePlayer -> gamePlayer.getPlayer().teleport(MeetupUtils.getScatterLocation()));
+
 		new GameStartTask();
 	}
 
-	public void checkWinner() {
+	public void checkWinners() {
+		if (this.game.isState(GameState.IN_GAME)) {
+			return;
+		}
 
+		if (this.getRemainingPlayers().size() == 1 && !this.broadcasted) {
+			this.getRemainingPlayers().forEach(this::selectWinner);
+		}
+	}
+
+	private void selectWinner(GamePlayer winner) {
+		this.broadcasted = true;
+
+		Bukkit.broadcastMessage("");
+		Bukkit.broadcastMessage(winner.getPlayer().getDisplayName() + CC.GREEN + " wins!");
+		Bukkit.broadcastMessage("");
+
+		winner.setWins(winner.getWins() + 1);
+
+		this.game.setWinner(winner.getPlayer().getDisplayName());
+
+		new EndTask();
 	}
 
 	public void handleSetWhitelistedBlocks() {

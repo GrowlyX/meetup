@@ -2,6 +2,8 @@ package com.solexgames.meetup.task;
 
 import com.solexgames.meetup.UHCMeetup;
 import com.solexgames.meetup.game.Game;
+import com.solexgames.meetup.game.GameState;
+import com.solexgames.meetup.player.PlayerState;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.PlayerUtil;
 import com.solexgames.meetup.util.TimeUtil;
@@ -40,10 +42,12 @@ public class GameStartTask extends BukkitRunnable {
 				this.sendTitle(CC.B_GREEN + gameStartTime, "Game is starting!");
 			}
 		}
+
 		if (gameStartTime == 0) {
+			Bukkit.broadcastMessage(CC.SEC + "The game has begun.");
 			this.sendTitle(CC.B_GREEN + "BEGIN", "Game has started!");
 
-			UHCMeetup.getInstance().getGameHandler().getGame().start();
+			UHCMeetup.getInstance().getGameHandler().handleStart();
 
 			this.cancel();
 			return;
@@ -55,7 +59,7 @@ public class GameStartTask extends BukkitRunnable {
 	private void sendTitle(String title, String subTitle) {
 		Bukkit.getOnlinePlayers().stream()
 				.map(player -> UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player))
-				.filter(gamePlayer -> !gamePlayer.isSpectating())
+				.filter(gamePlayer -> !gamePlayer.getState().equals(PlayerState.SPECTATING))
 				.forEach(gamePlayer -> PlayerUtil.sendTitle(gamePlayer.getPlayer(), title, subTitle, 20, 20 * 5, 20));
 	}
 }

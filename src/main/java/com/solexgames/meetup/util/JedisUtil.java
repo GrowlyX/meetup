@@ -3,7 +3,6 @@ package com.solexgames.meetup.util;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.lib.commons.redis.json.JsonAppender;
 import com.solexgames.meetup.UHCMeetup;
-import com.solexgames.meetup.state.impl.TempPlayerState;
 import org.bukkit.Bukkit;
 
 /**
@@ -14,8 +13,7 @@ import org.bukkit.Bukkit;
 public class JedisUtil {
 
     public static String getServerUpdateJson() {
-        final int remaining = (int) UHCMeetup.getInstance().getGameHandler().getGame().getPlayerTypeMap().values().stream()
-                .filter(tempPlayer -> tempPlayer.getState().equals(TempPlayerState.ALIVE)).count();
+        final int remaining = UHCMeetup.getInstance().getGameHandler().getRemainingPlayers().size();
 
         return new JsonAppender("MEETUP_SERVER_UPDATE")
                 .put("SERVER_ID", CorePlugin.getInstance().getServerName())

@@ -2,6 +2,7 @@ package com.solexgames.meetup.game.border;
 
 import com.solexgames.meetup.UHCMeetup;
 import com.solexgames.meetup.game.Game;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 public class Border {
@@ -11,7 +12,9 @@ public class Border {
 
 		game.setBorder(border);
 		BorderHelper.addBedrockBorder(world.getName(), border, 5);
-		// todo: set world border
+
+		world.getWorldBorder().setCenter(0, 0);
+		world.getWorldBorder().setSize(border * 2);
 
 		if (border == 10) {
 			game.setBorderTime(-1);

@@ -1,6 +1,5 @@
 package com.solexgames.meetup.listener;
 
-import com.solexgames.core.util.Color;
 import com.solexgames.meetup.UHCMeetup;
 import com.solexgames.meetup.game.Game;
 import com.solexgames.meetup.game.GameState;

@@ -29,7 +29,7 @@ public class BorderTask extends BukkitRunnable {
 		final GameHandler gameHandler = UHCMeetup.getInstance().getGameHandler();
 		final Game game = gameHandler.getGame();
 
-		if (game.decrementBorderTime() == 0) {
+		if (game.getBorderTime() <= 0) {
 			if (game.getNextBorder() == 10) {
 				new Border(Bukkit.getWorld("meetup_game"), game.getNextBorder());
 				this.cancel();
@@ -37,8 +37,11 @@ public class BorderTask extends BukkitRunnable {
 			}
 
 			game.setBorderTime(120);
+			new Border(Bukkit.getWorld("meetup_game"), game.getNextBorder());
+			game.setBorder(game.getNextBorder());
 		} else if (this.seconds.contains(game.getBorderTime())) {
 			Bukkit.broadcastMessage(CC.SEC + "The border will shrink to " + CC.PRI + game.getNextBorder() + CC.SEC + " in " + CC.PRI + TimeUtil.secondsToRoundedTime(game.getBorderTime()) + CC.SEC + ".");
 		}
+		game.decrementBorderTime();
 	}
 }

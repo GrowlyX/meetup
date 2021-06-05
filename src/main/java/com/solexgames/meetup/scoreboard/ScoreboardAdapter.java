@@ -11,6 +11,7 @@ import com.solexgames.meetup.util.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -50,7 +51,7 @@ public class ScoreboardAdapter implements BoardAdapter {
 				break;
 			case IN_GAME:
 				board.add("Border: " + CC.PRI + game.getBorder() + game.getFormattedBorderStatus());
-				board.add("Players: " + CC.PRI + game.getRemaining());
+				board.add("Players: " + CC.PRI + gameHandler.getRemainingPlayers().size());
 				board.add("Ping: " + CC.PRI + PlayerUtil.getPing(player) + " ms");
 				board.add("Kills: " + CC.PRI + gamePlayer.getGameKills());
 
@@ -80,7 +81,11 @@ public class ScoreboardAdapter implements BoardAdapter {
 
 	@Override
 	public void onScoreboardCreate(Player player, Scoreboard board) {
-//        final Team team;
+//        Team ghostTeam = board.getTeam("ghost");
+//
+//        if (ghostTeam == null) {
+//        	ghostTeam = board.registerNewTeam("ghost");
+//		}
 	}
 
 	@Override

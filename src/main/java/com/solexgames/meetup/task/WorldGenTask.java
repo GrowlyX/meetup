@@ -118,6 +118,8 @@ public class WorldGenTask extends BukkitRunnable {
 		new Border(Bukkit.getWorld("meetup_game"), 100);
 
 		UHCMeetup.getInstance().setWorldProperties();
+
+		// todo: set bedrock on y level 50
 	}
 
 	private boolean deleteDirectory(File path) {
@@ -140,66 +142,66 @@ public class WorldGenTask extends BukkitRunnable {
 
 	private void swapBiomes() {
 		// Swap all biomes with other biomes
-		setBiomeBase(Biome.OCEAN, Biome.PLAINS, 0);
-		setBiomeBase(Biome.RIVER, Biome.PLAINS, 0);
-		setBiomeBase(Biome.BEACH, Biome.TAIGA, 0);
-		setBiomeBase(Biome.JUNGLE, Biome.PLAINS, 0);
-		setBiomeBase(Biome.JUNGLE_HILLS, Biome.TAIGA, 0);
-		setBiomeBase(Biome.JUNGLE_EDGE, Biome.DESERT, 0);
-		setBiomeBase(Biome.DEEP_OCEAN, Biome.PLAINS, 0);
-		setBiomeBase(Biome.SAVANNA_PLATEAU, Biome.PLAINS, 0);
-		setBiomeBase(Biome.ROOFED_FOREST, Biome.DESERT, 0);
-		setBiomeBase(Biome.STONE_BEACH, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.OCEAN, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.RIVER, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.BEACH, Biome.TAIGA, 0);
+		this.setBiomeBase(Biome.JUNGLE, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.JUNGLE_HILLS, Biome.TAIGA, 0);
+		this.setBiomeBase(Biome.JUNGLE_EDGE, Biome.DESERT, 0);
+		this.setBiomeBase(Biome.DEEP_OCEAN, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.SAVANNA_PLATEAU, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.ROOFED_FOREST, Biome.DESERT, 0);
+		this.setBiomeBase(Biome.STONE_BEACH, Biome.PLAINS, 0);
 
 		// Weird sub-biomes
-		setBiomeBase(Biome.JUNGLE, Biome.PLAINS, 128);
-		setBiomeBase(Biome.JUNGLE_EDGE, Biome.DESERT, 128);
-		setBiomeBase(Biome.SAVANNA, Biome.SAVANNA, 128);
-		setBiomeBase(Biome.SAVANNA_PLATEAU, Biome.DESERT, 128);
+		this.setBiomeBase(Biome.JUNGLE, Biome.PLAINS, 128);
+		this.setBiomeBase(Biome.JUNGLE_EDGE, Biome.DESERT, 128);
+		this.setBiomeBase(Biome.SAVANNA, Biome.SAVANNA, 128);
+		this.setBiomeBase(Biome.SAVANNA_PLATEAU, Biome.DESERT, 128);
 
 		// LIMITED threshold biomes
-		setBiomeBase(Biome.FOREST_HILLS, Biome.PLAINS, 0);
-		setBiomeBase(Biome.BIRCH_FOREST_HILLS, Biome.FOREST, 0);
-		setBiomeBase(Biome.BIRCH_FOREST_HILLS, Biome.PLAINS, 128);
-		setBiomeBase(Biome.BIRCH_FOREST_HILLS_MOUNTAINS, Biome.PLAINS, 0);
-		setBiomeBase(Biome.BIRCH_FOREST_MOUNTAINS, Biome.PLAINS, 0);
-		setBiomeBase(Biome.TAIGA, Biome.SAVANNA, 0);
-		setBiomeBase(Biome.TAIGA, Biome.SAVANNA, 128);
-		setBiomeBase(Biome.TAIGA_HILLS, Biome.SAVANNA, 0);
-		setBiomeBase(Biome.TAIGA_MOUNTAINS, Biome.SAVANNA, 0);
-		setBiomeBase(Biome.ICE_PLAINS, Biome.BIRCH_FOREST, 0);
-		setBiomeBase(Biome.ICE_PLAINS, Biome.BIRCH_FOREST, 128);
-		setBiomeBase(Biome.ICE_PLAINS_SPIKES, Biome.BIRCH_FOREST, 0);
-		setBiomeBase(Biome.MEGA_SPRUCE_TAIGA, Biome.PLAINS, 0);
-		setBiomeBase(Biome.MEGA_SPRUCE_TAIGA_HILLS, Biome.PLAINS, 0);
-		setBiomeBase(Biome.MEGA_TAIGA, Biome.PLAINS, 0);
-		setBiomeBase(Biome.MEGA_TAIGA, Biome.PLAINS, 128);
-		setBiomeBase(Biome.MEGA_TAIGA_HILLS, Biome.PLAINS, 0);
-		setBiomeBase(Biome.COLD_BEACH, Biome.DESERT, 0);
-		setBiomeBase(Biome.COLD_TAIGA, Biome.PLAINS, 0);
-		setBiomeBase(Biome.COLD_TAIGA, Biome.PLAINS, 128);
-		setBiomeBase(Biome.COLD_TAIGA_HILLS, Biome.DESERT, 0);
-		setBiomeBase(Biome.COLD_TAIGA_MOUNTAINS, Biome.DESERT, 0);
+		this.setBiomeBase(Biome.FOREST_HILLS, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.BIRCH_FOREST_HILLS, Biome.FOREST, 0);
+		this.setBiomeBase(Biome.BIRCH_FOREST_HILLS, Biome.PLAINS, 128);
+		this.setBiomeBase(Biome.BIRCH_FOREST_HILLS_MOUNTAINS, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.BIRCH_FOREST_MOUNTAINS, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.TAIGA, Biome.SAVANNA, 0);
+		this.setBiomeBase(Biome.TAIGA, Biome.SAVANNA, 128);
+		this.setBiomeBase(Biome.TAIGA_HILLS, Biome.SAVANNA, 0);
+		this.setBiomeBase(Biome.TAIGA_MOUNTAINS, Biome.SAVANNA, 0);
+		this.setBiomeBase(Biome.ICE_PLAINS, Biome.BIRCH_FOREST, 0);
+		this.setBiomeBase(Biome.ICE_PLAINS, Biome.BIRCH_FOREST, 128);
+		this.setBiomeBase(Biome.ICE_PLAINS_SPIKES, Biome.BIRCH_FOREST, 0);
+		this.setBiomeBase(Biome.MEGA_SPRUCE_TAIGA, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.MEGA_SPRUCE_TAIGA_HILLS, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.MEGA_TAIGA, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.MEGA_TAIGA, Biome.PLAINS, 128);
+		this.setBiomeBase(Biome.MEGA_TAIGA_HILLS, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.COLD_BEACH, Biome.DESERT, 0);
+		this.setBiomeBase(Biome.COLD_TAIGA, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.COLD_TAIGA, Biome.PLAINS, 128);
+		this.setBiomeBase(Biome.COLD_TAIGA_HILLS, Biome.DESERT, 0);
+		this.setBiomeBase(Biome.COLD_TAIGA_MOUNTAINS, Biome.DESERT, 0);
 
 		// DISALLOWED threshold biomes
-		setBiomeBase(Biome.ROOFED_FOREST_MOUNTAINS, Biome.PLAINS, 0);
-		setBiomeBase(Biome.MESA, Biome.PLAINS, 0);
-		setBiomeBase(Biome.MESA, Biome.PLAINS, 128);
-		setBiomeBase(Biome.MESA_PLATEAU, Biome.PLAINS, 0);
-		setBiomeBase(Biome.MESA_PLATEAU, Biome.PLAINS, 128);
-		setBiomeBase(Biome.MESA_BRYCE, Biome.PLAINS, 0);
-		setBiomeBase(Biome.MESA_PLATEAU_FOREST, Biome.PLAINS, 0);
-		setBiomeBase(Biome.MESA_PLATEAU_MOUNTAINS, Biome.PLAINS, 0);
-		setBiomeBase(Biome.MESA_PLATEAU_FOREST_MOUNTAINS, Biome.PLAINS, 0);
-		setBiomeBase(Biome.EXTREME_HILLS, Biome.PLAINS, 0);
-		setBiomeBase(Biome.EXTREME_HILLS, Biome.DESERT, 128);
-		setBiomeBase(Biome.EXTREME_HILLS_MOUNTAINS, Biome.PLAINS, 0);
-		setBiomeBase(Biome.EXTREME_HILLS_PLUS, Biome.FOREST, 0);
-		setBiomeBase(Biome.EXTREME_HILLS_PLUS, Biome.FOREST, 128);
-		setBiomeBase(Biome.EXTREME_HILLS_PLUS_MOUNTAINS, Biome.FOREST, 0);
-		setBiomeBase(Biome.FROZEN_OCEAN, Biome.PLAINS, 0);
-		setBiomeBase(Biome.FROZEN_RIVER, Biome.PLAINS, 0);
-		setBiomeBase(Biome.ICE_MOUNTAINS, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.ROOFED_FOREST_MOUNTAINS, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.MESA, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.MESA, Biome.PLAINS, 128);
+		this.setBiomeBase(Biome.MESA_PLATEAU, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.MESA_PLATEAU, Biome.PLAINS, 128);
+		this.setBiomeBase(Biome.MESA_BRYCE, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.MESA_PLATEAU_FOREST, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.MESA_PLATEAU_MOUNTAINS, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.MESA_PLATEAU_FOREST_MOUNTAINS, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.EXTREME_HILLS, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.EXTREME_HILLS, Biome.DESERT, 128);
+		this.setBiomeBase(Biome.EXTREME_HILLS_MOUNTAINS, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.EXTREME_HILLS_PLUS, Biome.FOREST, 0);
+		this.setBiomeBase(Biome.EXTREME_HILLS_PLUS, Biome.FOREST, 128);
+		this.setBiomeBase(Biome.EXTREME_HILLS_PLUS_MOUNTAINS, Biome.FOREST, 0);
+		this.setBiomeBase(Biome.FROZEN_OCEAN, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.FROZEN_RIVER, Biome.PLAINS, 0);
+		this.setBiomeBase(Biome.ICE_MOUNTAINS, Biome.PLAINS, 0);
 	}
 
 	private void setBiomeBase(Biome from, Biome to, int plus) {

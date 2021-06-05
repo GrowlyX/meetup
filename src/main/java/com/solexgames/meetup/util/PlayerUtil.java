@@ -1,58 +1,47 @@
 package com.solexgames.meetup.util;
 
 import com.solexgames.core.util.Color;
+import com.solexgames.meetup.UHCMeetup;
 import lombok.experimental.UtilityClass;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
-import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import org.bukkit.metadata.FixedMetadataValue;
 
 @UtilityClass
 public class PlayerUtil {
 
-	private static Method getHandleMethod;
-	private static Field pingField;
+	public static void sitPlayer(Player player) {
+		final CraftPlayer craftPlayer = (CraftPlayer) player;
+		final Location location = player.getLocation();
+		final EntityBat bat = new EntityBat(((CraftWorld) location.getWorld()).getHandle());
 
-	/**
-	 * Gets a player's connection ping via reflection
-	 * From https://www.spigotmc.org/threads/get-player-ping-with-reflection.147773/
-	 *
-	 * @param player specified player
-	 * @return the player's ping
-	 */
-	public static int getPing(Player player) {
-		try {
-			if (getHandleMethod == null) {
-				getHandleMethod = player.getClass().getDeclaredMethod("getHandle");
-				getHandleMethod.setAccessible(true);
-			}
+		bat.setLocation(location.getX(), location.getY() + 0.5, location.getZ(), 0, 0);
+		bat.setInvisible(true);
+		bat.setHealth(6);
 
-			final Object entityPlayer = getHandleMethod.invoke(player);
+		final PacketPlayOutSpawnEntityLiving spawnEntityPacket = new PacketPlayOutSpawnEntityLiving(bat);
+		craftPlayer.getHandle().playerConnection.sendPacket(spawnEntityPacket);
 
-			if (pingField == null) {
-				pingField = entityPlayer.getClass().getDeclaredField("ping");
-				pingField.setAccessible(true);
-			}
+		player.setMetadata("seated", new FixedMetadataValue(UHCMeetup.getInstance(), bat.getId()));
 
-			final int ping = pingField.getInt(entityPlayer);
+		final PacketPlayOutAttachEntity sitPacket = new PacketPlayOutAttachEntity(0, craftPlayer.getHandle(), bat);
+		craftPlayer.getHandle().playerConnection.sendPacket(sitPacket);
+	}
 
-			return Math.max(ping, 0);
-		} catch (Exception e) {
-			return 1;
+	public void unsitPlayer(Player player) {
+		if (player.hasMetadata("seated")) {
+			final CraftPlayer craftPlayer = (CraftPlayer) player;
+			final PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(player.getMetadata("seated").get(0).asInt());
+
+			craftPlayer.getHandle().playerConnection.sendPacket(packet);
 		}
 	}
 
-	/**
-	 * Resets player related functions
-	 * <p></p>
-	 *
-	 * @param player Player to reset
-	 */
 	public static void resetPlayer(Player player) {
 		player.getInventory().setArmorContents(new ItemStack[4]);
 		player.getInventory().setContents(new ItemStack[36]);

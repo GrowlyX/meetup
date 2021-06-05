@@ -1,8 +1,5 @@
 package com.solexgames.meetup.game;
 
-import com.solexgames.meetup.cache.PlayerCache;
-import com.solexgames.meetup.state.StateBasedModel;
-import com.solexgames.meetup.state.impl.TempPlayer;
 import com.solexgames.meetup.util.CC;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,15 +7,17 @@ import lombok.Setter;
 /**
  * @author GrowlyX
  * @since 5/31/2021
+ *
+ * Used for storing game data
  */
 
 @Getter
 @Setter
-public class Game extends PlayerCache<TempPlayer> implements StateBasedModel<GameState, TempPlayer> {
+public class Game {
 
     private int remaining;
     private int initial;
-    private int border;
+    private int border = 100;
 
     private int gameStartTime = 60;
     private int borderTime = 120;
@@ -33,21 +32,6 @@ public class Game extends PlayerCache<TempPlayer> implements StateBasedModel<Gam
 
     private GameState state = GameState.WAITING;
 
-    @Override
-    public void start() {
-
-    }
-
-    @Override
-    public void end(TempPlayer profile) {
-
-    }
-
-    @Override
-    public void cleanup() {
-
-    }
-
     public int getNextBorder() {
         switch (this.border) {
             case 100: return 75;
@@ -61,8 +45,8 @@ public class Game extends PlayerCache<TempPlayer> implements StateBasedModel<Gam
         return this.borderTime > 0 && this.border != 10 ? CC.WHITE + " (" + CC.PRI + this.borderTime + CC.WHITE + ")" : "";
     }
 
-    public int decrementBorderTime() {
-        return this.borderTime--;
+    public void decrementBorderTime() {
+        this.borderTime--;
     }
 
     public boolean isState(GameState state) {

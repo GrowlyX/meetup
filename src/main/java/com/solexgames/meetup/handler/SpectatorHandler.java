@@ -4,6 +4,7 @@ import com.solexgames.core.util.builder.ItemBuilder;
 import com.solexgames.meetup.UHCMeetup;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.game.GameState;
+import com.solexgames.meetup.player.PlayerState;
 import com.solexgames.meetup.util.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -42,10 +43,6 @@ public class SpectatorHandler {
 	}
 
 	public void setSpectator(GamePlayer gamePlayer, String reason) {
-		if (!UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.WAITING)) {
-			// todo: send a message to the player
-			return;
-		}
 		// todo: add to invisible team
 
 		final Player player = gamePlayer.getPlayer();
@@ -60,8 +57,11 @@ public class SpectatorHandler {
 		player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0));
 		player.updateInventory();
 
-		gamePlayer.getPlayer().sendMessage(CC.SEC + "You're now a spectator: " + CC.RED + reason);
-		gamePlayer.setSpectating(true);
+		if (reason != null) {
+			gamePlayer.getPlayer().sendMessage(CC.SEC + "You're now a spectator: " + CC.RED + reason);
+		}
+
+		gamePlayer.setState(PlayerState.SPECTATING);
 	}
 
 	public void removeSpectator(GamePlayer gamePlayer) {
@@ -80,6 +80,6 @@ public class SpectatorHandler {
 		Bukkit.getScheduler().runTask(UHCMeetup.getInstance(), () -> Bukkit.getOnlinePlayers().stream().filter(online -> !online.canSee(player)).forEach(online -> online.showPlayer(player)));
 
 		gamePlayer.getPlayer().sendMessage(CC.SEC + "You are no longer spectating the game.");
-		gamePlayer.setSpectating(false);
+		gamePlayer.setState(PlayerState.WAITING);
 	}
 }

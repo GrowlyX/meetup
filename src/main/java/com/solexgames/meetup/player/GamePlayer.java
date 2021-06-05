@@ -11,8 +11,10 @@ import com.solexgames.meetup.task.NoCleanTimer;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -27,28 +29,29 @@ import java.util.concurrent.CompletableFuture;
 public class GamePlayer {
 
     @SerializedName("_id")
-    private final Player player;
+    private final UUID uuid;
     private final String name;
 
     private int gameKills;
     private int kills;
     private int deaths;
     private int played;
+    private int wins;
 
-    private boolean spectating;
+    private PlayerState state;
     private NoCleanTimer noCleanTimer;
 
     private Loadout loadout;
 
     public GamePlayer(Player player, String name) {
-        this.player = player;
+        this.uuid = player.getUniqueId();
         this.name = name;
 
         this.loadPlayerData();
     }
 
     public void savePlayerData(boolean remove) {
-        CompletableFuture.runAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("uuid", this.player.getUniqueId().toString()), this.getDocument(), new ReplaceOptions().upsert(true)));
+        CompletableFuture.runAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("uuid", this.uuid.toString()), this.getDocument(), new ReplaceOptions().upsert(true)));
 
         if (remove) {
             UHCMeetup.getInstance().getPlayerHandler().remove(this.getPlayer().getUniqueId());
@@ -56,14 +59,15 @@ public class GamePlayer {
     }
 
     public Document getDocument() {
-        final Document document = new Document("_id", this.player.getUniqueId());
+        final Document document = new Document("_id", this.uuid);
 
-        document.put("uuid", this.player.getUniqueId().toString());
+        document.put("uuid", this.uuid.toString());
         document.put("name", this.name);
 
         document.put("kills", this.kills);
         document.put("deaths", this.deaths);
         document.put("played", this.played);
+        document.put("wins", this.wins);
 
         document.put("layout", GsonFactory.getPrettyGson().toJson(this.loadout));
 
@@ -71,7 +75,7 @@ public class GamePlayer {
     }
 
     private void loadPlayerData() {
-        CompletableFuture.supplyAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().find(Filters.eq("uuid", this.player.getUniqueId().toString())).first())
+        CompletableFuture.supplyAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().find(Filters.eq("uuid", this.uuid.toString())).first())
                 .thenAccept(document -> {
                     if (document == null) {
 //                        this.layout = new Loadout(this.uuid);
@@ -89,6 +93,9 @@ public class GamePlayer {
                         if (document.getInteger("played") != null) {
                             this.played = document.getInteger("played");
                         }
+                        if (document.getInteger("wins") != null) {
+                            this.wins = document.getInteger("wins");
+                        }
 //                        if (document.getString("loadout") != null) {
 //                            this.layout = GsonFactory.getPrettyGson().fromJson(document.getString("loadout"), Loadout.class);
 //                        } else {
@@ -98,5 +105,17 @@ public class GamePlayer {
 //                        this.layout.setupDefaultInventory();
                     }
                 });
+    }
+
+    public Player getPlayer() {
+        return Bukkit.getPlayer(this.uuid);
+    }
+
+    public boolean isSpectating() {
+        return this.state.equals(PlayerState.SPECTATING);
+    }
+
+    public boolean isPlaying() {
+        return this.state.equals(PlayerState.PLAYING);
     }
 }

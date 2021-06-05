@@ -25,8 +25,6 @@ public class NoCleanTimer extends BukkitRunnable {
 		this.gamePlayer.setNoCleanTimer(this);
 		this.gamePlayer.getPlayer().sendMessage(CC.GREEN + "You now have no clean timer.");
 
-		// TODO: CC.RED + "Your no clean timer has expired due to hostile action."
-
 		this.runTaskTimer(UHCMeetup.getInstance(), 0L, 20L);
 	}
 
@@ -35,14 +33,18 @@ public class NoCleanTimer extends BukkitRunnable {
 		if (Arrays.asList(15, 10, 5, 4, 3, 2, 1).contains(this.time)) {
 			this.gamePlayer.getPlayer().sendMessage(CC.RED + "No clean will expire in " + TimeUtil.secondsToRoundedTime(this.time) + ".");
 		} else if (time == 0) {
-			this.gamePlayer.getPlayer().sendMessage(CC.B_RED + "Your no clean timer has expired.");
 			this.cancel();
 			return;
 		}
 		this.time--;
 	}
 
-	private void stop(boolean hostileAction) {
+	@Override
+	public synchronized void cancel() throws IllegalStateException {
+		super.cancel();
 
+		if (this.gamePlayer.getPlayer() != null) {
+			this.gamePlayer.getPlayer().sendMessage(CC.B_RED + "Your no clean timer has expired.");
+		}
 	}
 }
