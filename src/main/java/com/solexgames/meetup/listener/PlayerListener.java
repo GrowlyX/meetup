@@ -12,6 +12,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -25,10 +26,16 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
+		if (this.isSpectator(event.getPlayer())) event.setCancelled(true);
 		if (!event.hasItem() || !event.getAction().name().contains("RIGHT") || !this.isSpectator(event.getPlayer())) return;
 		if (!event.getItem().getType().equals(Material.ITEM_FRAME)) return;
 
 		new SpectateMenu().openMenu(event.getPlayer());
+	}
+
+	@EventHandler
+	public void onInventoryClick(InventoryClickEvent event) {
+		if (this.isSpectator((Player) event.getWhoClicked())) event.setCancelled(true);
 	}
 
 	@EventHandler
