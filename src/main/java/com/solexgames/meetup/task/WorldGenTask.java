@@ -182,6 +182,7 @@ public class WorldGenTask extends BukkitRunnable {
 		this.setBiomeBase(Biome.COLD_TAIGA, Biome.PLAINS, 128);
 		this.setBiomeBase(Biome.COLD_TAIGA_HILLS, Biome.DESERT, 0);
 		this.setBiomeBase(Biome.COLD_TAIGA_MOUNTAINS, Biome.DESERT, 0);
+		this.setBiomeBase(Biome.FOREST, Biome.PLAINS, 0);
 
 		// DISALLOWED threshold biomes
 		this.setBiomeBase(Biome.ROOFED_FOREST_MOUNTAINS, Biome.PLAINS, 0);
