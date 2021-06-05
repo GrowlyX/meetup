@@ -8,15 +8,11 @@ import com.solexgames.meetup.game.Game;
 import com.solexgames.meetup.handler.GameHandler;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.util.CC;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author GrowlyX
@@ -40,8 +36,8 @@ public class ScoreboardAdapter implements BoardAdapter {
 				board.add("Waiting for players");
 
 				final List<GamePlayer> remaining = gameHandler.getRemainingPlayers();
-				if (remaining.size() < gameHandler.getMinPlayers()) {
-					final int more = gameHandler.getMinPlayers() - remaining.size();
+				if (remaining.size() < gameHandler.getMinimumPlayers()) {
+					final int more = gameHandler.getMinimumPlayers() - remaining.size();
 					board.add(CC.PRI + more + CC.RESET + " more player" + (more == 1 ? "" : "s") + ".");
 				}
 				break;

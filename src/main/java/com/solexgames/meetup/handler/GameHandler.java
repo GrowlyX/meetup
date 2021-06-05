@@ -2,27 +2,26 @@ package com.solexgames.meetup.handler;
 
 import com.solexgames.meetup.UHCMeetup;
 import com.solexgames.meetup.game.Game;
-import com.solexgames.meetup.game.GameListener;
 import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.player.PlayerState;
 import com.solexgames.meetup.task.BorderTask;
-import com.solexgames.meetup.task.EndTask;
+import com.solexgames.meetup.task.GameEndTask;
 import com.solexgames.meetup.task.GameStartTask;
 import com.solexgames.meetup.task.WorldGenTask;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtils;
 import com.solexgames.meetup.util.PlayerUtil;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -31,22 +30,18 @@ import java.util.stream.Collectors;
  */
 
 @Getter
+@Setter
 public class GameHandler {
 
-	private Game game;
+	private Game game = new Game();
 
-	private final List<Material> whitelistedBlocks = new ArrayList<>();
+	private final Set<Material> whitelistedBlocks = new HashSet<>();
 
-	private int minPlayers = 2;
-	private boolean broadcasted;
-
-	// todo:
-	// private final List<GamePlayer> remaining;
-	// private final List<GamePlayer> spectators;
+	private final int minimumPlayers = 2;
+	private long lastAnnouncement = 0L;
+	private boolean hasBeenBroadcasted = false;
 
 	public void setupGame() {
-		this.game = new Game();
-
 		new WorldGenTask(this).runTaskTimer(UHCMeetup.getInstance(), 0L, 20L);
 	}
 
@@ -68,9 +63,9 @@ public class GameHandler {
 		this.game.setState(GameState.IN_GAME);
 
 		final List<GamePlayer> gamePlayers = this.getRemainingPlayers();
+
 		gamePlayers.forEach(gamePlayer -> {
 			final Player player = gamePlayer.getPlayer();
-
 			gamePlayer.setPlayed(gamePlayer.getPlayed() + 1);
 
 			PlayerUtil.unsitPlayer(player);
@@ -110,13 +105,13 @@ public class GameHandler {
 			return;
 		}
 
-		if (this.getRemainingPlayers().size() == 1 && !this.broadcasted) {
+		if (this.getRemainingPlayers().size() == 1 && !this.hasBeenBroadcasted) {
 			this.getRemainingPlayers().forEach(this::selectWinner);
 		}
 	}
 
 	private void selectWinner(GamePlayer winner) {
-		this.broadcasted = true;
+		this.hasBeenBroadcasted = true;
 
 		Bukkit.broadcastMessage("");
 		Bukkit.broadcastMessage(winner.getPlayer().getDisplayName() + CC.GREEN + " wins!");
@@ -126,7 +121,7 @@ public class GameHandler {
 
 		this.game.setWinner(winner.getPlayer().getDisplayName());
 
-		new EndTask();
+		new GameEndTask();
 	}
 
 	public void handleSetWhitelistedBlocks() {

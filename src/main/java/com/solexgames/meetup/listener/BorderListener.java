@@ -36,7 +36,7 @@ public class BorderListener implements Listener {
             }
         }
 
-        int size = game.getBorder();
+        final int size = game.getBorder();
         final World world = player.getWorld();
 
         if (world.getName().equalsIgnoreCase("meetup_game")) {

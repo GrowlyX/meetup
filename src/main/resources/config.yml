@@ -1,6 +1,0 @@
-#
-#  UHC Meetup - by SolexGames
-#
-mongodb:
-  url: ""
-  database: ""

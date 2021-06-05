@@ -1,5 +1,6 @@
 name: UHCMeetup
 version: ${project.version}
 main: com.solexgames.meetup.UHCMeetup
+
 author: SolexGames
-loadbefore: [Scandium]
+website: https://solexgames.com

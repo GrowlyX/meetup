@@ -61,7 +61,7 @@ public class SpectatorHandler {
 		}
 
 		if (title) {
-			PlayerUtil.sendTitle(player, "&c&lDEAD", "You are now a spectator!", 0, 80, 20);
+			PlayerUtil.sendTitle(player, CC.B_RED + "DEAD", "You are now a spectator!", 0, 80, 20);
 		}
 
 		gamePlayer.setState(PlayerState.SPECTATING);

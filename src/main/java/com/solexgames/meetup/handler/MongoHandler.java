@@ -4,6 +4,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.solexgames.core.CorePlugin;
 import com.solexgames.meetup.UHCMeetup;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,14 +26,9 @@ public class MongoHandler {
     private MongoCollection<Document> playerCollection;
 
     public MongoHandler() {
-        try {
-            this.client = new MongoClient(new MongoClientURI(UHCMeetup.getInstance().getConfig().getString("mongodb.url")));
-            this.database = this.client.getDatabase(UHCMeetup.getInstance().getConfig().getString("mongodb.database"));
+        this.client = CorePlugin.getInstance().getCoreDatabase().getClient();
+        this.database = CorePlugin.getInstance().getCoreDatabase().getDatabase();
 
-            this.playerCollection = this.database.getCollection("UHCMeetup");
-        } catch (Exception exception) {
-            System.out.println("[UHCMeetup] Couldn't connect to the mongo database.");
-            Bukkit.shutdown();
-        }
+        this.playerCollection = this.database.getCollection("UHCMeetup");
     }
 }

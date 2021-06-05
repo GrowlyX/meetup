@@ -10,6 +10,4 @@ import lombok.Getter;
  */
 
 @Getter
-public class PlayerHandler extends PlayerCache<GamePlayer> {
-
-}
+public class PlayerHandler extends PlayerCache<GamePlayer> { }

@@ -1,5 +1,6 @@
 package com.solexgames.meetup.menu;
 
+import com.solexgames.core.util.builder.ItemBuilder;
 import com.solexgames.core.util.external.Button;
 import com.solexgames.core.util.external.pagination.PaginatedMenu;
 import com.solexgames.meetup.UHCMeetup;
@@ -42,38 +43,21 @@ public class SpectateMenu extends PaginatedMenu {
 		final Map<Integer, Button> buttons = new HashMap<>();
 
 		for (GamePlayer gamePlayer : UHCMeetup.getInstance().getGameHandler().getRemainingPlayers()) {
-			buttons.put(buttons.size(), new PlayerButton(gamePlayer));
+			buttons.put(buttons.size(), new ItemBuilder(Material.SKULL_ITEM)
+					.setDurability(3)
+					.setDisplayName(gamePlayer.getPlayer().getDisplayName())
+					.addLore(CC.SEC + "Click to teleport to " + gamePlayer.getPlayer().getDisplayName() + CC.SEC + ".")
+					.setOwner(gamePlayer.getName())
+					.toButton((clicker, clickType) -> {
+						final Player target = gamePlayer.getPlayer();
+
+						if (target != null) {
+							player.teleport(target);
+						}
+					})
+			);
 		}
 
 		return buttons;
-	}
-
-	@AllArgsConstructor
-	public static class PlayerButton extends Button {
-
-		private final GamePlayer gamePlayer;
-
-		@Override
-		public ItemStack getButtonItem(Player player) {
-			final ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
-			final SkullMeta meta = (SkullMeta) item.getItemMeta();
-
-			meta.setOwner(this.gamePlayer.getName());
-			meta.setDisplayName(this.gamePlayer.getPlayer().getDisplayName());
-			meta.setLore(Collections.singletonList(CC.SEC + "Click to teleport to " + this.gamePlayer.getPlayer().getDisplayName() + CC.SEC + "."));
-
-			item.setItemMeta(meta);
-
-			return item;
-		}
-
-		@Override
-		public void clicked(Player player, ClickType clickType) {
-			final Player target = this.gamePlayer.getPlayer();
-
-			if (target != null) {
-				player.teleport(target);
-			}
-		}
 	}
 }

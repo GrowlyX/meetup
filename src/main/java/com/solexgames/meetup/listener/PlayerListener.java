@@ -25,9 +25,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if (!event.hasItem()) return;
-		if (!event.getAction().name().contains("RIGHT")) return;
-		if (!this.isSpectator(event.getPlayer())) return;
+		if (!event.hasItem() || !event.getAction().name().contains("RIGHT") || !this.isSpectator(event.getPlayer())) return;
 		if (!event.getItem().getType().equals(Material.ITEM_FRAME)) return;
 
 		new SpectateMenu().openMenu(event.getPlayer());

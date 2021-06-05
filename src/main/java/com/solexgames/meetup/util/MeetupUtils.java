@@ -1,6 +1,7 @@
 package com.solexgames.meetup.util;
 
 import com.solexgames.core.util.builder.ItemBuilder;
+import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,6 +15,8 @@ import java.util.Random;
  * @author puugz
  * @since 05/06/2021 12:31
  */
+
+@UtilityClass
 public class MeetupUtils {
 
 	public static ItemStack getGoldenHead() {

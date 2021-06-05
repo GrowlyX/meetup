@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
  * @author puugz
  * @since 05/06/2021 12:12
  */
-public class Scenario {
+public abstract class Scenario {
 
 	public Scenario() {
 		if (this instanceof Listener) {

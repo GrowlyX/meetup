@@ -58,12 +58,11 @@ public class GameListener implements Listener {
 				gamePlayer.setState(PlayerState.WAITING);
 
 				final int waiting = gameHandler.getRemainingPlayers().size();
-				final int minPlayers = gameHandler.getMinPlayers();
+				final int minPlayers = gameHandler.getMinimumPlayers();
 
 				if (waiting >= minPlayers) {
 					gameHandler.handleStarting();
-				}
-				else {
+				} else {
 					final int more = minPlayers - waiting;
 					Bukkit.broadcastMessage(CC.SEC + "The game requires " + CC.PRI + more + CC.SEC + " player" + (more == 1 ? "" : "s") + " to start.");
 				}
@@ -75,7 +74,6 @@ public class GameListener implements Listener {
 				player.teleport(MeetupUtils.getScatterLocation());
 				PlayerUtil.sitPlayer(player);
 
-				// TODO: 05/06/2021 load kit with layout
 				UHCMeetup.getInstance().getKitManager().handleItems(player);
 				break;
 			case IN_GAME:
@@ -87,7 +85,6 @@ public class GameListener implements Listener {
 				UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, null, false);
 
 				gamePlayer.setState(PlayerState.SPECTATING);
-
 				break;
 		}
 
@@ -104,9 +101,8 @@ public class GameListener implements Listener {
 		if (gamePlayer != null) {
 			gamePlayer.savePlayerData(true);
 
-			// combat logger
 			if (gamePlayer.isPlaying() && UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
-				Bukkit.broadcastMessage(player.getDisplayName() + CC.SEC + " disconnected and was disqualified.");
+				Bukkit.broadcastMessage(player.getDisplayName() + CC.SEC + " has disconnected and was disqualified.");
 
 				UHCMeetup.getInstance().getGameHandler().checkWinners();
 			}
@@ -155,6 +151,7 @@ public class GameListener implements Listener {
 		if (event.getEntityType() != EntityType.HORSE || event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) {
 			return;
 		}
+
 		final Horse horse = (Horse) event.getEntity();
 
 		horse.setAdult();

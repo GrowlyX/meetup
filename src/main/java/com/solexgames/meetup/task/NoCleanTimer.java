@@ -41,6 +41,7 @@ public class NoCleanTimer extends BukkitRunnable {
 			this.cancel();
 			return;
 		}
+
 		this.time--;
 	}
 

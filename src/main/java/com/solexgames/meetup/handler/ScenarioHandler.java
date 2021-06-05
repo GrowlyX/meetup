@@ -12,14 +12,13 @@ import java.util.List;
  * @author puugz
  * @since 05/06/2021 12:14
  */
+
 @SuppressWarnings("all")
 public class ScenarioHandler {
 
-	private final List<Scenario> scenarios;
+	private final List<Scenario> scenarios = new ArrayList<>();
 
 	public ScenarioHandler() {
-		this.scenarios = new ArrayList<>();
-
 		this.registerScenarios(new NoCleanScenario(), new TimeBombScenario());
 	}
 

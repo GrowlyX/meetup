@@ -2,7 +2,6 @@ package com.solexgames.meetup.task;
 
 import com.solexgames.meetup.UHCMeetup;
 import com.solexgames.meetup.game.Game;
-import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.player.PlayerState;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.PlayerUtil;
@@ -27,13 +26,12 @@ public class GameStartTask extends BukkitRunnable {
 	public void run() {
 		final Game game = UHCMeetup.getInstance().getGameHandler().getGame();
 
-		if (UHCMeetup.getInstance().getGameHandler().getRemainingPlayers().size() < UHCMeetup.getInstance().getGameHandler().getMinPlayers()) {
+		if (UHCMeetup.getInstance().getGameHandler().getRemainingPlayers().size() < UHCMeetup.getInstance().getGameHandler().getMinimumPlayers()) {
 			game.setGameStartTime(60);
-			// TODO: 6/1/2021 shutdown server and send game regeneration packet to redis
-//			this.cancel();
-			// back to lobby?
+			// TODO: 6/5/2021 Send all online players back to waiting state
 			return;
 		}
+
 		final int gameStartTime = game.getGameStartTime();
 
 		if (Arrays.asList(60, 30, 15, 10, 5, 4, 3, 2, 1).contains(gameStartTime)) {
