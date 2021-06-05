@@ -67,6 +67,8 @@ public class SpectatorHandler {
 			PlayerUtil.sendTitle(player, CC.B_RED + "DEAD", "You are now a spectator!", 0, 80, 20);
 		}
 
+		CorePlugin.getInstance().getNMS().removeExecute(player);
+
 		Bukkit.getOnlinePlayers().forEach(player1 -> {
 			final GamePlayer gamePlayer1 = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player1);
 
