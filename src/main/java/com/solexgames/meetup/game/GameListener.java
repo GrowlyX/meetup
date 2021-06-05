@@ -145,13 +145,13 @@ public class GameListener implements Listener {
 			playerKiller.setGameKills(playerKiller.getGameKills() + 1);
 			playerKiller.setKills(playerKiller.getKills() + 1);
 
-			event.setDeathMessage(player.getDisplayName() + CC.GRAY + "[" + CC.RED + gamePlayer.getGameKills() + CC.GRAY + "]" + CC.SEC + " was slain by " + killer.getDisplayName() + CC.GRAY + "[" + CC.RED + playerKiller.getGameKills() + CC.GRAY + "]" + CC.SEC + " using " + CC.RED + StringUtils.capitalize(killer.getItemInHand().getType().name().replace("_", " ").toLowerCase()) + CC.SEC + ".");
+			event.setDeathMessage(player.getDisplayName() + CC.GRAY + " [" + CC.RED + gamePlayer.getGameKills() + CC.GRAY + "]" + CC.SEC + " was slain by " + killer.getDisplayName() + CC.GRAY + " [" + CC.RED + playerKiller.getGameKills() + CC.GRAY + "]" + CC.SEC + " using " + CC.RED + StringUtils.capitalize(killer.getItemInHand().getType().name().replace("_", " ").toLowerCase()) + CC.SEC + ".");
 
 			UHCMeetup.getInstance().getScenario(NoCleanScenario.class).handleNoClean(playerKiller);
 		}
 
 		if (killer == null) {
-			event.setDeathMessage(player.getDisplayName() + CC.GRAY + "[" + CC.RED + gamePlayer.getGameKills() + CC.GRAY + "]" + CC.SEC + " was killed.");
+			event.setDeathMessage(player.getDisplayName() + CC.GRAY + " [" + CC.RED + gamePlayer.getGameKills() + CC.GRAY + "]" + CC.SEC + " was killed.");
 		}
 
 		UHCMeetup.getInstance().getGameHandler().checkWinners();

@@ -1,5 +1,6 @@
 package com.solexgames.meetup.handler;
 
+import com.solexgames.core.CorePlugin;
 import com.solexgames.core.util.builder.ItemBuilder;
 import com.solexgames.meetup.UHCMeetup;
 import com.solexgames.meetup.player.GamePlayer;
@@ -37,8 +38,8 @@ public class SpectatorHandler {
 		this.navigationCompassItem = new ItemBuilder(Material.COMPASS)
 				.setDisplayName(CC.AQUA + "Navigation Compass")
 				.addLore(
-						CC.GRAY + "Left-Click: " + CC.SEC + "Teleport to the block you're looking at!",
-						CC.GRAY + "Right-Click: " + CC.SEC + "Teleport through walls!"
+						CC.GRAY + "Left-Click: " + CC.WHITE + "Teleport to the block you're looking at!",
+						CC.GRAY + "Right-Click: " + CC.WHITE + "Teleport through walls!"
 				)
 				.create();
 	}
@@ -50,8 +51,10 @@ public class SpectatorHandler {
 		player.setFlying(true);
 		player.getInventory().clear();
 		player.getInventory().setArmorContents(null);
+
 		player.getInventory().setItem(0, this.spectateMenuItem);
 		player.getInventory().setItem(1, this.navigationCompassItem);
+
 		player.setGameMode(GameMode.CREATIVE);
 		player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false));
 		player.updateInventory();
@@ -63,6 +66,14 @@ public class SpectatorHandler {
 		if (title) {
 			PlayerUtil.sendTitle(player, CC.B_RED + "DEAD", "You are now a spectator!", 0, 80, 20);
 		}
+
+		Bukkit.getOnlinePlayers().forEach(player1 -> {
+			final GamePlayer gamePlayer1 = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player1);
+
+			if (!gamePlayer1.isSpectating()) {
+				player1.hidePlayer(player);
+			}
+		});
 
 		gamePlayer.setState(PlayerState.SPECTATING);
 	}

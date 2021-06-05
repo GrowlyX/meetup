@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
 
 /**
  * @author puugz
@@ -130,6 +131,10 @@ public class PlayerListener implements Listener {
 				event.setCancelled(true);
 			}
 		}
+	}
+
+	public void onWeather(WeatherChangeEvent event) {
+		event.setCancelled(true);
 	}
 
 	public boolean shouldCancel(Player player) {

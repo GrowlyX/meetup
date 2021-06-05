@@ -30,8 +30,7 @@ public class NoCleanScenario extends Scenario implements Listener {
 
 		if (damagerPlayer.getNoCleanTimer() != null) {
 			this.handleCancelNoClean(damagerPlayer);
-		}
-		else if (gamePlayer.getNoCleanTimer() != null) {
+		} else if (gamePlayer.getNoCleanTimer() != null) {
 			damager.sendMessage(entity.getDisplayName() + "'s " + CC.RED + "no clean timer expires in " + TimeUtil.secondsToRoundedTime(gamePlayer.getNoCleanTimer().getTime()) + ".");
 		}
 	}
@@ -50,6 +49,6 @@ public class NoCleanScenario extends Scenario implements Listener {
 		gamePlayer.getNoCleanTimer().cancel();
 		gamePlayer.setNoCleanTimer(null);
 
-		gamePlayer.getPlayer().sendMessage(CC.RED + "Your no clean timer has expired due to hostile action.");
+		gamePlayer.getPlayer().sendMessage(CC.RED + CC.BOLD + "Your no clean timer has expired due to hostile action.");
 	}
 }

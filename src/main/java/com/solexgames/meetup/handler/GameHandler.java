@@ -135,7 +135,6 @@ public class GameHandler {
 		this.whitelistedBlocks.add(Material.LAVA);
 		this.whitelistedBlocks.add(Material.STATIONARY_LAVA);
 		this.whitelistedBlocks.add(Material.LONG_GRASS);
-		this.whitelistedBlocks.add(Material.YELLOW_FLOWER);
 		this.whitelistedBlocks.add(Material.COBBLESTONE);
 		this.whitelistedBlocks.add(Material.CACTUS);
 		this.whitelistedBlocks.add(Material.SUGAR_CANE_BLOCK);

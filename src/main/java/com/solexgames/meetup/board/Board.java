@@ -1,6 +1,7 @@
 package com.solexgames.meetup.board;
 
 import com.solexgames.core.CorePlugin;
+import com.solexgames.core.board.ScoreBoard;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -40,7 +41,22 @@ public class Board {
 		this.objective = this.scoreboard.registerNewObjective("Default", "dummy");
 		this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
+		this.enableBelowNameTagHearts();
+		this.enableTabListHearts();
+
 		this.objective.setDisplayName(this.adapter.getTitle(this.player));
+	}
+
+	public void enableBelowNameTagHearts() {
+		final Objective objective = this.scoreboard.registerNewObjective("name", "health");
+
+		objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+		objective.setDisplayName("§4❤");
+	}
+
+	public void enableTabListHearts() {
+		final Objective tab = this.scoreboard.registerNewObjective("tab", "health");
+		tab.setDisplaySlot(DisplaySlot.PLAYER_LIST);
 	}
 
 	public String getNewKey(BoardEntry entry) {
