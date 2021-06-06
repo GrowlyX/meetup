@@ -23,7 +23,7 @@ public class NoCleanTimer extends BukkitRunnable {
 	public NoCleanTimer(GamePlayer gamePlayer) {
 		this.gamePlayer = gamePlayer;
 		this.gamePlayer.setNoCleanTimer(this);
-		this.gamePlayer.getPlayer().sendMessage(CC.GREEN + "You now have no clean timer.");
+		this.gamePlayer.getPlayer().sendMessage(CC.SEC + "You now have a no clean timer for " + CC.PRI + "15 seconds" + CC.SEC + ".");
 
 		this.runTaskTimer(UHCMeetup.getInstance(), 0L, 20L);
 	}
@@ -36,7 +36,7 @@ public class NoCleanTimer extends BukkitRunnable {
 		}
 
 		if (Arrays.asList(15, 10, 5, 4, 3, 2, 1).contains(this.time)) {
-			this.gamePlayer.getPlayer().sendMessage(CC.RED + "No clean will expire in " + TimeUtil.secondsToRoundedTime(this.time) + ".");
+			this.gamePlayer.getPlayer().sendMessage(CC.RED + "Your no clean timer will expire in " + TimeUtil.secondsToRoundedTime(this.time) + ".");
 		} else if (time == 0) {
 			this.cancel();
 			return;

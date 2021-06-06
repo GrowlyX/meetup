@@ -13,7 +13,12 @@ import java.util.List;
 public abstract class Scenario {
 
 	public Scenario() {
-		this.getListeners().forEach(listener -> Bukkit.getPluginManager().registerEvents(listener, UHCMeetup.getInstance()));
+		this.setupListeners();
+	}
+
+	private void setupListeners() {
+		this.getListeners()
+				.forEach(listener -> Bukkit.getPluginManager().registerEvents(listener, UHCMeetup.getInstance()));
 	}
 
 	public abstract List<Listener> getListeners();

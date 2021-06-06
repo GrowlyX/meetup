@@ -25,7 +25,7 @@ public class ForceStartCommand extends BaseCommand {
 		final Game game = gameHandler.getGame();
 
 		if (!game.isState(GameState.STARTING) || game.getGameStartTime() < 10) {
-			sender.sendMessage(CC.RED + "I'm sorry, but you can't do this anymore.");
+			sender.sendMessage(CC.RED + "Error: The game has already started, or is starting soon.");
 			return;
 		}
 

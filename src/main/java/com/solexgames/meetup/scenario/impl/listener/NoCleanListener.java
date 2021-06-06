@@ -29,9 +29,11 @@ public class NoCleanListener implements Listener {
         final GamePlayer damagerPlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(damager);
 
         if (damagerPlayer.getNoCleanTimer() != null) {
-            UHCMeetup.getInstance().getScenario(NoCleanScenario.class).handleCancelNoClean(damagerPlayer);
+            UHCMeetup.getInstance().getScenario(NoCleanScenario.class)
+                    .handleCancelNoClean(damagerPlayer);
         } else if (gamePlayer.getNoCleanTimer() != null) {
             damager.sendMessage(entity.getDisplayName() + "'s " + CC.RED + "no clean timer expires in " + TimeUtil.secondsToRoundedTime(gamePlayer.getNoCleanTimer().getTime()) + ".");
+            event.setCancelled(true);
         }
     }
 }
