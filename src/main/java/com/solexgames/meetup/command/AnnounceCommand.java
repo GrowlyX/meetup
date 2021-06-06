@@ -34,7 +34,7 @@ public class AnnounceCommand extends BaseCommand {
         }
 
         if (gameHandler.getLastAnnouncement() + TimeUnit.SECONDS.toMillis(15L) > System.currentTimeMillis() && gameHandler.getLastAnnouncer() != null) {
-            player.sendMessage(CC.RED + "You must wait " + DurationFormatUtils.formatDurationWords(gameHandler.getLastAnnouncement() + TimeUnit.SECONDS.toMillis(15L) - System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(15L), true, true) + " seconds as " + gameHandler.getLastAnnouncer() + CC.RED + " has already announced the game.");
+            player.sendMessage(CC.RED + "You must wait " + DurationFormatUtils.formatDurationWords(gameHandler.getLastAnnouncement() + TimeUnit.SECONDS.toMillis(15L) - System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(15L), true, true) + " as " + gameHandler.getLastAnnouncer() + CC.RED + " has already announced the game.");
             return;
         }
 

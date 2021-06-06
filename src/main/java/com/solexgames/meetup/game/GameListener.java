@@ -160,8 +160,8 @@ public class GameListener implements Listener {
 			event.setDeathMessage(player.getDisplayName() + CC.GRAY + " [" + CC.RED + gamePlayer.getGameKills() + CC.GRAY + "]" + CC.SEC + " was killed.");
 		}
 
-		UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "died", true);
 		UHCMeetup.getInstance().getGameHandler().checkWinners();
+		UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "died", true);
 	}
 
 	@EventHandler

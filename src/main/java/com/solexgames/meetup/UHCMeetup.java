@@ -1,7 +1,10 @@
 package com.solexgames.meetup;
 
 import co.aikar.commands.PaperCommandManager;
+import com.solexgames.core.CorePlugin;
+import com.solexgames.lib.commons.redis.JedisBuilder;
 import com.solexgames.lib.commons.redis.JedisManager;
+import com.solexgames.lib.commons.redis.JedisSettings;
 import com.solexgames.meetup.board.BoardManager;
 import com.solexgames.meetup.command.*;
 import com.solexgames.meetup.game.GameListener;
@@ -11,6 +14,7 @@ import com.solexgames.meetup.listener.PlayerListener;
 import com.solexgames.meetup.scenario.Scenario;
 import com.solexgames.meetup.handler.ScenarioHandler;
 import com.solexgames.meetup.scoreboard.ScoreboardAdapter;
+import com.solexgames.meetup.task.ServerUpdateTask;
 import com.solexgames.meetup.util.MeetupUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -18,6 +22,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public final class UHCMeetup extends JavaPlugin {
@@ -73,17 +79,12 @@ public final class UHCMeetup extends JavaPlugin {
     }
 
     private void setupJedis() {
-//        this.jedisManager = new JedisBuilder()
-//                .withChannel("meetup")
-//                .withSettings(new JedisSettings(
-//                        CorePlugin.getInstance().getDatabaseConfig().getString("redis.host"),
-//                        CorePlugin.getInstance().getDatabaseConfig().getInt("redis.port"),
-//                        CorePlugin.getInstance().getDatabaseConfig().getBoolean("redis.authentication.enabled"),
-//                        CorePlugin.getInstance().getDatabaseConfig().getString("redis.authentication.password")
-//                ))
-//                .build();
-//
-//        new ServerUpdateTask().runTaskTimerAsynchronously(this, 20L, TimeUnit.SECONDS.toMillis(5L));
+        this.jedisManager = new JedisBuilder()
+                .withChannel("meetup")
+                .withSettings(CorePlugin.getInstance().getDefaultJedisSettings())
+                .build();
+
+        new ServerUpdateTask().runTaskTimerAsynchronously(this, 20L, TimeUnit.SECONDS.toMillis(5L));
     }
 
     private void registerListeners() {

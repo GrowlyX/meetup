@@ -75,8 +75,8 @@ public class SpectatorHandler {
 				}
 			});
 
-			player.getInventory().setItem(0, this.spectateMenuItem.clone());
-			player.getInventory().setItem(1, this.navigationCompassItem.clone());
+			player.getInventory().setItem(0, this.spectateMenuItem);
+			player.getInventory().setItem(1, this.navigationCompassItem);
 		});
 
 		gamePlayer.setState(PlayerState.SPECTATING);
