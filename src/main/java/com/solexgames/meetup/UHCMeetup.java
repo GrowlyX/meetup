@@ -3,10 +3,7 @@ package com.solexgames.meetup;
 import co.aikar.commands.PaperCommandManager;
 import com.solexgames.lib.commons.redis.JedisManager;
 import com.solexgames.meetup.board.BoardManager;
-import com.solexgames.meetup.command.ForceStartCommand;
-import com.solexgames.meetup.command.LoadoutCommand;
-import com.solexgames.meetup.command.ResetLoadoutCommand;
-import com.solexgames.meetup.command.SpectateCommand;
+import com.solexgames.meetup.command.*;
 import com.solexgames.meetup.game.GameListener;
 import com.solexgames.meetup.game.kit.KitManager;
 import com.solexgames.meetup.handler.*;
@@ -72,6 +69,7 @@ public final class UHCMeetup extends JavaPlugin {
         manager.registerCommand(new LoadoutCommand());
         manager.registerCommand(new ResetLoadoutCommand());
         manager.registerCommand(new SpectateCommand());
+        manager.registerCommand(new AnnounceCommand());
     }
 
     private void setupJedis() {

@@ -43,8 +43,8 @@ public class GamePlayer {
 
     private Loadout loadout;
 
-    public GamePlayer(Player player, String name) {
-        this.uuid = player.getUniqueId();
+    public GamePlayer(UUID player, String name) {
+        this.uuid = player;
         this.name = name;
 
         this.loadPlayerData();
@@ -69,7 +69,7 @@ public class GamePlayer {
         document.put("played", this.played);
         document.put("wins", this.wins);
 
-        document.put("layout", GsonFactory.getPrettyGson().toJson(this.loadout));
+        document.put("loadout", GsonFactory.getPrettyGson().toJson(this.loadout));
 
         return document;
     }
@@ -78,8 +78,8 @@ public class GamePlayer {
         CompletableFuture.supplyAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().find(Filters.eq("uuid", this.uuid.toString())).first())
                 .thenAccept(document -> {
                     if (document == null) {
-//                        this.layout = new Loadout(this.uuid);
-//                        this.layout.setupDefaultInventory();
+                        this.loadout = new Loadout(this.uuid);
+                        this.loadout.setupDefaultInventory();
 
                         UHCMeetup.getInstance().getServer().getScheduler()
                                 .runTaskLaterAsynchronously(CorePlugin.getInstance(), () -> this.savePlayerData(false), 20L);
@@ -96,13 +96,15 @@ public class GamePlayer {
                         if (document.getInteger("wins") != null) {
                             this.wins = document.getInteger("wins");
                         }
-//                        if (document.getString("loadout") != null) {
-//                            this.layout = GsonFactory.getPrettyGson().fromJson(document.getString("loadout"), Loadout.class);
-//                        } else {
-//                            this.layout = new Loadout(this.uuid);
-//                        }
-//
-//                        this.layout.setupDefaultInventory();
+                        if (document.getString("loadout") != null) {
+                            this.loadout = GsonFactory.getPrettyGson().fromJson(document.getString("loadout"), Loadout.class);
+                        } else {
+                            this.loadout = new Loadout(this.uuid);
+                        }
+
+                        if (this.loadout.getInventoryLocationMap().isEmpty()) {
+                            this.loadout.setupDefaultInventory();
+                        }
                     }
                 });
     }

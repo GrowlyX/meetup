@@ -25,6 +25,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -39,11 +40,17 @@ import java.util.stream.Stream;
 public class GameListener implements Listener {
 
 	@EventHandler
+	public void onAsyncJoin(AsyncPlayerPreLoginEvent event) {
+		if (event.getLoginResult().equals(AsyncPlayerPreLoginEvent.Result.ALLOWED)) {
+			UHCMeetup.getInstance().getPlayerHandler().insert(event.getUniqueId(), new GamePlayer(event.getUniqueId(), event.getName()));
+		}
+	}
+
+	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
 
 		UHCMeetup.getInstance().getBoardManager().getPlayerBoards().put(player.getUniqueId(), new Board(player, UHCMeetup.getInstance().getBoardManager().getAdapter()));
-		UHCMeetup.getInstance().getPlayerHandler().insert(player.getUniqueId(), new GamePlayer(player, player.getName()));
 
 		final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
 		final GameHandler gameHandler = UHCMeetup.getInstance().getGameHandler();

@@ -1,66 +1,47 @@
 package com.solexgames.meetup.game.kit;
 
+import com.solexgames.core.CorePlugin;
 import com.solexgames.core.util.builder.ItemBuilder;
+import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.util.MeetupUtils;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
+@Getter
 public class KitManager {
 
-    /*private List<String> kits = new ArrayList<>();
-    private int count = 0;
-    private UHCMeetup plugin = UHCMeetup.getInstance();
+	private final Map<ItemStack, Integer> defaultInventory = new HashMap<>();
 
-    public KitManager() {
-        plugin.getKits().getConfig().getKeys(false).stream()
-                .filter(kit -> plugin.getKits().getConfig().contains(kit + ".inventory")
-                        && plugin.getKits().getConfig().contains(kit + ".armor")).forEach(kits::add);
-    }
+	public KitManager() {
+		this.setupDefaultInventory(this.defaultInventory);
+	}
 
-    public void handleGiveKit(Player player) {
-        if(count == 20) {
-            count = 1;
-        }
-
-        try {
-            String items = plugin.getKits().getConfig().getString(kits.get(count) + ".inventory");
-            String armor = plugin.getKits().getConfig().getString(kits.get(count) + ".armor");
-
-            player.getInventory().clear();
-            player.getInventory().setArmorContents(null);
-
-            player.getInventory().setContents(UHCMeetupUtils.getInventory(items).getContents());
-            player.getInventory().setArmorContents(UHCMeetupUtils.getArmor(armor));
-            player.getInventory().addItem(new ItemStack(Material.EXP_BOTTLE, 32));
-            player.updateInventory();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        count++;
-    }*/
-
-	private final Random random = new Random();
+	private final Random random = CorePlugin.RANDOM;
 
 	public void handleItems(Player player) {
-		PlayerInventory inventory = player.getInventory();
-		
-		inventory.setHelmet(new ItemBuilder(getRandomMaterial("helmet"))
-				.setEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, getLevel()).create());
+		final PlayerInventory inventory = player.getInventory();
+		final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
 
-		inventory.setChestplate(new ItemBuilder(getRandomMaterial("chestplate"))
-				.setEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, getLevel()).create());
+		inventory.setHelmet(new ItemBuilder(this.getRandomMaterial("helmet"))
+				.setEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, this.getLevel()).create());
 
-		inventory.setLeggings(new ItemBuilder(getRandomMaterial("leggings"))
-				.setEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, getLevel()).create());
+		inventory.setChestplate(new ItemBuilder(this.getRandomMaterial("chestplate"))
+				.setEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, this.getLevel()).create());
 
-		inventory.setBoots(new ItemBuilder(getRandomMaterial("boots"))
-				.setEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, getLevel()).create());
+		inventory.setLeggings(new ItemBuilder(this.getRandomMaterial("leggings"))
+				.setEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, this.getLevel()).create());
+
+		inventory.setBoots(new ItemBuilder(this.getRandomMaterial("boots"))
+				.setEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, this.getLevel()).create());
 
 		boolean hasAnythingDiamond = false;
 
@@ -78,7 +59,7 @@ public class KitManager {
 			inventory.setLeggings(new ItemBuilder(getRandomMaterial("leggings"))
 					.setEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, getLevel()).create());
 		} else {
-			boolean hasEverythingDiamond = inventory.getHelmet().getType().name().startsWith("DIAMOND")
+			final boolean hasEverythingDiamond = inventory.getHelmet().getType().name().startsWith("DIAMOND")
 					&& inventory.getChestplate().getType().name().startsWith("DIAMOND")
 					&& inventory.getLeggings().getType().name().startsWith("DIAMOND")
 					&& inventory.getBoots().getType().name().startsWith("DIAMOND");
@@ -117,7 +98,7 @@ public class KitManager {
 		}
 
 		final ItemStack head = MeetupUtils.getGoldenHead();
-		head.setAmount(this.random.nextInt(4) + 1);
+		head.setAmount(this.random.nextInt(3) + 1);
 
 		inventory.setItem(0, sword);
 		inventory.setItem(1, new ItemStack(Material.FISHING_ROD));
@@ -143,26 +124,47 @@ public class KitManager {
 	}
 
 	private Material getRandomMaterial(String type) {
-		int r = this.random.nextInt(100);
+		final int random = this.random.nextInt(100);
 
 		switch (type) {
 			case "helmet":
-				return r >= 50 ? Material.DIAMOND_HELMET : Material.IRON_HELMET;
+				return random >= 50 ? Material.DIAMOND_HELMET : Material.IRON_HELMET;
 			case "chestplate":
-				return r >= 60 ? Material.DIAMOND_CHESTPLATE : Material.IRON_CHESTPLATE;
+				return random >= 60 ? Material.DIAMOND_CHESTPLATE : Material.IRON_CHESTPLATE;
 			case "leggings":
-				return r >= 60 ? Material.DIAMOND_LEGGINGS : Material.IRON_LEGGINGS;
+				return random >= 60 ? Material.DIAMOND_LEGGINGS : Material.IRON_LEGGINGS;
 			case "boots":
-				return r >= 50 ? Material.DIAMOND_BOOTS : Material.IRON_BOOTS;
+				return random >= 50 ? Material.DIAMOND_BOOTS : Material.IRON_BOOTS;
 			case "sword":
-				return r >= 50 ? Material.DIAMOND_SWORD : Material.IRON_SWORD;
+				return random >= 50 ? Material.DIAMOND_SWORD : Material.IRON_SWORD;
 			default:
 				return Material.GRASS;
 		}
 	}
 
 	private int getLevel() {
-		int r = this.random.nextInt(100);
+		final int r = this.random.nextInt(100);
 		return r >= 65 ? 3 : r >= 35 ? 2 : 1;
+	}
+
+	public void setupDefaultInventory(Map<ItemStack, Integer> defaultInventory) {
+		defaultInventory.put(new ItemStack(Material.GOLD_SWORD), 0);
+		defaultInventory.put(new ItemStack(Material.FISHING_ROD), 1);
+		defaultInventory.put(new ItemStack(Material.BOW), 2);
+		defaultInventory.put(new ItemStack(Material.COOKED_BEEF), 3);
+		defaultInventory.put(new ItemStack(Material.GOLDEN_APPLE), 4);
+		defaultInventory.put(new ItemStack(Material.APPLE), 5);
+		defaultInventory.put(new ItemStack(Material.DIAMOND_AXE), 6);
+		defaultInventory.put(new ItemStack(Material.FLINT_AND_STEEL), 7);
+		defaultInventory.put(new ItemStack(Material.COBBLESTONE), 8);
+		defaultInventory.put(new ItemStack(Material.ARROW), 9);
+		defaultInventory.put(new ItemStack(Material.LAVA_BUCKET), 10);
+		defaultInventory.put(new ItemStack(Material.LAVA_BUCKET), 11);
+		defaultInventory.put(new ItemStack(Material.WATER_BUCKET), 12);
+		defaultInventory.put(new ItemStack(Material.WATER_BUCKET), 13);
+		defaultInventory.put(new ItemStack(Material.DIAMOND_PICKAXE), 14);
+		defaultInventory.put(new ItemStack(Material.ENCHANTMENT_TABLE), 15);
+		defaultInventory.put(new ItemStack(Material.ANVIL), 16);
+		defaultInventory.put(new ItemStack(Material.EXP_BOTTLE), 17);
 	}
 }
