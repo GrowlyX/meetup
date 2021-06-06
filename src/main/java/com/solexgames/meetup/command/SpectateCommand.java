@@ -26,7 +26,7 @@ public class SpectateCommand extends BaseCommand {
 
 		final Clickable clickable = new Clickable("");
 
-		if (spectating) {
+		if (!spectating) {
 			clickable.add(CC.GRAY + "Are you sure you want to spectate? ", null, null, null);
 			clickable.add(CC.GREEN + "[Click here to spectate]", null, "/spec confirm", ClickEvent.Action.RUN_COMMAND);
 		} else {
@@ -42,7 +42,7 @@ public class SpectateCommand extends BaseCommand {
 		final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
 		final boolean spectating = gamePlayer.isSpectating();
 
-		if (spectating) {
+		if (!spectating) {
 			UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "chose to watch", true);
 		} else {
 			UHCMeetup.getInstance().getSpectatorHandler().removeSpectator(gamePlayer);
