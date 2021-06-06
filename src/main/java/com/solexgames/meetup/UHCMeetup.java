@@ -15,6 +15,7 @@ import com.solexgames.meetup.scenario.Scenario;
 import com.solexgames.meetup.handler.ScenarioHandler;
 import com.solexgames.meetup.scoreboard.ScoreboardAdapter;
 import com.solexgames.meetup.task.ServerUpdateTask;
+import com.solexgames.meetup.util.JedisUtil;
 import com.solexgames.meetup.util.MeetupUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -65,6 +66,8 @@ public final class UHCMeetup extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        this.jedisManager.publish(JedisUtil.getServerOfflineJson());
+
         MeetupUtils.deleteWorld();
     }
 
@@ -84,7 +87,7 @@ public final class UHCMeetup extends JavaPlugin {
                 .withSettings(CorePlugin.getInstance().getDefaultJedisSettings())
                 .build();
 
-        new ServerUpdateTask().runTaskTimerAsynchronously(this, 20L, TimeUnit.SECONDS.toMillis(5L));
+        new ServerUpdateTask().runTaskTimerAsynchronously(this, 0L, 100L);
     }
 
     private void registerListeners() {

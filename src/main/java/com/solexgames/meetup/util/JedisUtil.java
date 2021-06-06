@@ -19,7 +19,6 @@ public class JedisUtil {
                 .put("SERVER_ID", CorePlugin.getInstance().getServerName())
                 .put("GAME_STATE", UHCMeetup.getInstance().getGameHandler().getGame().getState().name())
                 .put("REMAINING_PLAYERS", remaining)
-                .put("MAX_PLAYERS", Bukkit.getMaxPlayers())
                 .getAsJson();
     }
 

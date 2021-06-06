@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AnnounceCommand extends BaseCommand {
 
-    @CommandAlias("announce")
+    @CommandAlias("announce|a|gamealert|gameannounce")
     @CommandPermission("uhcmeetup.command.announce")
     public void execute(Player player) {
         final GameHandler gameHandler = UHCMeetup.getInstance().getGameHandler();
@@ -33,8 +33,8 @@ public class AnnounceCommand extends BaseCommand {
             return;
         }
 
-        if (gameHandler.getLastAnnouncement() + TimeUnit.SECONDS.toMillis(15L) > System.currentTimeMillis() && gameHandler.getLastAnnouncer() != null) {
-            player.sendMessage(CC.RED + "You must wait " + DurationFormatUtils.formatDurationWords(gameHandler.getLastAnnouncement() + TimeUnit.SECONDS.toMillis(15L) - System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(15L), true, true) + " as " + gameHandler.getLastAnnouncer() + CC.RED + " has already announced the game.");
+        if (gameHandler.getLastAnnouncement() + TimeUnit.SECONDS.toMillis(15L) > System.currentTimeMillis() && gameHandler.getLastAnnouncer() != null && !player.isOp()) {
+            player.sendMessage(CC.RED + "You must wait " + DurationFormatUtils.formatDurationWords(gameHandler.getLastAnnouncement() + TimeUnit.SECONDS.toMillis(15L) - System.currentTimeMillis(), true, true) + " as " + gameHandler.getLastAnnouncer() + CC.RED + " has already announced the game.");
             return;
         }
 
