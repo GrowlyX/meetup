@@ -68,7 +68,7 @@ public class ScoreboardAdapter implements BoardAdapter {
 
 	@Override
 	public String getTitle(Player player) {
-		return CC.B_PRI + "UHC Meetup";
+		return CC.B_PRI + "PvPBar " + CC.GRAY + "▏" + CC.RESET + "Meetup";
 	}
 
 	@Override
