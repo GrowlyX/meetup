@@ -36,6 +36,10 @@ public class SpectateCommand extends BaseCommand {
 			clickable.add(CC.GRAY + "Are you sure you want to spectate? ", null, null, null);
 			clickable.add(CC.GREEN + "[Click here to spectate]", null, "/spec confirm", ClickEvent.Action.RUN_COMMAND);
 		} else {
+			if (UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.STARTING)) {
+				player.sendMessage(CC.RED + "You can't do this anymore.");
+				return;
+			}
 			clickable.add(CC.GRAY + "Are you sure you want to stop spectating? ", null, null, null);
 			clickable.add(CC.RED + "[Click here to stop spectating]", null, "/spec confirm", ClickEvent.Action.RUN_COMMAND);
 		}
