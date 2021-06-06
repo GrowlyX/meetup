@@ -47,34 +47,36 @@ public class SpectatorHandler {
 	public void setSpectator(GamePlayer gamePlayer, String reason, boolean title) {
 		final Player player = gamePlayer.getPlayer();
 
-		player.setAllowFlight(true);
-		player.setFlying(true);
-		player.getInventory().clear();
-		player.getInventory().setArmorContents(null);
+		Bukkit.getScheduler().runTask(UHCMeetup.getInstance(), () -> {
+			player.setAllowFlight(true);
+			player.setFlying(true);
+			player.getInventory().clear();
+			player.getInventory().setArmorContents(null);
 
-		player.getInventory().setItem(0, this.spectateMenuItem.clone());
-		player.getInventory().setItem(1, this.navigationCompassItem.clone());
+			player.setGameMode(GameMode.CREATIVE);
+			player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false));
+			player.updateInventory();
 
-		player.setGameMode(GameMode.CREATIVE);
-		player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false));
-		player.updateInventory();
-
-		if (reason != null) {
-			gamePlayer.getPlayer().sendMessage(CC.SEC + "You're now a spectator: " + CC.RED + reason);
-		}
-
-		if (title) {
-			PlayerUtil.sendTitle(player, CC.B_RED + "DEAD", "You are now a spectator!", 0, 80, 20);
-		}
-
-		CorePlugin.getInstance().getNMS().removeExecute(player);
-
-		Bukkit.getOnlinePlayers().forEach(player1 -> {
-			final GamePlayer gamePlayer1 = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player1);
-
-			if (!gamePlayer1.isSpectating()) {
-				player1.hidePlayer(player);
+			if (reason != null) {
+				gamePlayer.getPlayer().sendMessage(CC.SEC + "You're now a spectator: " + CC.RED + reason);
 			}
+
+			if (title) {
+				PlayerUtil.sendTitle(player, CC.B_RED + "DEAD", "You are now a spectator!", 0, 80, 20);
+			}
+
+			CorePlugin.getInstance().getNMS().removeExecute(player);
+
+			Bukkit.getOnlinePlayers().forEach(player1 -> {
+				final GamePlayer gamePlayer1 = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player1);
+
+				if (!gamePlayer1.isSpectating()) {
+					player1.hidePlayer(player);
+				}
+			});
+
+			player.getInventory().setItem(0, this.spectateMenuItem.clone());
+			player.getInventory().setItem(1, this.navigationCompassItem.clone());
 		});
 
 		gamePlayer.setState(PlayerState.SPECTATING);

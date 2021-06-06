@@ -38,8 +38,10 @@ public class GameHandler {
 	private final Set<Material> whitelistedBlocks = new HashSet<>();
 
 	private final int minimumPlayers = 2;
-	private long lastAnnouncement = 0L;
 	private boolean hasBeenBroadcasted = false;
+
+	private long lastAnnouncement = 0L;
+	private String lastAnnouncer;
 
 	public void setupGame() {
 		new WorldGenTask(this).runTaskTimer(UHCMeetup.getInstance(), 0L, 20L);
@@ -83,19 +85,21 @@ public class GameHandler {
 	public void handleStarting() {
 		this.game.setState(GameState.STARTING);
 
-		this.getRemainingPlayers().forEach(gamePlayer -> {
+		Bukkit.getScheduler().runTaskLater(UHCMeetup.getInstance(), () -> this.getRemainingPlayers().forEach(gamePlayer -> {
 			final Player player = gamePlayer.getPlayer();
 
 			gamePlayer.setState(PlayerState.PLAYING);
 
-			PlayerUtil.resetPlayer(player);
-			PlayerUtil.sitPlayer(player);
+			Bukkit.getScheduler().runTask(UHCMeetup.getInstance(), () -> {
+				PlayerUtil.resetPlayer(player);
+				PlayerUtil.sitPlayer(player);
 
-			// TODO: 05/06/2021 load kit with layout
-			UHCMeetup.getInstance().getKitManager().handleItems(player);
+				// TODO: 05/06/2021 load kit with layout
+				UHCMeetup.getInstance().getKitManager().handleItems(player);
+			});
 
 			player.teleport(MeetupUtils.getScatterLocation());
-		});
+		}), 40L);
 
 		new GameStartTask();
 	}
@@ -156,7 +160,7 @@ public class GameHandler {
 		Bukkit.getScheduler().runTaskLater(UHCMeetup.getInstance(), () -> {
 			for (int x = -110; x < 110; x++) {
 				for (int z = -110; z < 110; z++) {
-					Location location = new Location(Bukkit.getWorld("meetup_game"), x, 60, z);
+					final Location location = new Location(Bukkit.getWorld("meetup_game"), x, 60, z);
 
 					if (!location.getChunk().isLoaded()) {
 						location.getWorld().loadChunk(x, z);

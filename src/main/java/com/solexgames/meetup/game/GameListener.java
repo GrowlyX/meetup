@@ -62,7 +62,7 @@ public class GameListener implements Listener {
 				final int minPlayers = gameHandler.getMinimumPlayers();
 
 				if (waiting >= minPlayers) {
-					Bukkit.getScheduler().runTaskLater(UHCMeetup.getInstance(), gameHandler::handleStarting, 10L);
+					gameHandler.handleStarting();
 				} else {
 					final int more = minPlayers - waiting;
 					Bukkit.broadcastMessage(CC.SEC + "The game requires " + CC.PRI + more + CC.SEC + " player" + (more == 1 ? "" : "s") + " to start.");
@@ -129,15 +129,14 @@ public class GameListener implements Listener {
 				.filter(stack -> stack != null && stack.getType() != Material.AIR)
 				.forEach(items::add);
 
-		UHCMeetup.getInstance().getScenario(TimeBombScenario.class).handleTimeBomb(player, event.getDrops(), items);
+		UHCMeetup.getInstance().getScenario(TimeBombScenario.class)
+				.handleTimeBomb(player, event.getDrops(), items);
 
 		event.setDroppedExp(0);
 
 		final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
 
 		gamePlayer.setDeaths(gamePlayer.getDeaths() + 1);
-
-		UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "died", true);
 
 		if (killer != null) {
 			final GamePlayer playerKiller = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(killer);
@@ -154,6 +153,7 @@ public class GameListener implements Listener {
 			event.setDeathMessage(player.getDisplayName() + CC.GRAY + " [" + CC.RED + gamePlayer.getGameKills() + CC.GRAY + "]" + CC.SEC + " was killed.");
 		}
 
+		UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "died", true);
 		UHCMeetup.getInstance().getGameHandler().checkWinners();
 	}
 

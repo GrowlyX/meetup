@@ -28,6 +28,10 @@ public class NoCleanListener implements Listener {
         final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(entity);
         final GamePlayer damagerPlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(damager);
 
+        if (damagerPlayer.isSpectating()) {
+            return;
+        }
+
         if (damagerPlayer.getNoCleanTimer() != null) {
             UHCMeetup.getInstance().getScenario(NoCleanScenario.class)
                     .handleCancelNoClean(damagerPlayer);
