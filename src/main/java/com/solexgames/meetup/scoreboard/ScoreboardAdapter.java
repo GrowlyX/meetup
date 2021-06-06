@@ -36,6 +36,7 @@ public class ScoreboardAdapter implements BoardAdapter {
 				board.add("Waiting for players");
 
 				final List<GamePlayer> remaining = gameHandler.getRemainingPlayers();
+
 				if (remaining.size() < gameHandler.getMinimumPlayers()) {
 					final int more = gameHandler.getMinimumPlayers() - remaining.size();
 					board.add(CC.PRI + more + CC.RESET + " more player" + (more == 1 ? "" : "s") + ".");

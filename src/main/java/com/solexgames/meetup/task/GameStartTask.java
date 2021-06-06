@@ -28,7 +28,6 @@ public class GameStartTask extends BukkitRunnable {
 
 		if (UHCMeetup.getInstance().getGameHandler().getRemainingPlayers().size() < UHCMeetup.getInstance().getGameHandler().getMinimumPlayers()) {
 			game.setGameStartTime(60);
-			// TODO: 6/5/2021 Send all online players back to waiting state
 			return;
 		}
 
@@ -36,6 +35,7 @@ public class GameStartTask extends BukkitRunnable {
 
 		if (Arrays.asList(60, 30, 15, 10, 5, 4, 3, 2, 1).contains(gameStartTime)) {
 			Bukkit.broadcastMessage(CC.SEC + "The game will begin in " + CC.PRI + TimeUtil.secondsToRoundedTime(gameStartTime) + CC.SEC + ".");
+
 			if (Arrays.asList(15, 10, 5, 4, 3, 2, 1).contains(gameStartTime)) {
 				this.sendTitle(CC.B_GREEN + gameStartTime, "Game is starting!");
 			}

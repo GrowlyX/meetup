@@ -62,7 +62,7 @@ public class GameListener implements Listener {
 				final int minPlayers = gameHandler.getMinimumPlayers();
 
 				if (waiting >= minPlayers) {
-					Bukkit.getScheduler().runTaskLater(UHCMeetup.getInstance(), gameHandler::handleStarting, 20L);
+					Bukkit.getScheduler().runTaskLater(UHCMeetup.getInstance(), gameHandler::handleStarting, 10L);
 				} else {
 					final int more = minPlayers - waiting;
 					Bukkit.broadcastMessage(CC.SEC + "The game requires " + CC.PRI + more + CC.SEC + " player" + (more == 1 ? "" : "s") + " to start.");

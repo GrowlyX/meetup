@@ -33,12 +33,7 @@ public class Game {
     private GameState state = GameState.WAITING;
 
     public int getNextBorder() {
-        switch (this.border) {
-            case 100: return 75;
-            case 75: return 50;
-            case 50: return 25;
-            default: return 10;
-        }
+        return this.border == 10 ? 10 : this.border == 25 ? 10 : this.border - 25;
     }
 
     public String getFormattedBorderStatus() {
