@@ -24,18 +24,18 @@ public class Loadout {
     private final UUID uuid;
 
     @SerializedName("inventoryLayout")
-    private final Map<ItemStack, Integer> inventoryLocationMap = new HashMap<>();
+    private final Map<Integer, ItemStack> inventoryLocationMap = new HashMap<>();
 
     public int getFromMaterial(Material material) {
         return this.inventoryLocationMap.entrySet().stream()
-                .filter(itemStackIntegerEntry -> itemStackIntegerEntry.getKey().getType().equals(material))
-                .map(Map.Entry::getValue).findFirst().orElse(-1);
+                .filter(itemStackIntegerEntry -> itemStackIntegerEntry.getValue().getType().equals(material))
+                .map(Map.Entry::getKey).findFirst().orElse(-1);
     }
 
     public ItemStack getFromInteger(Integer integer) {
         return this.inventoryLocationMap.entrySet().stream()
-                .filter(itemStackIntegerEntry -> itemStackIntegerEntry.getValue().equals(integer))
-                .map(Map.Entry::getKey).findFirst().orElse(new ItemStack(Material.AIR));
+                .filter(integerItemStackEntry -> integerItemStackEntry.getKey().equals(integer))
+                .map(Map.Entry::getValue).findFirst().orElse(new ItemStack(Material.AIR));
     }
 
     public void setupDefaultInventory() {

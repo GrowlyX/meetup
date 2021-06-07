@@ -1,6 +1,5 @@
 package com.solexgames.meetup.menu;
 
-import com.solexgames.core.CorePlugin;
 import com.solexgames.core.util.builder.ItemBuilder;
 import com.solexgames.core.util.external.Button;
 import com.solexgames.core.util.external.Menu;
@@ -40,7 +39,7 @@ public class LoadoutEditorMenu extends Menu {
     @Override
     public Map<Integer, Button> getButtons(Player player) {
         final Map<Integer, Button> buttonMap = new HashMap<>();
-        final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByUuid(player.getUniqueId());
+        final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
 
         for (int i = 0; i <= 36; i++) {
             final int finalSlot = i;

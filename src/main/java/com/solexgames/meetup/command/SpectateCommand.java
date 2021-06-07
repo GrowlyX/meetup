@@ -25,11 +25,6 @@ public class SpectateCommand extends BaseCommand {
 		final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
 		final boolean spectating = gamePlayer.isSpectating();
 
-		if (UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
-			player.sendMessage(CC.RED + "Error: You cannot stop spectating when there is a game running.");
-			return;
-		}
-
 		final Clickable clickable = new Clickable("");
 
 		if (!spectating) {
@@ -48,9 +43,21 @@ public class SpectateCommand extends BaseCommand {
 		final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
 		final boolean spectating = gamePlayer.isSpectating();
 
+		if (UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
+			player.sendMessage(CC.RED + "Error: You cannot stop spectating when there is a game running.");
+			return;
+		}
+
 		if (!spectating) {
 			UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "chose to watch", true);
 		} else {
+			// if the game is starting (when you're seated) we don't
+			// want the player to be teleported back to the lobby
+			if (UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.STARTING)) {
+				player.sendMessage(CC.RED + "You can't do this anymore.");
+				return;
+			}
+
 			UHCMeetup.getInstance().getSpectatorHandler().removeSpectator(gamePlayer);
 		}
 	}

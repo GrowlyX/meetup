@@ -19,7 +19,7 @@ import java.util.Random;
 @Getter
 public class KitManager {
 
-	private final Map<ItemStack, Integer> defaultInventory = new HashMap<>();
+	private final Map<Integer, ItemStack> defaultInventory = new HashMap<>();
 
 	public KitManager() {
 		this.setupDefaultInventory(this.defaultInventory);
@@ -147,24 +147,24 @@ public class KitManager {
 		return r >= 65 ? 3 : r >= 35 ? 2 : 1;
 	}
 
-	public void setupDefaultInventory(Map<ItemStack, Integer> defaultInventory) {
-		defaultInventory.put(new ItemStack(Material.GOLD_SWORD), 0);
-		defaultInventory.put(new ItemStack(Material.FISHING_ROD), 1);
-		defaultInventory.put(new ItemStack(Material.BOW), 2);
-		defaultInventory.put(new ItemStack(Material.COOKED_BEEF), 3);
-		defaultInventory.put(new ItemStack(Material.GOLDEN_APPLE), 4);
-		defaultInventory.put(new ItemStack(Material.APPLE), 5);
-		defaultInventory.put(new ItemStack(Material.DIAMOND_AXE), 6);
-		defaultInventory.put(new ItemStack(Material.FLINT_AND_STEEL), 7);
-		defaultInventory.put(new ItemStack(Material.COBBLESTONE), 8);
-		defaultInventory.put(new ItemStack(Material.ARROW), 9);
-		defaultInventory.put(new ItemStack(Material.LAVA_BUCKET), 10);
-		defaultInventory.put(new ItemStack(Material.LAVA_BUCKET), 11);
-		defaultInventory.put(new ItemStack(Material.WATER_BUCKET), 12);
-		defaultInventory.put(new ItemStack(Material.WATER_BUCKET), 13);
-		defaultInventory.put(new ItemStack(Material.DIAMOND_PICKAXE), 14);
-		defaultInventory.put(new ItemStack(Material.ENCHANTMENT_TABLE), 15);
-		defaultInventory.put(new ItemStack(Material.ANVIL), 16);
-		defaultInventory.put(new ItemStack(Material.EXP_BOTTLE), 17);
+	public void setupDefaultInventory(Map<Integer, ItemStack> defaultInventory) {
+		defaultInventory.put(0, new ItemStack(Material.GOLD_SWORD));
+		defaultInventory.put(1, new ItemStack(Material.FISHING_ROD));
+		defaultInventory.put(2, new ItemStack(Material.BOW));
+		defaultInventory.put(3, new ItemStack(Material.COOKED_BEEF));
+		defaultInventory.put(4 ,new ItemStack(Material.GOLDEN_APPLE));
+		defaultInventory.put(5, new ItemStack(Material.APPLE));
+		defaultInventory.put( 6,new ItemStack(Material.DIAMOND_AXE));
+		defaultInventory.put(7, new ItemStack(Material.FLINT_AND_STEEL));
+		defaultInventory.put(8, new ItemStack(Material.COBBLESTONE));
+		defaultInventory.put(9, new ItemStack(Material.ARROW));
+		defaultInventory.put(10, new ItemStack(Material.LAVA_BUCKET));
+		defaultInventory.put(11, new ItemStack(Material.LAVA_BUCKET));
+		defaultInventory.put(12, new ItemStack(Material.WATER_BUCKET));
+		defaultInventory.put(13, new ItemStack(Material.WATER_BUCKET));
+		defaultInventory.put(14, new ItemStack(Material.DIAMOND_PICKAXE));
+		defaultInventory.put(15, new ItemStack(Material.ENCHANTMENT_TABLE));
+		defaultInventory.put(16, new ItemStack(Material.ANVIL));
+		defaultInventory.put(17, new ItemStack(Material.EXP_BOTTLE));
 	}
 }

@@ -13,7 +13,7 @@ public class GameCheckTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (!UHCMeetup.getInstance().getGameHandler().getGame().getState().equals(GameState.IN_GAME)) {
+        if (!UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
             return;
         }
 
