@@ -8,10 +8,7 @@ import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.player.PlayerState;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.PlayerUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -89,11 +86,14 @@ public class SpectatorHandler {
 
 	public void removeSpectator(GamePlayer gamePlayer) {
 		final Player player = gamePlayer.getPlayer();
+		final World lobbyWorld = Bukkit.getWorld("world");
 
 		PlayerUtil.resetPlayer(player);
 
 		Bukkit.getScheduler().runTask(UHCMeetup.getInstance(), () -> Bukkit.getOnlinePlayers().stream()
 				.filter(online -> !online.canSee(player)).forEach(online -> online.showPlayer(player)));
+
+		player.teleport(new Location(lobbyWorld, 0.5, lobbyWorld.getHighestBlockYAt(0, 0) + 4, 0.5));
 
 		gamePlayer.getPlayer().sendMessage(CC.SEC + "You are no longer spectating the game.");
 		gamePlayer.setState(PlayerState.WAITING);

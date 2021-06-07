@@ -37,8 +37,8 @@ public class GameHandler {
 
 	private final Set<Material> whitelistedBlocks = new HashSet<>();
 
-	private final int minimumPlayers = 2;
-	private boolean hasBeenBroadcasted = false;
+	private final int minimumPlayers = 5;
+	private boolean hasEnded = false;
 
 	private long lastAnnouncement = 0L;
 	private String lastAnnouncer;
@@ -104,13 +104,13 @@ public class GameHandler {
 			return;
 		}
 
-		if (this.getRemainingPlayers().size() == 1 && !this.hasBeenBroadcasted) {
+		if (this.getRemainingPlayers().size() == 1 && !this.hasEnded) {
 			this.getRemainingPlayers().forEach(this::selectWinner);
 		}
 	}
 
 	private void selectWinner(GamePlayer winner) {
-		this.hasBeenBroadcasted = true;
+		this.hasEnded = true;
 
 		Bukkit.broadcastMessage("");
 		Bukkit.broadcastMessage(winner.getPlayer().getDisplayName() + CC.GREEN + " wins!");

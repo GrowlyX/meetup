@@ -26,18 +26,18 @@ public class SpectateCommand extends BaseCommand {
 		final boolean spectating = gamePlayer.isSpectating();
 
 		if (UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
-			player.sendMessage(CC.RED + "You can't do this anymore.");
+			player.sendMessage(CC.RED + "Error: You cannot stop spectating when there is a game running.");
 			return;
 		}
 
 		final Clickable clickable = new Clickable("");
 
 		if (!spectating) {
-			clickable.add(CC.GRAY + "Are you sure you want to spectate?", null, null, null);
-			clickable.add(CC.GREEN + "\n[Click here to spectate]", null, "/spec confirm", ClickEvent.Action.RUN_COMMAND);
+			clickable.add(CC.GRAY + "Are you sure you want to spectate?\n", null, null, null);
+			clickable.add(CC.GREEN + "[Click here to spectate]", null, "/spec confirm", ClickEvent.Action.RUN_COMMAND);
 		} else {
-			clickable.add(CC.GRAY + "Are you sure you want to stop spectating?", null, null, null);
-			clickable.add(CC.RED + "\n[Click here to stop spectating]", null, "/spec confirm", ClickEvent.Action.RUN_COMMAND);
+			clickable.add(CC.GRAY + "Are you sure you want to stop spectating?\n", null, null, null);
+			clickable.add(CC.RED + "[Click here to stop spectating]", null, "/spec confirm", ClickEvent.Action.RUN_COMMAND);
 		}
 
 		player.spigot().sendMessage(clickable.asComponents());
