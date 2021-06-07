@@ -37,7 +37,7 @@ public class GameHandler {
 
 	private final Set<Material> whitelistedBlocks = new HashSet<>();
 
-	private final int minimumPlayers = 2;
+	private final int minimumPlayers = 5;
 	private boolean hasBeenBroadcasted = false;
 
 	private long lastAnnouncement = 0L;

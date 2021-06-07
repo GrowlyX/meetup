@@ -60,7 +60,7 @@ public class ScoreboardAdapter implements BoardAdapter {
 		}
 
 		board.add("");
-		board.add(CC.PRI + "pvp.bar");
+		board.add(CC.GRAY + CC.ITALIC + "store.pvp.bar");
 		board.add(CC.GRAY + CC.S + "--------------------");
 
 		return board;
@@ -68,7 +68,7 @@ public class ScoreboardAdapter implements BoardAdapter {
 
 	@Override
 	public String getTitle(Player player) {
-		return CC.B_PRI + "PvPBar " + CC.GRAY + "▏" + CC.RESET + "Meetup";
+		return CC.B_PRI + "PvPBar" + CC.GRAY + " ┃ " + CC.RESET + "Meetup";
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.solexgames.meetup.game.Game;
 import com.solexgames.meetup.util.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Comparator;
@@ -33,16 +34,15 @@ public class GameEndTask extends BukkitRunnable {
 			return;
 		}
 
-		if (game.getEndTime() == 2) {
+		if (game.getEndTime() == 5) {
 			CorePlugin.getInstance().getServerSettings().setCanJoin(false);
 
-			Bukkit.getOnlinePlayers()
-					.forEach(player -> {
-						player.sendMessage(ChatColor.RED + "The server you were previously on is now down for:");
-						player.sendMessage(game.getWinner() + CC.GREEN + " has won the game, thanks for playing!");
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				player.sendMessage(ChatColor.RED + "The server you were previously on is now down for:");
+				player.sendMessage(game.getWinner() + CC.GREEN + " has won the game, thanks for playing!");
 
-						BungeeUtil.sendToServer(player, this.getBestHub().getServerName(), CorePlugin.getInstance());
-					});
+				BungeeUtil.sendToServer(player, this.getBestHub().getServerName(), CorePlugin.getInstance());
+			}
 		}
 
 		game.setEndTime(game.getEndTime() - 1);

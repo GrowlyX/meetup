@@ -4,7 +4,6 @@ import co.aikar.commands.PaperCommandManager;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.lib.commons.redis.JedisBuilder;
 import com.solexgames.lib.commons.redis.JedisManager;
-import com.solexgames.lib.commons.redis.JedisSettings;
 import com.solexgames.meetup.board.BoardManager;
 import com.solexgames.meetup.command.*;
 import com.solexgames.meetup.game.GameListener;
@@ -12,8 +11,8 @@ import com.solexgames.meetup.game.kit.KitManager;
 import com.solexgames.meetup.handler.*;
 import com.solexgames.meetup.listener.PlayerListener;
 import com.solexgames.meetup.scenario.Scenario;
-import com.solexgames.meetup.handler.ScenarioHandler;
 import com.solexgames.meetup.scoreboard.ScoreboardAdapter;
+import com.solexgames.meetup.task.GameCheckTask;
 import com.solexgames.meetup.task.ServerUpdateTask;
 import com.solexgames.meetup.util.JedisUtil;
 import com.solexgames.meetup.util.MeetupUtils;
@@ -23,8 +22,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.concurrent.TimeUnit;
 
 @Getter
 public final class UHCMeetup extends JavaPlugin {
@@ -88,6 +85,7 @@ public final class UHCMeetup extends JavaPlugin {
                 .build();
 
         new ServerUpdateTask().runTaskTimerAsynchronously(this, 0L, 100L);
+        new GameCheckTask().runTaskTimerAsynchronously(this, 0L, 100L);
     }
 
     private void registerListeners() {

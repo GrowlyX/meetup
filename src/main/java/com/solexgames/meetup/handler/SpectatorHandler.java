@@ -36,10 +36,10 @@ public class SpectatorHandler {
 				)
 				.create();
 		this.navigationCompassItem = new ItemBuilder(Material.COMPASS)
-				.setDisplayName(CC.AQUA + "Navigation Compass")
+				.setDisplayName(CC.B_PRI + "Navigation Compass")
 				.addLore(
-						CC.GRAY + "Left-Click: " + CC.WHITE + "Teleport to the block you're looking at!",
-						CC.GRAY + "Right-Click: " + CC.WHITE + "Teleport through walls!"
+						CC.GRAY + "Left-Click: " + CC.AQUA + "Teleport to the block you're looking at!",
+						CC.GRAY + "Right-Click: " + CC.AQUA + "Teleport through walls!"
 				)
 				.create();
 	}
@@ -65,14 +65,14 @@ public class SpectatorHandler {
 				PlayerUtil.sendTitle(player, CC.B_RED + "DEAD", "You are now a spectator!", 0, 80, 20);
 			}
 
-			CorePlugin.getInstance().getNMS().removeExecute(player);
-
-			Bukkit.getOnlinePlayers().forEach(player1 -> {
-				final GamePlayer gamePlayer1 = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player1);
+			Bukkit.getOnlinePlayers().forEach(other -> {
+				final GamePlayer gamePlayer1 = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(other);
 
 				if (!gamePlayer1.isSpectating()) {
-					player1.hidePlayer(player);
+					other.hidePlayer(player);
 				}
+
+				CorePlugin.getInstance().getNameTagManager().setupNameTag(player, other, ChatColor.GRAY);
 			});
 
 			player.getInventory().setItem(0, this.spectateMenuItem);
@@ -85,15 +85,10 @@ public class SpectatorHandler {
 	public void removeSpectator(GamePlayer gamePlayer) {
 		final Player player = gamePlayer.getPlayer();
 
-		player.getInventory().clear();
-		player.getInventory().setArmorContents(null);
-		player.updateInventory();
+		PlayerUtil.resetPlayer(player);
 
-		if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-			player.removePotionEffect(PotionEffectType.INVISIBILITY);
-		}
-
-		Bukkit.getScheduler().runTask(UHCMeetup.getInstance(), () -> Bukkit.getOnlinePlayers().stream().filter(online -> !online.canSee(player)).forEach(online -> online.showPlayer(player)));
+		Bukkit.getScheduler().runTask(UHCMeetup.getInstance(), () -> Bukkit.getOnlinePlayers().stream()
+				.filter(online -> !online.canSee(player)).forEach(online -> online.showPlayer(player)));
 
 		gamePlayer.getPlayer().sendMessage(CC.SEC + "You are no longer spectating the game.");
 		gamePlayer.setState(PlayerState.WAITING);

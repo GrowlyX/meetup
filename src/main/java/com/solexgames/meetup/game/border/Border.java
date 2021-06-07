@@ -24,26 +24,35 @@ public class Border {
 			if (player.getWorld().getName().equalsIgnoreCase("meetup_game")) {
 				if (player.getLocation().getBlockX() > border) {
 					this.handleEffects(player);
+					player.teleport(new Location(world, border - 2, player.getLocation().getBlockY(), player.getLocation().getBlockZ()));
 
-					player.teleport(new Location(world, player.getLocation().getBlockX(), world.getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ()) + 2, player.getLocation().getBlockZ()));
+					if (player.getLocation().getBlockY() < world.getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ())) {
+						player.teleport(new Location(world, player.getLocation().getBlockX(), world.getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ()) + 2, player.getLocation().getBlockZ()));
+					}
 				}
 
 				if (player.getLocation().getBlockZ() > border) {
 					this.handleEffects(player);
-
-					player.teleport(new Location(world, player.getLocation().getBlockX(), world.getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ()) + 2, player.getLocation().getBlockZ()));
+					player.teleport(new Location(world, player.getLocation().getBlockX(), player.getLocation().getBlockY(), border - 2));
+					if (player.getLocation().getBlockY() < world.getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ())) {
+						player.teleport(new Location(world, player.getLocation().getBlockX(), world.getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ()) + 2, player.getLocation().getBlockZ()));
+					}
 				}
 
 				if (player.getLocation().getBlockX() < -border) {
 					this.handleEffects(player);
-
-					player.teleport(new Location(world, player.getLocation().getBlockX(), world.getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ()) + 2, player.getLocation().getBlockZ()));
+					player.teleport(new Location(world, -border + 2, player.getLocation().getBlockY(), player.getLocation().getBlockZ()));
+					if (player.getLocation().getBlockY() < world.getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ())) {
+						player.teleport(new Location(world, player.getLocation().getBlockX(), world.getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ()) + 2, player.getLocation().getBlockZ()));
+					}
 				}
 
 				if (player.getLocation().getBlockZ() < -border) {
 					this.handleEffects(player);
-
-					player.teleport(new Location(world, player.getLocation().getBlockX(), world.getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ()) + 2, player.getLocation().getBlockZ()));
+					player.teleport(new Location(world, player.getLocation().getBlockX(), player.getLocation().getBlockY(), -border + 2));
+					if (player.getLocation().getBlockY() < world.getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ())) {
+						player.teleport(new Location(world, player.getLocation().getBlockX(), world.getHighestBlockYAt(player.getLocation().getBlockX(), player.getLocation().getBlockZ()) + 2, player.getLocation().getBlockZ()));
+					}
 				}
 			}
 		}
