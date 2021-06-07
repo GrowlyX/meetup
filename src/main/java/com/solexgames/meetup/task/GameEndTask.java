@@ -15,9 +15,10 @@ import java.util.Comparator;
 import java.util.Objects;
 
 /**
- * @author puugz
- * @since 05/06/2021 12:40
+ * @author GrowlyX
+ * @since 6/6/2021
  */
+
 public class GameEndTask extends BukkitRunnable {
 
 	public GameEndTask() {

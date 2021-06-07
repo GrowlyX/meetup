@@ -23,20 +23,22 @@ public class NoCleanListener implements Listener {
         if (!(event.getDamager() instanceof Player)) return;
 
         final Player entity = (Player) event.getEntity();
-        final Player damager = (Player) event.getDamager();
+        final Player damaging = (Player) event.getDamager();
 
         final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(entity);
-        final GamePlayer damagerPlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(damager);
+        final GamePlayer damagingPlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(damaging);
 
-        if (damagerPlayer.isSpectating()) {
+        if (damagingPlayer.isSpectating()) {
             return;
         }
 
-        if (damagerPlayer.getNoCleanTimer() != null) {
-            UHCMeetup.getInstance().getScenario(NoCleanScenario.class)
-                    .handleCancelNoClean(damagerPlayer);
+        final NoCleanScenario noCleanScenario = UHCMeetup.getInstance()
+                .getScenario(NoCleanScenario.class);
+
+        if (damagingPlayer.getNoCleanTimer() != null) {
+            noCleanScenario.handleCancelNoClean(damagingPlayer);
         } else if (gamePlayer.getNoCleanTimer() != null) {
-            damager.sendMessage(entity.getDisplayName() + "'s " + CC.RED + "no clean timer expires in " + TimeUtil.secondsToRoundedTime(gamePlayer.getNoCleanTimer().getTime()) + ".");
+            damaging.sendMessage(entity.getDisplayName() + "'s " + CC.RED + "no clean timer expires in " + TimeUtil.secondsToRoundedTime(gamePlayer.getNoCleanTimer().getTime()) + ".");
             event.setCancelled(true);
         }
     }

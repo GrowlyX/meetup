@@ -36,9 +36,9 @@ public class BorderTask extends BukkitRunnable {
 				return;
 			}
 
-			game.setBorderTime(120);
-
 			new Border(Bukkit.getWorld("meetup_game"), game.getNextBorder());
+
+			game.setBorderTime(120);
 			game.setBorder(game.getNextBorder());
 		} else if (this.seconds.contains(game.getBorderTime())) {
 			Bukkit.broadcastMessage(CC.SEC + "The border will shrink to " + CC.PRI + game.getNextBorder() + CC.SEC + " in " + CC.PRI + TimeUtil.secondsToRoundedTime(game.getBorderTime()) + CC.SEC + ".");

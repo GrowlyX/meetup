@@ -1,6 +1,6 @@
 package com.solexgames.meetup.handler;
 
-import com.solexgames.meetup.cache.PlayerCache;
+import com.solexgames.lib.commons.game.PlayerCache;
 import com.solexgames.meetup.player.GamePlayer;
 import lombok.Getter;
 

@@ -56,8 +56,10 @@ public final class UHCMeetup extends JavaPlugin {
         this.kitManager = new KitManager();
 
         this.setupJedis();
+
         this.registerCommands();
         this.registerListeners();
+
         this.setBoardManager(new BoardManager(new ScoreboardAdapter()));
     }
 

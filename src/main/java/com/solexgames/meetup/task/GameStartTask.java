@@ -42,11 +42,10 @@ public class GameStartTask extends BukkitRunnable {
 		}
 
 		if (gameStartTime == 0) {
-			Bukkit.broadcastMessage(CC.SEC + "The game has begun.");
-			this.sendTitle(CC.B_GREEN + "BEGIN", "Game has started!");
-
+			Bukkit.broadcastMessage(CC.SEC + "The game has started, good luck!");
 			UHCMeetup.getInstance().getGameHandler().handleStart();
 
+			this.sendTitle(CC.B_GREEN + "BEGIN", "Game has started!");
 			this.cancel();
 			return;
 		}

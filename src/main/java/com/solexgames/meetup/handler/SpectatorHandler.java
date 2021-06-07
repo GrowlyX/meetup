@@ -26,6 +26,9 @@ public class SpectatorHandler {
 	private final ItemStack spectateMenuItem;
 	private final ItemStack navigationCompassItem;
 
+	private final PotionEffect invisibilityEffect = new PotionEffect(
+			PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false);
+
 	public SpectatorHandler() {
 		this.spectateMenuItem = new ItemBuilder(Material.ITEM_FRAME)
 				.setDisplayName(CC.B_PRI + "Spectate Menu")
@@ -38,8 +41,8 @@ public class SpectatorHandler {
 		this.navigationCompassItem = new ItemBuilder(Material.COMPASS)
 				.setDisplayName(CC.B_PRI + "Navigation Compass")
 				.addLore(
-						CC.GRAY + "Left-Click: " + CC.AQUA + "Teleport to the block you're looking at!",
-						CC.GRAY + "Right-Click: " + CC.AQUA + "Teleport through walls!"
+						CC.GRAY + "Left-Click: " + CC.WHITE + "Teleport to the block you're looking at!",
+						CC.GRAY + "Right-Click: " + CC.WHITE + "Teleport through walls!"
 				)
 				.create();
 	}
@@ -50,12 +53,12 @@ public class SpectatorHandler {
 		Bukkit.getScheduler().runTask(UHCMeetup.getInstance(), () -> {
 			player.setAllowFlight(true);
 			player.setFlying(true);
+
 			player.getInventory().clear();
 			player.getInventory().setArmorContents(null);
 
 			player.setGameMode(GameMode.CREATIVE);
-			player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false));
-			player.updateInventory();
+			player.addPotionEffect(this.invisibilityEffect);
 
 			if (reason != null) {
 				gamePlayer.getPlayer().sendMessage(CC.SEC + "You're now a spectator: " + CC.RED + reason);
@@ -77,6 +80,8 @@ public class SpectatorHandler {
 
 			player.getInventory().setItem(0, this.spectateMenuItem);
 			player.getInventory().setItem(1, this.navigationCompassItem);
+
+			player.updateInventory();
 		});
 
 		gamePlayer.setState(PlayerState.SPECTATING);

@@ -15,6 +15,8 @@ public class ServerUpdateTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        CompletableFuture.runAsync(() -> UHCMeetup.getInstance().getJedisManager().publish(JedisUtil.getServerUpdateJson()));
+        CompletableFuture.runAsync(() ->
+                UHCMeetup.getInstance().getJedisManager().publish(JedisUtil.getServerUpdateJson())
+        );
     }
 }
