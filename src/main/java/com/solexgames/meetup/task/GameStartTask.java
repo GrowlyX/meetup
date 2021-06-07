@@ -25,12 +25,6 @@ public class GameStartTask extends BukkitRunnable {
 	@Override
 	public void run() {
 		final Game game = UHCMeetup.getInstance().getGameHandler().getGame();
-
-		if (UHCMeetup.getInstance().getGameHandler().getRemainingPlayers().size() < UHCMeetup.getInstance().getGameHandler().getMinimumPlayers()) {
-			game.setGameStartTime(60);
-			return;
-		}
-
 		final int gameStartTime = game.getGameStartTime();
 
 		if (Arrays.asList(60, 30, 15, 10, 5, 4, 3, 2, 1).contains(gameStartTime)) {

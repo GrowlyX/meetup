@@ -83,7 +83,7 @@ public class LoadoutEditorMenu extends Menu {
         }
 
         player.sendMessage(CC.SEC + "You've modified your loadout!");
-        player.sendMessage(CC.I_GRAY + "If you need to reset your loadout try " + CC.I_YELLOW + "/resetloaout");
+        player.sendMessage(CC.I_GRAY + "If you need to reset your loadout try " + CC.I_YELLOW + "/resetloadout");
 
         player.getInventory().clear();
     }

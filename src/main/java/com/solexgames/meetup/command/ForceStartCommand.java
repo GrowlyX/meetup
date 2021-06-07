@@ -9,6 +9,7 @@ import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.handler.GameHandler;
 import com.solexgames.meetup.util.CC;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -24,7 +25,23 @@ public class ForceStartCommand extends BaseCommand {
 		final GameHandler gameHandler = UHCMeetup.getInstance().getGameHandler();
 		final Game game = gameHandler.getGame();
 
-		if (!game.isState(GameState.STARTING) || game.getGameStartTime() < 10) {
+		if (!gameHandler.isCanPlay()) {
+			sender.sendMessage(ChatColor.RED + "The map's currently generating, sorry.");
+			return;
+		}
+
+		if (!game.isState(GameState.STARTING)) {
+			if (Bukkit.getOnlinePlayers().size() < 2) {
+				sender.sendMessage(ChatColor.RED + "There must be at least two players online for you to forcestart the game.");
+				return;
+			}
+
+			gameHandler.handleStarting();
+			game.setGameStartTime(10);
+			return;
+		}
+
+		if (game.getGameStartTime() < 10) {
 			sender.sendMessage(CC.RED + "Error: The game has already started, or is starting soon.");
 			return;
 		}

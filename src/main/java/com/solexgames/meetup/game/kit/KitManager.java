@@ -133,13 +133,16 @@ public class KitManager {
 		inventory.setItem(loadout.getLocationOf(Material.COBBLESTONE), new ItemStack(Material.COBBLESTONE, 64));
 
 		inventory.setItem(loadout.getLocationOf(Material.ARROW), new ItemStack(Material.ARROW, 64));
-		inventory.setItem(loadout.getLocationOf(Material.LAVA_BUCKET), new ItemBuilder(Material.LAVA_BUCKET).setAmount(2).create());
-		inventory.setItem(loadout.getLocationOf(Material.WATER_BUCKET), new ItemBuilder(Material.WATER_BUCKET).setAmount(2).create());
+		inventory.setItem(loadout.getLocationOf(Material.LAVA_BUCKET), new ItemBuilder(Material.LAVA_BUCKET).setAmount(1).create());
+		inventory.setItem(loadout.getLocationOf(Material.WATER_BUCKET), new ItemBuilder(Material.WATER_BUCKET).setAmount(1).create());
 
 		inventory.setItem(loadout.getLocationOf(Material.DIAMOND_PICKAXE), new ItemStack(Material.DIAMOND_PICKAXE));
 		inventory.setItem(loadout.getLocationOf(Material.ENCHANTMENT_TABLE), new ItemStack(Material.ENCHANTMENT_TABLE));
 		inventory.setItem(loadout.getLocationOf(Material.ANVIL), new ItemStack(Material.ANVIL, this.random.nextInt(2) + 1));
 		inventory.setItem(loadout.getLocationOf(Material.EXP_BOTTLE), new ItemStack(Material.EXP_BOTTLE, 64));
+
+		inventory.setItem(inventory.firstEmpty(), new ItemBuilder(Material.LAVA_BUCKET).setAmount(1).create());
+		inventory.setItem(inventory.firstEmpty(), new ItemBuilder(Material.WATER_BUCKET).setAmount(1).create());
 
 		player.updateInventory();
 	}

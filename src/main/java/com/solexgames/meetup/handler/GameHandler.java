@@ -39,6 +39,7 @@ public class GameHandler {
 
 	private final int minimumPlayers = 5;
 	private boolean hasEnded = false;
+	private boolean canPlay = false;
 
 	private long lastAnnouncement = 0L;
 	private String lastAnnouncer;
@@ -162,6 +163,8 @@ public class GameHandler {
 					}
 				}
 			}
+
+			this.canPlay = true;
 		}, 100L);
 	}
 }

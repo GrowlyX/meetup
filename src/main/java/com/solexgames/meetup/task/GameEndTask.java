@@ -1,6 +1,7 @@
 package com.solexgames.meetup.task;
 
 import com.solexgames.core.CorePlugin;
+import com.solexgames.core.enums.NetworkServerType;
 import com.solexgames.core.server.NetworkServer;
 import com.solexgames.core.util.BungeeUtil;
 import com.solexgames.meetup.UHCMeetup;
@@ -52,6 +53,7 @@ public class GameEndTask extends BukkitRunnable {
 	public NetworkServer getBestHub() {
 		return CorePlugin.getInstance().getServerManager().getNetworkServers().stream()
 				.filter(Objects::nonNull)
+				.filter(networkServer -> networkServer.getServerType().equals(NetworkServerType.HUB))
 				.min(Comparator.comparingInt(server -> (int) + (long) server.getOnlinePlayers()))
 				.orElse(null);
 	}
