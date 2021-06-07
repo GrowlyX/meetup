@@ -1,4 +1,4 @@
-package com.solexgames.meetup.task;
+package com.solexgames.meetup.task.game;
 
 import com.solexgames.meetup.UHCMeetup;
 import com.solexgames.meetup.game.GameState;

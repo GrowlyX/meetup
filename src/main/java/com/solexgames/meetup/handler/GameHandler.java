@@ -6,8 +6,8 @@ import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.player.PlayerState;
 import com.solexgames.meetup.task.BorderTask;
-import com.solexgames.meetup.task.GameEndTask;
-import com.solexgames.meetup.task.GameStartTask;
+import com.solexgames.meetup.task.game.GameEndTask;
+import com.solexgames.meetup.task.game.GameStartTask;
 import com.solexgames.meetup.task.WorldGenTask;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtils;
@@ -17,6 +17,7 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -81,21 +82,31 @@ public class GameHandler {
 	public void handleStarting() {
 		this.game.setState(GameState.STARTING);
 
-		Bukkit.getScheduler().runTaskLater(UHCMeetup.getInstance(), () -> this.getRemainingPlayers().forEach(gamePlayer -> {
-			final Player player = gamePlayer.getPlayer();
+		Bukkit.getScheduler().runTaskLater(UHCMeetup.getInstance(), () -> {
+			this.getRemainingPlayers().forEach(gamePlayer -> {
+				final Player player = gamePlayer.getPlayer();
 
-			gamePlayer.setState(PlayerState.PLAYING);
+				gamePlayer.setState(PlayerState.PLAYING);
 
-			Bukkit.getScheduler().runTask(UHCMeetup.getInstance(), () -> {
-				PlayerUtil.resetPlayer(player);
-				PlayerUtil.sitPlayer(player);
+				Bukkit.getScheduler().runTask(UHCMeetup.getInstance(), () -> {
+					PlayerUtil.resetPlayer(player);
+					PlayerUtil.sitPlayer(player);
 
-				// TODO: 05/06/2021 load kit with layout
-				UHCMeetup.getInstance().getKitManager().handleItems(player);
+					// TODO: 05/06/2021 load kit with layout
+					UHCMeetup.getInstance().getKitManager().handleItems(player);
+				});
+
+				player.teleport(MeetupUtils.getScatterLocation());
 			});
 
-			player.teleport(MeetupUtils.getScatterLocation());
-		}), 40L);
+			this.getSpectators().forEach(gamePlayer -> {
+				final Player player = gamePlayer.getPlayer();
+				final World gameWorld = Bukkit.getWorld("meetup_game");
+
+				player.teleport(new Location(gameWorld, 0.5, gameWorld.getHighestBlockYAt(0, 0) + 15, 0.5));
+				player.sendMessage(CC.SEC + "You've been teleported the the arena as a spectator.");
+			});
+		}, 40L);
 
 		new GameStartTask();
 	}
@@ -120,6 +131,7 @@ public class GameHandler {
 		winner.setWins(winner.getWins() + 1);
 
 		this.game.setWinner(winner.getPlayer().getDisplayName());
+		this.game.setWinnerId(winner.getPlayer().getUniqueId());
 
 		new GameEndTask();
 	}

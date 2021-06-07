@@ -1,5 +1,6 @@
 package com.solexgames.meetup;
 
+import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.PaperCommandManager;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.lib.commons.redis.JedisBuilder;
@@ -12,16 +13,21 @@ import com.solexgames.meetup.handler.*;
 import com.solexgames.meetup.listener.PlayerListener;
 import com.solexgames.meetup.scenario.Scenario;
 import com.solexgames.meetup.scoreboard.ScoreboardAdapter;
-import com.solexgames.meetup.task.GameCheckTask;
+import com.solexgames.meetup.task.game.GameCheckTask;
 import com.solexgames.meetup.task.ServerUpdateTask;
+import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.JedisUtil;
 import com.solexgames.meetup.util.MeetupUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Getter
 public final class UHCMeetup extends JavaPlugin {
@@ -78,6 +84,19 @@ public final class UHCMeetup extends JavaPlugin {
         manager.registerCommand(new ResetLoadoutCommand());
         manager.registerCommand(new SpectateCommand());
         manager.registerCommand(new AnnounceCommand());
+        manager.registerCommand(new ReRollCommand());
+
+        manager.getCommandContexts().registerContext(Integer.class, bukkitCommandExecutionContext -> {
+            try {
+                return Integer.parseInt(bukkitCommandExecutionContext.getFirstArg());
+            } catch (Exception ignored) {
+                throw new InvalidCommandArgument(CC.RED + bukkitCommandExecutionContext.getFirstArg() + " is not a valid integer.");
+            }
+        });
+
+        manager.getCommandCompletions().registerAsyncCompletion("purchasable", context ->
+                Arrays.asList("1", "2", "3", "4", "5", "10", "20", "30", "50")
+        );
     }
 
     private void setupJedis() {

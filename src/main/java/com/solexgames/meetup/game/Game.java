@@ -4,6 +4,8 @@ import com.solexgames.meetup.util.CC;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 /**
  * @author GrowlyX
  * @since 5/31/2021
@@ -22,15 +24,25 @@ public class Game {
     private int endTime = 10;
 
     private String winner;
+    private UUID winnerId;
 
     private GameState state = GameState.WAITING;
 
     public int getNextBorder() {
-        return this.border == 10 ? 10 : this.border == 25 ? 10 : this.border - 25;
+        switch (this.border) {
+            case 100:
+                return 75;
+            case 75:
+                return 50;
+            case 50:
+                return 25;
+            default:
+                return 10;
+        }
     }
 
     public String getFormattedBorderStatus() {
-        return this.borderTime > 0 && this.border != 10 ? CC.WHITE + " (" + CC.PRI + this.borderTime + CC.WHITE + ")" : "";
+        return this.borderTime > 0 ? CC.WHITE + " (" + CC.PRI + this.borderTime + CC.WHITE + ")" : "";
     }
 
     public void decrementBorderTime() {

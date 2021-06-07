@@ -1,6 +1,7 @@
 package com.solexgames.meetup.handler;
 
 import com.solexgames.core.CorePlugin;
+import com.solexgames.core.player.PotPlayer;
 import com.solexgames.core.util.builder.ItemBuilder;
 import com.solexgames.meetup.UHCMeetup;
 import com.solexgames.meetup.player.GamePlayer;
@@ -71,9 +72,9 @@ public class SpectatorHandler {
 				if (!gamePlayer1.isSpectating()) {
 					other.hidePlayer(player);
 				}
-
-				CorePlugin.getInstance().getNameTagManager().setupNameTag(player, other, ChatColor.GRAY);
 			});
+
+			player.setPlayerListName(CC.GRAY + "[S] " + player.getName());
 
 			player.getInventory().setItem(0, this.spectateMenuItem);
 			player.getInventory().setItem(1, this.navigationCompassItem);
@@ -94,6 +95,10 @@ public class SpectatorHandler {
 				.filter(online -> !online.canSee(player)).forEach(online -> online.showPlayer(player)));
 
 		player.teleport(new Location(lobbyWorld, 0.5, lobbyWorld.getHighestBlockYAt(0, 0) + 4, 0.5));
+
+		final PotPlayer potPlayer = CorePlugin.getInstance().getPlayerManager().getPlayer(player);
+
+		potPlayer.setupPlayerList();
 
 		gamePlayer.getPlayer().sendMessage(CC.SEC + "You are no longer spectating the game.");
 		gamePlayer.setState(PlayerState.WAITING);

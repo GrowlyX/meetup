@@ -87,10 +87,6 @@ public class KitManager {
 		bow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, this.random.nextInt(3) + 1);
 
 		if (this.random.nextInt(10) == 7) {
-			bow.addUnsafeEnchantment(Enchantment.ARROW_FIRE, 1);
-		}
-
-		if (this.random.nextInt(10) == 7) {
 			bow.addUnsafeEnchantment(Enchantment.ARROW_KNOCKBACK, 1);
 		}
 
@@ -99,28 +95,9 @@ public class KitManager {
 		}
 
 		final ItemStack head = MeetupUtils.getGoldenHead();
-		head.setAmount(this.random.nextInt(3) + 1);
-
-		// 		defaultInventory.put(0, new ItemStack(Material.DIAMOND_SWORD));
-		//		defaultInventory.put(1, new ItemStack(Material.FISHING_ROD));
-		//		defaultInventory.put(2, new ItemStack(Material.BOW));
-		//		defaultInventory.put(3, new ItemStack(Material.COOKED_BEEF));
-		//		defaultInventory.put(4, new ItemStack(Material.GOLDEN_APPLE));
-		//		defaultInventory.put(5, new ItemStack(Material.APPLE));
-		//		defaultInventory.put(6, new ItemStack(Material.DIAMOND_AXE));
-		//		defaultInventory.put(7, new ItemStack(Material.FLINT_AND_STEEL));
-		//		defaultInventory.put(8, new ItemStack(Material.COBBLESTONE));
-		//		defaultInventory.put(9, new ItemStack(Material.ARROW));
-		//		defaultInventory.put(10, new ItemStack(Material.LAVA_BUCKET));
-		//		defaultInventory.put(11, new ItemStack(Material.LAVA_BUCKET));
-		//		defaultInventory.put(12, new ItemStack(Material.WATER_BUCKET));
-		//		defaultInventory.put(13, new ItemStack(Material.WATER_BUCKET));
-		//		defaultInventory.put(14, new ItemStack(Material.DIAMOND_PICKAXE));
-		//		defaultInventory.put(15, new ItemStack(Material.ENCHANTMENT_TABLE));
-		//		defaultInventory.put(16, new ItemStack(Material.ANVIL));
-		//		defaultInventory.put(17, new ItemStack(Material.EXP_BOTTLE));
-
 		final Loadout loadout = gamePlayer.getLoadout();
+
+		head.setAmount(this.random.nextInt(3) + 1);
 
 		inventory.setItem(loadout.getLocationOf(Material.DIAMOND_SWORD), sword);
 		inventory.setItem(loadout.getLocationOf(Material.FISHING_ROD), new ItemStack(Material.FISHING_ROD));

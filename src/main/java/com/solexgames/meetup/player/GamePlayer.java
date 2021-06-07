@@ -37,6 +37,7 @@ public class GamePlayer {
     private int deaths;
     private int played;
     private int wins;
+    private int reRolls;
 
     private PlayerState state;
     private NoCleanTimer noCleanTimer;
@@ -68,6 +69,7 @@ public class GamePlayer {
         document.put("deaths", this.deaths);
         document.put("played", this.played);
         document.put("wins", this.wins);
+        document.put("reRolls", this.reRolls);
 
         document.put("inventory", GsonFactory.getCompactGson().toJson(this.loadout));
 
@@ -92,6 +94,9 @@ public class GamePlayer {
                         }
                         if (document.getInteger("wins") != null) {
                             this.wins = document.getInteger("wins");
+                        }
+                        if (document.getInteger("reRolls") != null) {
+                            this.deaths = document.getInteger("reRolls");
                         }
 
                         final String inventory = document.getString("inventory");
