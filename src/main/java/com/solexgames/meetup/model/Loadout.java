@@ -23,23 +23,16 @@ public class Loadout {
     @SerializedName("boundPlayer")
     private final UUID uuid;
 
-    @SerializedName("inventoryLayout")
+    @SerializedName("meetupLoadout")
     private final Map<Integer, ItemStack> inventoryLocationMap = new HashMap<>();
 
-    public int getFromMaterial(Material material) {
-        return this.inventoryLocationMap.entrySet().stream()
-                .filter(itemStackIntegerEntry -> itemStackIntegerEntry.getValue().getType().equals(material))
-                .map(Map.Entry::getKey).findFirst().orElse(-1);
-    }
-
-    public ItemStack getFromInteger(Integer integer) {
-        return this.inventoryLocationMap.entrySet().stream()
-                .filter(integerItemStackEntry -> integerItemStackEntry.getKey().equals(integer))
-                .map(Map.Entry::getValue).findFirst().orElse(new ItemStack(Material.AIR));
-    }
-
     public void setupDefaultInventory() {
-        UHCMeetup.getInstance().getKitManager().getDefaultInventory()
-                .forEach(this.inventoryLocationMap::put);
+        UHCMeetup.getInstance().getKitManager().setupDefaultInventory(this.inventoryLocationMap);
+    }
+
+    public int getLocationOf(Material material) {
+        return this.inventoryLocationMap.entrySet().stream()
+                .filter(integerItemStackEntry -> integerItemStackEntry.getValue().getType().equals(material))
+                .map(Map.Entry::getKey).findFirst().orElse(-1);
     }
 }

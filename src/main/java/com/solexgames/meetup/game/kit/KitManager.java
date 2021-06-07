@@ -3,6 +3,7 @@ package com.solexgames.meetup.game.kit;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.core.util.builder.ItemBuilder;
 import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.model.Loadout;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.util.MeetupUtils;
 import lombok.Getter;
@@ -100,25 +101,45 @@ public class KitManager {
 		final ItemStack head = MeetupUtils.getGoldenHead();
 		head.setAmount(this.random.nextInt(3) + 1);
 
-		inventory.setItem(0, sword);
-		inventory.setItem(1, new ItemStack(Material.FISHING_ROD));
-		inventory.setItem(2, bow);
-		inventory.setItem(3, new ItemStack(Material.COOKED_BEEF, 64));
-		inventory.setItem(4, new ItemStack(Material.GOLDEN_APPLE, this.random.nextInt(7) + 1));
-		inventory.setItem(5, head);
-		inventory.setItem(6, new ItemStack(Material.DIAMOND_AXE));
-		inventory.setItem(7, new ItemStack(Material.FLINT_AND_STEEL));
-		inventory.setItem(8, new ItemStack(Material.COBBLESTONE, 64));
+		// 		defaultInventory.put(0, new ItemStack(Material.DIAMOND_SWORD));
+		//		defaultInventory.put(1, new ItemStack(Material.FISHING_ROD));
+		//		defaultInventory.put(2, new ItemStack(Material.BOW));
+		//		defaultInventory.put(3, new ItemStack(Material.COOKED_BEEF));
+		//		defaultInventory.put(4, new ItemStack(Material.GOLDEN_APPLE));
+		//		defaultInventory.put(5, new ItemStack(Material.APPLE));
+		//		defaultInventory.put(6, new ItemStack(Material.DIAMOND_AXE));
+		//		defaultInventory.put(7, new ItemStack(Material.FLINT_AND_STEEL));
+		//		defaultInventory.put(8, new ItemStack(Material.COBBLESTONE));
+		//		defaultInventory.put(9, new ItemStack(Material.ARROW));
+		//		defaultInventory.put(10, new ItemStack(Material.LAVA_BUCKET));
+		//		defaultInventory.put(11, new ItemStack(Material.LAVA_BUCKET));
+		//		defaultInventory.put(12, new ItemStack(Material.WATER_BUCKET));
+		//		defaultInventory.put(13, new ItemStack(Material.WATER_BUCKET));
+		//		defaultInventory.put(14, new ItemStack(Material.DIAMOND_PICKAXE));
+		//		defaultInventory.put(15, new ItemStack(Material.ENCHANTMENT_TABLE));
+		//		defaultInventory.put(16, new ItemStack(Material.ANVIL));
+		//		defaultInventory.put(17, new ItemStack(Material.EXP_BOTTLE));
 
-		inventory.setItem(9, new ItemStack(Material.ARROW, 64));
-		inventory.setItem(10, new ItemStack(Material.LAVA_BUCKET));
-		inventory.setItem(11, new ItemStack(Material.LAVA_BUCKET));
-		inventory.setItem(12, new ItemStack(Material.WATER_BUCKET));
-		inventory.setItem(13, new ItemStack(Material.WATER_BUCKET));
-		inventory.setItem(14, new ItemStack(Material.DIAMOND_PICKAXE));
-		inventory.setItem(15, new ItemStack(Material.ENCHANTMENT_TABLE));
-		inventory.setItem(16, new ItemStack(Material.ANVIL, this.random.nextInt(2) + 1));
-		inventory.setItem(17, new ItemStack(Material.EXP_BOTTLE, 64));
+		final Loadout loadout = gamePlayer.getLoadout();
+
+		inventory.setItem(loadout.getLocationOf(Material.DIAMOND_SWORD), sword);
+		inventory.setItem(loadout.getLocationOf(Material.FISHING_ROD), new ItemStack(Material.FISHING_ROD));
+		inventory.setItem(loadout.getLocationOf(Material.BOW), bow);
+		inventory.setItem(loadout.getLocationOf(Material.COOKED_BEEF), new ItemStack(Material.COOKED_BEEF, 64));
+		inventory.setItem(loadout.getLocationOf(Material.GOLDEN_APPLE), new ItemStack(Material.GOLDEN_APPLE, this.random.nextInt(7) + 1));
+		inventory.setItem(loadout.getLocationOf(Material.APPLE), head);
+		inventory.setItem(loadout.getLocationOf(Material.DIAMOND_AXE), new ItemStack(Material.DIAMOND_AXE));
+		inventory.setItem(loadout.getLocationOf(Material.FLINT_AND_STEEL), new ItemStack(Material.FLINT_AND_STEEL));
+		inventory.setItem(loadout.getLocationOf(Material.COBBLESTONE), new ItemStack(Material.COBBLESTONE, 64));
+
+		inventory.setItem(loadout.getLocationOf(Material.ARROW), new ItemStack(Material.ARROW, 64));
+		inventory.setItem(loadout.getLocationOf(Material.LAVA_BUCKET), new ItemBuilder(Material.LAVA_BUCKET).setAmount(2).create());
+		inventory.setItem(loadout.getLocationOf(Material.WATER_BUCKET), new ItemBuilder(Material.WATER_BUCKET).setAmount(2).create());
+
+		inventory.setItem(loadout.getLocationOf(Material.DIAMOND_PICKAXE), new ItemStack(Material.DIAMOND_PICKAXE));
+		inventory.setItem(loadout.getLocationOf(Material.ENCHANTMENT_TABLE), new ItemStack(Material.ENCHANTMENT_TABLE));
+		inventory.setItem(loadout.getLocationOf(Material.ANVIL), new ItemStack(Material.ANVIL, this.random.nextInt(2) + 1));
+		inventory.setItem(loadout.getLocationOf(Material.EXP_BOTTLE), new ItemStack(Material.EXP_BOTTLE, 64));
 
 		player.updateInventory();
 	}
@@ -148,20 +169,20 @@ public class KitManager {
 	}
 
 	public void setupDefaultInventory(Map<Integer, ItemStack> defaultInventory) {
-		defaultInventory.put(0, new ItemStack(Material.GOLD_SWORD));
+		defaultInventory.clear();
+
+		defaultInventory.put(0, new ItemStack(Material.DIAMOND_SWORD));
 		defaultInventory.put(1, new ItemStack(Material.FISHING_ROD));
 		defaultInventory.put(2, new ItemStack(Material.BOW));
 		defaultInventory.put(3, new ItemStack(Material.COOKED_BEEF));
-		defaultInventory.put(4 ,new ItemStack(Material.GOLDEN_APPLE));
+		defaultInventory.put(4, new ItemStack(Material.GOLDEN_APPLE));
 		defaultInventory.put(5, new ItemStack(Material.APPLE));
-		defaultInventory.put( 6,new ItemStack(Material.DIAMOND_AXE));
+		defaultInventory.put(6, new ItemStack(Material.DIAMOND_AXE));
 		defaultInventory.put(7, new ItemStack(Material.FLINT_AND_STEEL));
 		defaultInventory.put(8, new ItemStack(Material.COBBLESTONE));
 		defaultInventory.put(9, new ItemStack(Material.ARROW));
 		defaultInventory.put(10, new ItemStack(Material.LAVA_BUCKET));
-		defaultInventory.put(11, new ItemStack(Material.LAVA_BUCKET));
-		defaultInventory.put(12, new ItemStack(Material.WATER_BUCKET));
-		defaultInventory.put(13, new ItemStack(Material.WATER_BUCKET));
+		defaultInventory.put(11, new ItemStack(Material.WATER_BUCKET));
 		defaultInventory.put(14, new ItemStack(Material.DIAMOND_PICKAXE));
 		defaultInventory.put(15, new ItemStack(Material.ENCHANTMENT_TABLE));
 		defaultInventory.put(16, new ItemStack(Material.ANVIL));

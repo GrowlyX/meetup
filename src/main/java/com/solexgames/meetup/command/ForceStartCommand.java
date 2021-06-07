@@ -30,6 +30,6 @@ public class ForceStartCommand extends BaseCommand {
 		}
 
 		game.setGameStartTime(10);
-		Bukkit.broadcastMessage((sender instanceof Player ? ((Player)sender).getDisplayName() : CC.D_RED + "Console") + CC.SEC + " force started the game.");
+		Bukkit.broadcastMessage((sender instanceof Player ? ((Player) sender).getDisplayName() : CC.D_RED + "Console") + CC.SEC + " force started the game.");
 	}
 }

@@ -1,15 +1,19 @@
 package com.solexgames.meetup.menu;
 
+import com.solexgames.core.CorePlugin;
 import com.solexgames.core.util.builder.ItemBuilder;
 import com.solexgames.core.util.external.Button;
 import com.solexgames.core.util.external.Menu;
 import com.solexgames.meetup.UHCMeetup;
 import com.solexgames.meetup.player.GamePlayer;
+import com.solexgames.meetup.util.CC;
+import com.solexgames.meetup.util.PlayerUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +36,11 @@ public class LoadoutEditorMenu extends Menu {
             .create();
 
     @Override
+    public int getSize() {
+        return 36;
+    }
+
+    @Override
     public String getTitle(Player player) {
         return "Editing Loadout";
     }
@@ -41,42 +50,41 @@ public class LoadoutEditorMenu extends Menu {
         final Map<Integer, Button> buttonMap = new HashMap<>();
         final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
 
-        for (int i = 0; i <= 36; i++) {
-            final int finalSlot = i;
-
-            buttonMap.put(i, new Button() {
-                @Override
-                public ItemStack getButtonItem(Player player) {
-                    return gamePlayer.getLoadout().getFromInteger(finalSlot);
-                }
-            });
-        }
+        gamePlayer.getLoadout().getInventoryLocationMap()
+                .forEach((integer, itemStack) -> buttonMap.put(
+                        integer >= 0 && integer <= 8 ? integer + 27 : integer - 9,
+                        new ItemBuilder(itemStack).toButton()
+                ));
 
         return buttonMap;
     }
 
-//    @Override
-//    public void onOpen(Player player) {
-//        player.getInventory().clear();
-//        player.sendMessage(Locale.LAYOUT_OPEN_EDITOR.formatLinesArray());
-//
-//        while (player.getInventory().firstEmpty() != -1) {
-//            final int firstEmpty = player.getInventory().firstEmpty();
-//
-//            player.getInventory().setItem(firstEmpty, LoadoutEditorMenu.RED_GLASS);
-//        }
-//    }
+    @Override
+    public void onOpen(Player player) {
+        player.getInventory().clear();
 
-//    @Override
-//    public void onClose(Player player) {
-//        final GamePlayer gamePlayer = CorePlugin.getInstance().getPlayerHandler().getByName(player.getName());
-//
-//        for (int i = 0; i <= 8; i++) {
-//            gamePlayer.getLayout().getItemStacks()[i] = this.getInventory().getItem(i);
-//        }
-//
-//        player.sendMessage(Locale.LAYOUT_MODIFIED.formatLinesArray());
-//
-//        CorePlugin.getInstance().getHotbarHandler().setupLobbyHotbar(player);
-//    }
+        while (player.getInventory().firstEmpty() != -1) {
+            final int firstEmpty = player.getInventory().firstEmpty();
+
+            player.getInventory().setItem(firstEmpty, LoadoutEditorMenu.RED_GLASS);
+        }
+
+        player.updateInventory();
+        player.sendMessage(CC.GREEN + "You're now editing your loadout.");
+    }
+
+    @Override
+    public void onClose(Player player) {
+        final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
+
+        for (int i = 0; i <= 35; i++) {
+            gamePlayer.getLoadout().getInventoryLocationMap()
+                    .put(i >= 27 ? i - 27 : i + 9, player.getOpenInventory().getItem(i));
+        }
+
+        player.sendMessage(CC.SEC + "You've modified your loadout!");
+        player.sendMessage(CC.I_GRAY + "If you need to reset your loadout try " + CC.I_YELLOW + "/resetloaout");
+
+        player.getInventory().clear();
+    }
 }

@@ -51,7 +51,7 @@ public class GamePlayer {
     }
 
     public void savePlayerData(boolean remove) {
-        CompletableFuture.runAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("uuid", this.uuid.toString()), this.getDocument(), new ReplaceOptions().upsert(true)));
+        CompletableFuture.runAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("_id", this.uuid), this.getDocument(), new ReplaceOptions().upsert(true)));
 
         if (remove) {
             UHCMeetup.getInstance().getPlayerHandler().remove(this.getUuid());
@@ -69,18 +69,15 @@ public class GamePlayer {
         document.put("played", this.played);
         document.put("wins", this.wins);
 
-        document.put("loadout", GsonFactory.getPrettyGson().toJson(this.loadout));
+        document.put("inventory", GsonFactory.getCompactGson().toJson(this.loadout));
 
         return document;
     }
 
     private void loadPlayerData() {
-        CompletableFuture.supplyAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().find(Filters.eq("uuid", this.uuid.toString())).first())
+        CompletableFuture.supplyAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().find(Filters.eq("_id", this.uuid)).first())
                 .thenAccept(document -> {
                     if (document == null) {
-                        this.loadout = new Loadout(this.uuid);
-                        this.loadout.setupDefaultInventory();
-
                         UHCMeetup.getInstance().getServer().getScheduler()
                                 .runTaskLaterAsynchronously(CorePlugin.getInstance(), () -> this.savePlayerData(false), 20L);
                     } else {
@@ -96,15 +93,17 @@ public class GamePlayer {
                         if (document.getInteger("wins") != null) {
                             this.wins = document.getInteger("wins");
                         }
-                        if (document.getString("loadout") != null) {
-                            this.loadout = GsonFactory.getPrettyGson().fromJson(document.getString("loadout"), Loadout.class);
-                        } else {
-                            this.loadout = new Loadout(this.uuid);
-                        }
 
-                        if (this.loadout.getInventoryLocationMap().isEmpty()) {
-                            this.loadout.setupDefaultInventory();
+                        final String inventory = document.getString("inventory");
+
+                        if (inventory != null) {
+                            this.loadout = GsonFactory.getPrettyGson().fromJson(inventory, Loadout.class);
                         }
+                    }
+
+                    if (this.loadout == null) {
+                        this.loadout = new Loadout(this.uuid);
+                        this.loadout.setupDefaultInventory();
                     }
                 });
     }
