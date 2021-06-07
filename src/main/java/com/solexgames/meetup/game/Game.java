@@ -15,18 +15,11 @@ import lombok.Setter;
 @Setter
 public class Game {
 
-    private int remaining;
-    private int initial;
     private int border = 100;
 
     private int gameStartTime = 60;
     private int borderTime = 120;
     private int endTime = 10;
-    private int noCleanTime = 15;
-
-    private boolean canStartGame;
-    private boolean canAnnounce;
-    private boolean generated;
 
     private String winner;
 

@@ -37,7 +37,7 @@ public class GameHandler {
 
 	private final Set<Material> whitelistedBlocks = new HashSet<>();
 
-	private final int minimumPlayers = 5;
+	private final int minimumPlayers = 2;
 	private boolean hasBeenBroadcasted = false;
 
 	private long lastAnnouncement = 0L;
@@ -64,9 +64,7 @@ public class GameHandler {
 	public void handleStart() {
 		this.game.setState(GameState.IN_GAME);
 
-		final List<GamePlayer> gamePlayers = this.getRemainingPlayers();
-
-		gamePlayers.forEach(gamePlayer -> {
+		this.getRemainingPlayers().forEach(gamePlayer -> {
 			final Player player = gamePlayer.getPlayer();
 			gamePlayer.setPlayed(gamePlayer.getPlayed() + 1);
 
@@ -75,9 +73,6 @@ public class GameHandler {
 
 		UHCMeetup.getInstance().getGameHandler().getSpectators()
 				.forEach(gamePlayer -> gamePlayer.getPlayer().sendMessage(CC.SEC + "You've been made a spectator as you're not playing."));
-
-		this.game.setRemaining(gamePlayers.size());
-		this.game.setInitial(gamePlayers.size());
 
 		new BorderTask();
 	}
@@ -168,7 +163,5 @@ public class GameHandler {
 				}
 			}
 		}, 100L);
-
-		Bukkit.getScheduler().runTaskLater(UHCMeetup.getInstance(), () -> this.game.setGenerated(true), 200L);
 	}
 }

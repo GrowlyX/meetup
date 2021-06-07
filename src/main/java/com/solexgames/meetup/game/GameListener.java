@@ -61,7 +61,7 @@ public class GameListener implements Listener {
 			case WAITING:
 				final World lobbyWorld = Bukkit.getWorld("world");
 
-				player.teleport(new Location(lobbyWorld, 0.5, lobbyWorld.getHighestBlockYAt(0, 0) + 6, 0.5));
+				player.teleport(new Location(lobbyWorld, 0.5, lobbyWorld.getHighestBlockYAt(0, 0) + 4, 0.5));
 
 				gamePlayer.setState(PlayerState.WAITING);
 

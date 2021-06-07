@@ -49,10 +49,7 @@ public class WorldGenTask extends BukkitRunnable {
 
 		if (this.isGenerating) {
 			Logger.getGlobal().info("[UHCMeetup] Currently generating the uhc meetup world...");
-			return;
 		}
-
-		this.generateNewWorld();
 	}
 
 	private void generateNewWorld() {
@@ -114,7 +111,6 @@ public class WorldGenTask extends BukkitRunnable {
 			return;
 		} else {
 			Bukkit.getLogger().info("Found a good seed (" + this.world.getSeed() + ").");
-			this.cancel();
 		}
 
 		final File lock = new File("meetup_game", "gen.lock");
@@ -127,8 +123,8 @@ public class WorldGenTask extends BukkitRunnable {
 			return;
 		}
 
-		gameHandler.handleSetWhitelistedBlocks();
-		gameHandler.handleLoadChunks();
+		this.gameHandler.handleSetWhitelistedBlocks();
+		this.gameHandler.handleLoadChunks();
 
 		new Border(Bukkit.getWorld("meetup_game"), 100);
 
@@ -235,6 +231,11 @@ public class WorldGenTask extends BukkitRunnable {
 		this.setBiomeBase(Biome.FROZEN_OCEAN, Biome.PLAINS, 0);
 		this.setBiomeBase(Biome.FROZEN_RIVER, Biome.PLAINS, 0);
 		this.setBiomeBase(Biome.ICE_MOUNTAINS, Biome.PLAINS, 0);
+
+		Logger.getGlobal().info("[UHCMeetup] Finished biome swap for the UHC Meetup world.");
+		Logger.getGlobal().info("[UHCMeetup] Starting world generation for the UHC Meetup world.");
+
+		this.generateNewWorld();
 	}
 
 	private void setBiomeBase(Biome from, Biome to, int plus) {
