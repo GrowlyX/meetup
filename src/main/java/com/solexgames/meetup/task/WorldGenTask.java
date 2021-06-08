@@ -234,9 +234,7 @@ public class WorldGenTask extends BukkitRunnable {
 		this.setBiomeBase(Biome.FROZEN_RIVER, Biome.PLAINS, 0);
 		this.setBiomeBase(Biome.ICE_MOUNTAINS, Biome.PLAINS, 0);
 		this.setBiomeBase(Biome.SWAMPLAND, Biome.PLAINS, 0);
-		this.setBiomeBase(Biome.SWAMPLAND, Biome.PLAINS, 128);
 		this.setBiomeBase(Biome.SWAMPLAND_MOUNTAINS, Biome.PLAINS, 0);
-		this.setBiomeBase(Biome.SWAMPLAND_MOUNTAINS, Biome.PLAINS, 128);
 
 		Logger.getGlobal().info("[UHCMeetup] Finished biome swap for the UHC Meetup world.");
 		Logger.getGlobal().info("[UHCMeetup] Starting world generation for the UHC Meetup world.");
