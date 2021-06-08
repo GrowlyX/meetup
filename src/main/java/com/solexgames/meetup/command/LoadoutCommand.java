@@ -16,11 +16,6 @@ public class LoadoutCommand extends BaseCommand {
 
 	@CommandAlias("loadout")
 	public void execute(Player player) {
-		if (!UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.WAITING)) {
-			player.sendMessage(CC.RED + "You cannot perform this action right now.");
-			return;
-		}
-
 		new LoadoutEditorMenu().openMenu(player);
 	}
 }

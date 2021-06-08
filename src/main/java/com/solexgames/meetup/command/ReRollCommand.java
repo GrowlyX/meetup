@@ -43,7 +43,7 @@ public class ReRollCommand extends BaseCommand {
         final Game game = UHCMeetup.getInstance().getGameHandler().getGame();
 
         if (!game.isState(GameState.STARTING)) {
-            player.sendMessage(CC.RED + "Error: You can only redeem re-roll credits when a meetup is starting.");
+            player.sendMessage(CC.RED + "Error: You can only redeem re-roll credits when the game is starting.");
             return;
         }
 
