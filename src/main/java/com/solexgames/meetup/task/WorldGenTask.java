@@ -74,44 +74,44 @@ public class WorldGenTask extends BukkitRunnable {
 
 		UHCMeetup.getInstance().getLogger().info("Loaded a new world.");
 
-		boolean flag = false;
-
-		for (int i = -100; i <= 100; ++i) {
-			boolean isInvalid = false;
-
-			for (int j = -100; j <= 100; j++) {
-				boolean isCenter = i >= -50 && i <= 50 && j >= -50 && j <= 50;
-
-				if (isCenter) {
-					final Block block = this.world.getHighestBlockAt(i, j).getLocation().add(0, -1, 0).getBlock();
-
-					if (block.getType() == Material.STATIONARY_WATER || block.getType() == Material.WATER || block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) {
-						++waterCount;
-					}
-				}
-
-				if (waterCount >= 2000) {
-					UHCMeetup.getInstance().getLogger().info("Invalid center, too much water/lava. (" + waterCount + ")");
-					isInvalid = true;
-					break;
-				}
-			}
-
-			if (isInvalid) {
-				flag = true;
-				break;
-			}
-		}
-
-		if (flag) {
-			Bukkit.getServer().unloadWorld(this.world, false);
-
-			this.deleteDirectory(new File("meetup_game"));
-			this.isGenerating = false;
-			return;
-		} else {
-			Bukkit.getLogger().info("Found a good seed (" + this.world.getSeed() + ").");
-		}
+//		boolean invalid = false;
+//
+//		for (int i = -100; i <= 100; ++i) {
+//			boolean isInvalid = false;
+//
+//			for (int j = -100; j <= 100; j++) {
+//				boolean isCenter = i >= -50 && i <= 50 && j >= -50 && j <= 50;
+//
+//				if (isCenter) {
+//					final Block block = this.world.getHighestBlockAt(i, j).getLocation().add(0, -1, 0).getBlock();
+//
+//					if (block.getType() == Material.STATIONARY_WATER || block.getType() == Material.WATER || block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) {
+//						++waterCount;
+//					}
+//				}
+//
+//				if (waterCount >= 2000) {
+//					UHCMeetup.getInstance().getLogger().info("Invalid center, too much water/lava. (" + waterCount + ")");
+//					isInvalid = true;
+//					break;
+//				}
+//			}
+//
+//			if (isInvalid) {
+//				invalid = true;
+//				break;
+//			}
+//		}
+//
+//		if (invalid) {
+//			Bukkit.getServer().unloadWorld(this.world, false);
+//
+//			this.deleteDirectory(new File("meetup_game"));
+//			this.isGenerating = false;
+//			return;
+//		} else {
+//			Bukkit.getLogger().info("Found a good seed (" + this.world.getSeed() + ").");
+//		}
 
 		final File lock = new File("meetup_game", "gen.lock");
 
