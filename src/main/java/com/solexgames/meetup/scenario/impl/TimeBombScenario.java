@@ -1,5 +1,7 @@
 package com.solexgames.meetup.scenario.impl;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.solexgames.meetup.UHCMeetup;
 import com.solexgames.meetup.scenario.Scenario;
 import com.solexgames.meetup.util.CC;
@@ -49,10 +51,13 @@ public class TimeBombScenario extends Scenario {
 					this.cancel();
 
 					chest.getInventory().clear();
+					chest.getBlock().setType(Material.AIR);
+
 					where.getWorld().createExplosion(where, 3.0F);
 
 					Bukkit.broadcastMessage(player.getDisplayName() + "'s " + CC.SEC + "corpse has exploded!");
 				}
+
 				this.time--;
 			}
 		}.runTaskTimer(UHCMeetup.getInstance(), 0L, 20L);
@@ -60,6 +65,6 @@ public class TimeBombScenario extends Scenario {
 
 	@Override
 	public List<Listener> getListeners() {
-		return new ArrayList<>();
+		return ImmutableList.of();
 	}
 }

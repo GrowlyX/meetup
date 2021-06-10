@@ -121,6 +121,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.GrowlyX</groupId>
+            <artifactId>WorldGeneratorApi</artifactId>
+            <version>v1.1.4</version>
+        </dependency>
+
         <!-- Internal Libraries !-->
         <dependency>
             <groupId>com.github.NoSequel</groupId>

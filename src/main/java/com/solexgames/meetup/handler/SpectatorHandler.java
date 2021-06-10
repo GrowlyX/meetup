@@ -56,7 +56,6 @@ public class SpectatorHandler {
 			player.getInventory().setArmorContents(null);
 
 			player.setGameMode(GameMode.CREATIVE);
-			player.addPotionEffect(this.invisibilityEffect);
 
 			if (reason != null) {
 				gamePlayer.getPlayer().sendMessage(CC.SEC + "You're now a spectator: " + CC.RED + reason);

@@ -5,10 +5,12 @@ import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.scenario.impl.NoCleanScenario;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.TimeUtil;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
  * @author GrowlyX
@@ -40,6 +42,23 @@ public class NoCleanListener implements Listener {
         } else if (gamePlayer.getNoCleanTimer() != null) {
             damaging.sendMessage(entity.getDisplayName() + "'s " + CC.RED + "no clean timer expires in " + TimeUtil.secondsToRoundedTime(gamePlayer.getNoCleanTimer().getTime()) + ".");
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent event) {
+        final Entity entity = event.getEntity();
+
+        if (entity instanceof Player) {
+            final Player player = (Player) entity;
+            final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
+
+            // already checking on EntityDamageByEntityEvent
+            if (gamePlayer != null && !event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
+                if (gamePlayer.getNoCleanTimer() != null) {
+                    event.setCancelled(true);
+                }
+            }
         }
     }
 }

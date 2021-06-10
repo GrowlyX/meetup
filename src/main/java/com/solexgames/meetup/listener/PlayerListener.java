@@ -1,8 +1,11 @@
 package com.solexgames.meetup.listener;
 
+import com.solexgames.core.listener.custom.PreDisguiseEvent;
 import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.game.Game;
 import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.menu.SpectateMenu;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -24,6 +27,16 @@ import org.bukkit.event.weather.WeatherChangeEvent;
  * @since 01/06/2021 21:26
  */
 public class PlayerListener implements Listener {
+
+	@EventHandler
+	public void onPreDisguise(PreDisguiseEvent event) {
+		final Game game = UHCMeetup.getInstance().getGameHandler().getGame();
+
+		if (game.isState(GameState.STARTING) || game.isState(GameState.IN_GAME)) {
+			event.getPlayer().sendMessage(ChatColor.RED + "Error: You cannot disguise while the game is starting or has already started.");
+			event.setCancelled(true);
+		}
+	}
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {

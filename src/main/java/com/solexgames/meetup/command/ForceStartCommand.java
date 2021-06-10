@@ -38,6 +38,8 @@ public class ForceStartCommand extends BaseCommand {
 
 			gameHandler.handleStarting();
 			game.setGameStartTime(10);
+
+			Bukkit.broadcastMessage((sender instanceof Player ? ((Player) sender).getDisplayName() : CC.D_RED + "Console") + CC.SEC + " force started the game.");
 			return;
 		}
 

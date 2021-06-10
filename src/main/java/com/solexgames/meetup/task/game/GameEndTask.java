@@ -41,8 +41,6 @@ public class GameEndTask extends BukkitRunnable {
 
 				ExperienceUtil.addExperience(player, winner ? 150 : 15);
 
-				player.sendMessage(CC.PRI + "+" + (winner ? 150 : 15) + CC.SEC + " experience " + CC.PRI + (winner ? "Winning" : "Playing") + " UHC Meetup");
-
 				final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
 
 				if (winner) {
