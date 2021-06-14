@@ -12,8 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.Set;
-
 @UtilityClass
 public class PlayerUtil {
 
@@ -52,8 +50,6 @@ public class PlayerUtil {
 	}
 
 	public static void restorePlayer(Player player) {
-		player.getActivePotionEffects().clear();
-
 		player.setHealth(20.0D);
 		player.setFoodLevel(20);
 		player.setLevel(0);

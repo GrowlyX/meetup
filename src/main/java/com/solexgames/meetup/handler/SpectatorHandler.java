@@ -4,6 +4,7 @@ import com.solexgames.core.CorePlugin;
 import com.solexgames.core.player.PotPlayer;
 import com.solexgames.core.util.builder.ItemBuilder;
 import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.board.Board;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.player.PlayerState;
@@ -14,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Team;
 
 /**
  * @author puugz
@@ -48,6 +50,8 @@ public class SpectatorHandler {
 	public void setSpectator(GamePlayer gamePlayer, String reason, boolean title) {
 		final Player player = gamePlayer.getPlayer();
 
+		gamePlayer.setState(PlayerState.SPECTATING);
+
 		Bukkit.getScheduler().runTask(UHCMeetup.getInstance(), () -> {
 			player.setAllowFlight(true);
 			player.setFlying(true);
@@ -56,6 +60,7 @@ public class SpectatorHandler {
 			player.getInventory().setArmorContents(null);
 
 			player.setGameMode(GameMode.CREATIVE);
+			player.addPotionEffect(this.invisibilityEffect);
 
 			if (reason != null) {
 				gamePlayer.getPlayer().sendMessage(CC.SEC + "You're now a spectator: " + CC.RED + reason);
@@ -67,9 +72,21 @@ public class SpectatorHandler {
 
 			Bukkit.getOnlinePlayers().forEach(other -> {
 				final GamePlayer gamePlayer1 = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(other);
+				final Board board = UHCMeetup.getInstance().getBoardManager().getPlayerBoards().get(other.getUniqueId());
+				final Team ghostTeam = board.getScoreboard().getTeam("ghost");
 
 				if (!gamePlayer1.isSpectating()) {
 					other.hidePlayer(player);
+
+					if (ghostTeam.hasEntry(player.getName())) {
+						ghostTeam.removeEntry(player.getName());
+					}
+				} else {
+					other.showPlayer(player);
+
+					if (!ghostTeam.hasEntry(player.getName())) {
+						ghostTeam.addEntry(player.getName());
+					}
 				}
 			});
 
@@ -80,8 +97,6 @@ public class SpectatorHandler {
 
 			player.updateInventory();
 		});
-
-		gamePlayer.setState(PlayerState.SPECTATING);
 	}
 
 	public void removeSpectator(GamePlayer gamePlayer) {

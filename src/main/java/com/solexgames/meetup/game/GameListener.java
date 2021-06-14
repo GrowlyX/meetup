@@ -74,7 +74,6 @@ public class GameListener implements Listener {
 					final int more = minPlayers - waiting;
 					Bukkit.broadcastMessage(CC.SEC + "The game requires " + CC.PRI + more + CC.SEC + " player" + (more == 1 ? "" : "s") + " to start.");
 				}
-
 				break;
 			case STARTING:
 				gamePlayer.setState(PlayerState.PLAYING);
@@ -91,8 +90,6 @@ public class GameListener implements Listener {
 				player.teleport(new Location(gameWorld, 0.5, gameWorld.getHighestBlockYAt(0, 0) + 15, 0.5));
 
 				UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, null, false);
-
-				gamePlayer.setState(PlayerState.SPECTATING);
 				break;
 		}
 

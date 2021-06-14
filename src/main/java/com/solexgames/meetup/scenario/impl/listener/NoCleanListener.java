@@ -7,10 +7,12 @@ import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.TimeUtil;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 /**
  * @author GrowlyX
@@ -22,10 +24,26 @@ public class NoCleanListener implements Listener {
     @EventHandler
     public void onPlayerEntityHit(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player)) return;
-        if (!(event.getDamager() instanceof Player)) return;
+
+        Player damaging = null;
+
+        if (event.getDamager() instanceof Projectile) {
+            final Projectile source = (Projectile) event.getDamager();
+
+            if (source.getShooter() instanceof Player) {
+                damaging = (Player) source.getShooter();
+            }
+        }
+
+        if (event.getDamager() instanceof Player) {
+            damaging = (Player) event.getDamager();
+        }
+
+        if (damaging == null) {
+            return;
+        }
 
         final Player entity = (Player) event.getEntity();
-        final Player damaging = (Player) event.getDamager();
 
         final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(entity);
         final GamePlayer damagingPlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(damaging);
@@ -42,23 +60,6 @@ public class NoCleanListener implements Listener {
         } else if (gamePlayer.getNoCleanTimer() != null) {
             damaging.sendMessage(entity.getDisplayName() + "'s " + CC.RED + "no clean timer expires in " + TimeUtil.secondsToRoundedTime(gamePlayer.getNoCleanTimer().getTime()) + ".");
             event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onPlayerDamage(EntityDamageEvent event) {
-        final Entity entity = event.getEntity();
-
-        if (entity instanceof Player) {
-            final Player player = (Player) entity;
-            final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
-
-            // already checking on EntityDamageByEntityEvent
-            if (gamePlayer != null && !event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
-                if (gamePlayer.getNoCleanTimer() != null) {
-                    event.setCancelled(true);
-                }
-            }
         }
     }
 }

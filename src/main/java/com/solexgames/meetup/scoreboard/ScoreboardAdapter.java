@@ -10,6 +10,7 @@ import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.util.CC;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,15 +79,15 @@ public class ScoreboardAdapter implements BoardAdapter {
 
 	@Override
 	public void onScoreboardCreate(Player player, Scoreboard board) {
-//        Team ghostTeam = board.getTeam("ghost");
-//
-//        if (ghostTeam == null) {
-//        	ghostTeam = board.registerNewTeam("ghost");
-//		}
+        Team ghostTeam = board.getTeam("ghost");
+
+        if (ghostTeam == null) {
+        	ghostTeam = board.registerNewTeam("ghost");
+		}
+
+        ghostTeam.setCanSeeFriendlyInvisibles(true);
 	}
 
 	@Override
-	public void preLoop() {
-
-	}
+	public void preLoop() { }
 }

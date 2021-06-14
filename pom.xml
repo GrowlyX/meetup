@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
 
-    <groupId>com.solexgames.uhc</groupId>
+    <groupId>com.solexgames.meetup</groupId>
     <artifactId>uhc-meetup</artifactId>
     <version>LATEST</version>
 
