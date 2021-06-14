@@ -38,8 +38,6 @@ public class TimeBombScenario extends Scenario {
 		where.add(0, 1, 0).getBlock().setType(Material.AIR);
 		where.add(1, 1, 0).getBlock().setType(Material.AIR);
 
-		final Chest chest2 = (Chest) where.add(1, 0, 0).getBlock().getState();
-
 		items.stream().filter(stack -> stack != null && stack.getType() != Material.AIR).forEach(stack -> chest.getInventory().addItem(stack));
 
 		chest.getInventory().addItem(MeetupUtils.getGoldenHead());
@@ -55,10 +53,6 @@ public class TimeBombScenario extends Scenario {
 					chest.getInventory().clear();
 					chest.getBlock().setType(Material.AIR);
 					chest.update();
-
-					chest2.getInventory().clear();
-					chest2.getBlock().setType(Material.AIR);
-					chest2.update();
 
 					where.getWorld().createExplosion(where, 3.0F);
 
