@@ -51,11 +51,15 @@ public class GameEndTask extends BukkitRunnable {
 		}
 
 		if (game.getEndTime() == 5) {
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.sendMessage(ChatColor.RED + "The server you were previously on is now down for:");
-				player.sendMessage(game.getWinner() + CC.GREEN + " has won the game, thanks for playing!");
+			final NetworkServer networkServer = this.getBestHub();
 
-				BungeeUtil.sendToServer(player, this.getBestHub().getServerName(), CorePlugin.getInstance());
+			if (networkServer != null) {
+				for (Player player : Bukkit.getOnlinePlayers()) {
+					player.sendMessage(ChatColor.RED + "The server you were previously on is now down for:");
+					player.sendMessage(game.getWinner() + CC.GREEN + " has won the game, thanks for playing!");
+
+					BungeeUtil.sendToServer(player, networkServer.getServerName(), CorePlugin.getInstance());
+				}
 			}
 		}
 
@@ -71,8 +75,7 @@ public class GameEndTask extends BukkitRunnable {
 	public NetworkServer getBestHub() {
 		return CorePlugin.getInstance().getServerManager().getNetworkServers().stream()
 				.filter(Objects::nonNull)
-				.filter(networkServer -> networkServer.getServerType().equals(NetworkServerType.HUB))
-				.min(Comparator.comparingInt(server -> (int) + (long) server.getOnlinePlayers()))
-				.orElse(null);
+				.filter(networkServer -> networkServer.getServerType().equals(NetworkServerType.HUB) && !networkServer.getServerName().contains("ds") && !networkServer.isWhitelistEnabled())
+				.min(Comparator.comparingInt(server -> (int) + (long) server.getOnlinePlayers())).orElse(null);
 	}
 }
