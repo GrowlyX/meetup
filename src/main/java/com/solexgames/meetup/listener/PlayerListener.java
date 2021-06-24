@@ -1,21 +1,27 @@
 package com.solexgames.meetup.listener;
 
+import com.solexgames.core.CorePlugin;
 import com.solexgames.core.listener.custom.PreDisguiseEvent;
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.core.util.BungeeUtil;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.game.Game;
 import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.menu.SpectateMenu;
+import com.solexgames.meetup.player.GamePlayer;
+import com.solexgames.meetup.util.CC;
+import com.solexgames.meetup.util.MeetupUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -28,9 +34,18 @@ import org.bukkit.event.weather.WeatherChangeEvent;
  */
 public class PlayerListener implements Listener {
 
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(event.getPlayer());
+
+		if (!event.isCancelled() && gamePlayer.isSpectating()) {
+			event.setFormat(CC.GRAY + "[Spectator] " + CC.WHITE + event.getFormat());
+		}
+	}
+
 	@EventHandler
 	public void onPreDisguise(PreDisguiseEvent event) {
-		final Game game = UHCMeetup.getInstance().getGameHandler().getGame();
+		final Game game = Meetup.getInstance().getGameHandler().getGame();
 
 		if (game.isState(GameState.STARTING) || game.isState(GameState.IN_GAME)) {
 			event.getPlayer().sendMessage(ChatColor.RED + "Error: You cannot disguise while the game is starting or has already started.");
@@ -40,11 +55,19 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if (this.isSpectator(event.getPlayer())) event.setCancelled(true);
-		if (!event.hasItem() || !event.getAction().name().contains("RIGHT") || !this.isSpectator(event.getPlayer())) return;
-		if (!event.getItem().getType().equals(Material.ITEM_FRAME)) return;
+		if (this.shouldCancel(event.getPlayer())) event.setCancelled(true);
+		if (!event.hasItem() || !event.getAction().name().contains("RIGHT")) return;
 
-		new SpectateMenu().openMenu(event.getPlayer());
+		switch (event.getItem().getType()) {
+			case ITEM_FRAME:
+				if (this.isSpectator(event.getPlayer())) {
+					new SpectateMenu().openMenu(event.getPlayer());
+				}
+				break;
+			case BED:
+				BungeeUtil.sendToServer(event.getPlayer(), MeetupUtil.getBestHub().getServerName(), CorePlugin.getInstance());
+				break;
+		}
 	}
 
 	@EventHandler
@@ -95,7 +118,6 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (this.shouldCancel(event.getPlayer())) {
@@ -121,28 +143,22 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
-		if (event.getEntity() instanceof Player) {
-			if (this.shouldCancel((Player) event.getEntity())) {
-				event.setCancelled(true);
-			}
+		if (event.getEntity() instanceof Player && this.shouldCancel((Player) event.getEntity())) {
+			event.setCancelled(true);
 		}
 	}
 
 	@EventHandler
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		if (event.getDamager() instanceof Player) {
-			if (this.shouldCancel((Player) event.getDamager())) {
-				event.setCancelled(true);
-			}
+		if (event.getDamager() instanceof Player && this.shouldCancel((Player) event.getDamager())) {
+			event.setCancelled(true);
 		}
 	}
 
 	@EventHandler
 	public void onVehicleEnter(VehicleEnterEvent event) {
-		if (event.getEntered() instanceof Player) {
-			if (this.shouldCancel((Player) event.getEntered())) {
-				event.setCancelled(true);
-			}
+		if (event.getEntered() instanceof Player && this.shouldCancel((Player) event.getEntered())) {
+			event.setCancelled(true);
 		}
 	}
 
@@ -152,11 +168,11 @@ public class PlayerListener implements Listener {
 	}
 
 	public boolean shouldCancel(Player player) {
-		return UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player).isSpectating()
-				|| !UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME);
+		return Meetup.getInstance().getPlayerHandler().getByPlayer(player).isSpectating()
+				|| !Meetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME);
 	}
 
 	public boolean isSpectator(Player player) {
-		return UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player).isSpectating();
+		return Meetup.getInstance().getPlayerHandler().getByPlayer(player).isSpectating();
 	}
 }

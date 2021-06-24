@@ -1,12 +1,12 @@
 package com.solexgames.meetup.task.game;
 
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.game.Game;
-import com.solexgames.meetup.player.PlayerState;
 import com.solexgames.meetup.util.CC;
-import com.solexgames.meetup.util.PlayerUtil;
-import com.solexgames.meetup.util.TimeUtil;
+import com.solexgames.meetup.util.MeetupUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
@@ -19,38 +19,47 @@ import java.util.Arrays;
 public class GameStartTask extends BukkitRunnable {
 
 	public GameStartTask() {
-		this.runTaskTimer(UHCMeetup.getInstance(), 0L, 20L);
+		this.runTaskTimer(Meetup.getInstance(), 0L, 20L);
 	}
 
 	@Override
 	public void run() {
-		final Game game = UHCMeetup.getInstance().getGameHandler().getGame();
+		final Game game = Meetup.getInstance().getGameHandler().getGame();
 		final int gameStartTime = game.getGameStartTime();
 
 		if (Arrays.asList(60, 30, 15, 10, 5, 4, 3, 2, 1).contains(gameStartTime)) {
-			Bukkit.broadcastMessage(CC.SEC + "The game will begin in " + CC.PRI + TimeUtil.secondsToRoundedTime(gameStartTime) + CC.SEC + ".");
+			Bukkit.broadcastMessage(CC.SEC + "The game will begin in " + CC.PRI + MeetupUtil.secondsToRoundedTime(gameStartTime) + CC.SEC + ".");
 
 			if (Arrays.asList(15, 10, 5, 4, 3, 2, 1).contains(gameStartTime)) {
 				this.sendTitle(CC.B_GREEN + gameStartTime, "Game is starting!");
+				this.playSound(1F);
 			}
 		}
 
 		if (gameStartTime == 0) {
-			Bukkit.broadcastMessage(CC.SEC + "The game has started, good luck!");
-			UHCMeetup.getInstance().getGameHandler().handleStart();
+			Bukkit.broadcastMessage(CC.SEC + "The game has commenced!");
+			Meetup.getInstance().getGameHandler().handleGameStarted();
 
-			this.sendTitle(CC.B_GREEN + "BEGIN", "Game has started!");
 			this.cancel();
+			this.sendTitle(CC.B_GREEN + "BEGIN", "Game has started!");
+			this.playSound(2F);
 			return;
 		}
 
 		game.setGameStartTime(gameStartTime - 1);
 	}
 
+	private void playSound(float pitch) {
+		Meetup.getInstance().getGameHandler().getRemaining()
+				.forEach(gamePlayer -> {
+					final Player player = gamePlayer.getPlayer();
+
+					player.playSound(player.getLocation(), Sound.NOTE_PLING, 5F, pitch);
+				});
+	}
+
 	private void sendTitle(String title, String subTitle) {
-		Bukkit.getOnlinePlayers().stream()
-				.map(player -> UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player))
-				.filter(gamePlayer -> !gamePlayer.getState().equals(PlayerState.SPECTATING))
-				.forEach(gamePlayer -> PlayerUtil.sendTitle(gamePlayer.getPlayer(), title, subTitle, 0, 20 * 5, 20));
+		Meetup.getInstance().getGameHandler().getRemaining()
+				.forEach(gamePlayer -> MeetupUtil.sendTitle(gamePlayer.getPlayer(), title, subTitle, 0, 20 * 5, 20));
 	}
 }

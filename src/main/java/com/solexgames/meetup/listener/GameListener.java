@@ -1,29 +1,25 @@
-package com.solexgames.meetup.game;
+package com.solexgames.meetup.listener;
 
 import com.solexgames.core.util.Color;
-import com.solexgames.meetup.UHCMeetup;
-import com.solexgames.meetup.board.Board;
+import com.solexgames.meetup.Meetup;
+import com.solexgames.meetup.game.GameState;
+import com.solexgames.meetup.handler.DeathMessageHandler;
 import com.solexgames.meetup.handler.GameHandler;
 import com.solexgames.meetup.player.GamePlayer;
-import com.solexgames.meetup.player.PlayerState;
 import com.solexgames.meetup.scenario.impl.NoCleanScenario;
 import com.solexgames.meetup.scenario.impl.TimeBombScenario;
 import com.solexgames.meetup.util.CC;
-import com.solexgames.meetup.util.MeetupUtils;
-import com.solexgames.meetup.util.PlayerUtil;
-import org.apache.commons.lang3.StringUtils;
+import com.solexgames.meetup.util.MeetupUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -41,32 +37,25 @@ public class GameListener implements Listener {
 
 	@EventHandler
 	public void onAsyncJoin(AsyncPlayerPreLoginEvent event) {
-		if (event.getLoginResult().equals(AsyncPlayerPreLoginEvent.Result.ALLOWED)) {
-			UHCMeetup.getInstance().getPlayerHandler().insert(event.getUniqueId(), new GamePlayer(event.getUniqueId(), event.getName()));
-		}
+		Meetup.getInstance().getPlayerHandler().insert(event.getUniqueId(), new GamePlayer(event.getUniqueId(), event.getName()));
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
+		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
+		final GameHandler gameHandler = Meetup.getInstance().getGameHandler();
 
-		UHCMeetup.getInstance().getBoardManager().getPlayerBoards().put(player.getUniqueId(), new Board(player, UHCMeetup.getInstance().getBoardManager().getAdapter()));
-
-		final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
-		final GameHandler gameHandler = UHCMeetup.getInstance().getGameHandler();
-
-		PlayerUtil.resetPlayer(player);
+		Meetup.getInstance().getPlayerHandler().setupInventory(player);
 
 		switch (gameHandler.getGame().getState()) {
 			case WAITING:
-				final World lobbyWorld = Bukkit.getWorld("world");
+				gameHandler.getRemaining().add(gamePlayer);
 
-				player.teleport(new Location(lobbyWorld, 0.5, lobbyWorld.getHighestBlockYAt(0, 0) + 4, 0.5));
+				player.teleport(gameHandler.getSpawnLocation());
 
-				gamePlayer.setState(PlayerState.WAITING);
-
-				final int waiting = gameHandler.getRemainingPlayers().size();
-				final int minPlayers = gameHandler.getMinimumPlayers();
+				final int waiting = gameHandler.getRemaining().size();
+				final int minPlayers = gameHandler.getMinPlayers();
 
 				if (waiting >= minPlayers) {
 					gameHandler.handleStarting();
@@ -76,20 +65,18 @@ public class GameListener implements Listener {
 				}
 				break;
 			case STARTING:
-				gamePlayer.setState(PlayerState.PLAYING);
+				gameHandler.getRemaining().add(gamePlayer);
 
-				player.teleport(MeetupUtils.getScatterLocation());
-				PlayerUtil.sitPlayer(player);
+				player.teleport(MeetupUtil.getScatterLocation());
+				MeetupUtil.sitPlayer(player);
 
-				UHCMeetup.getInstance().getKitManager().handleItems(player);
+				Meetup.getInstance().getKitHandler().handleItems(player);
 				break;
 			case IN_GAME:
-				final World gameWorld = Bukkit.getWorld("meetup_game");
-
 				player.sendMessage(CC.SEC + "You've been made a spectator as you've joined too late into the game.");
-				player.teleport(new Location(gameWorld, 0.5, gameWorld.getHighestBlockYAt(0, 0) + 15, 0.5));
+				player.teleport(gameHandler.getSpawnLocation());
 
-				UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, null, false);
+				Meetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, null, false);
 				break;
 		}
 
@@ -99,28 +86,39 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		final Player player = event.getPlayer();
-		final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
-
-		UHCMeetup.getInstance().getBoardManager().getPlayerBoards().remove(player.getUniqueId());
+		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
+		final GameHandler gameHandler = Meetup.getInstance().getGameHandler();
 
 		if (gamePlayer != null) {
 			gamePlayer.savePlayerData(true);
 
-			if (gamePlayer.isPlaying() && UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
+			if (gamePlayer.isPlaying() && Meetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
 				Bukkit.broadcastMessage(player.getDisplayName() + CC.SEC + " has disconnected and was disqualified.");
 
-				UHCMeetup.getInstance().getGameHandler().checkWinners();
+				Meetup.getInstance().getGameHandler().checkWinners();
 			}
+
+			gameHandler.getRemaining().remove(gamePlayer);
+			gameHandler.getSpectators().remove(gamePlayer);
 		}
 
 		event.setQuitMessage(null);
  	}
 
-	@EventHandler
+	@EventHandler(
+			priority = EventPriority.LOWEST,
+			ignoreCancelled = true
+	)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		final Player player = event.getEntity();
 		final Player killer = event.getEntity().getKiller();
 
+		final DeathMessageHandler deathMessageHandler = Meetup.getInstance().getDeathMessageHandler();
+		final CraftEntity craftKiller = deathMessageHandler.getKiller(player);
+
+		event.setDeathMessage(deathMessageHandler.getDeathMessage(player, craftKiller));
+
+		player.spigot().respawn();
 		player.setHealth(20.0D);
 		player.teleport(player.getLocation());
 
@@ -133,48 +131,45 @@ public class GameListener implements Listener {
 				.filter(stack -> stack != null && stack.getType() != Material.AIR)
 				.forEach(items::add);
 
-		UHCMeetup.getInstance().getScenario(TimeBombScenario.class)
+		Meetup.getInstance().getScenario(TimeBombScenario.class)
 				.handleTimeBomb(player, event.getDrops(), items);
 
 		event.setDroppedExp(0);
 
-		final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
+		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 
 		gamePlayer.setDeaths(gamePlayer.getDeaths() + 1);
 
 		if (killer != null) {
-			final GamePlayer playerKiller = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(killer);
+			final GamePlayer playerKiller = Meetup.getInstance().getPlayerHandler().getByPlayer(killer);
 
 			playerKiller.setGameKills(playerKiller.getGameKills() + 1);
 			playerKiller.setKills(playerKiller.getKills() + 1);
 
-			event.setDeathMessage(player.getDisplayName() + CC.GRAY + " [" + CC.RED + gamePlayer.getGameKills() + CC.GRAY + "]" + CC.SEC + " was slain by " + killer.getDisplayName() + CC.GRAY + " [" + CC.RED + playerKiller.getGameKills() + CC.GRAY + "]" + CC.SEC + " using " + CC.RED + StringUtils.capitalize(killer.getItemInHand().getType().name().replace("_", " ").toLowerCase()) + CC.SEC + ".");
+			Meetup.getInstance().getGameHandler().getKillTrackerMap().put(killer.getDisplayName(), playerKiller.getKills());
 
-			UHCMeetup.getInstance().getScenario(NoCleanScenario.class).handleNoClean(playerKiller);
+			Meetup.getInstance().getScenario(NoCleanScenario.class).handleNoClean(playerKiller);
 		}
 
-		if (killer == null) {
-			event.setDeathMessage(player.getDisplayName() + CC.GRAY + " [" + CC.RED + gamePlayer.getGameKills() + CC.GRAY + "]" + CC.SEC + " was killed.");
-		}
-
-		UHCMeetup.getInstance().getGameHandler().checkWinners();
-		UHCMeetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "died", true);
+		Meetup.getInstance().getGameHandler().checkWinners();
+		Meetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "died", true);
 	}
 
 	@EventHandler
-	public void onHorseSetup(CreatureSpawnEvent event) {
-		if (event.getEntityType() != EntityType.HORSE || event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) {
-			return;
+	public void onEntityDamage(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player)) return;
+
+		final Player player = (Player) event.getEntity();
+		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
+
+		if (event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
+			if (gamePlayer.isPlaying() && Meetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
+				player.setHealth(0);
+			} else {
+				event.setCancelled(true);
+				player.teleport(player.getWorld().getSpawnLocation());
+			}
 		}
-
-		final Horse horse = (Horse) event.getEntity();
-
-		horse.setAdult();
-		horse.setAgeLock(true);
-
-		horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
-
-		horse.setTamed(true);
 	}
 
 	@EventHandler

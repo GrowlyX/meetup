@@ -1,19 +1,16 @@
 package com.solexgames.meetup.task;
 
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.handler.GameHandler;
 import com.solexgames.meetup.game.border.Border;
 import net.minecraft.server.v1_8_R3.BiomeBase;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 public class WorldGenTask extends BukkitRunnable {
@@ -61,8 +58,8 @@ public class WorldGenTask extends BukkitRunnable {
 		try {
 			this.world = Bukkit.createWorld(worldCreator);
 		} catch (Exception ignored) {
-			UHCMeetup.getInstance().getLogger().info("World NPE when trying to generate map.");
-			UHCMeetup.getInstance().getServer().unloadWorld(this.world, false);
+			Meetup.getInstance().getLogger().info("World NPE when trying to generate map.");
+			Meetup.getInstance().getServer().unloadWorld(this.world, false);
 
 			this.deleteDirectory(new File("meetup_game"));
 
@@ -80,12 +77,11 @@ public class WorldGenTask extends BukkitRunnable {
 			return;
 		}
 
-		this.gameHandler.handleSetWhitelistedBlocks();
 		this.gameHandler.handleLoadChunks();
 
 		new Border(Bukkit.getWorld("meetup_game"), 100);
 
-		UHCMeetup.getInstance().setWorldProperties();
+		Meetup.getInstance().setWorldProperties();
 
 		for (final Chunk c : this.world.getLoadedChunks()) {
 			final int cx = c.getX() << 4;
@@ -93,13 +89,7 @@ public class WorldGenTask extends BukkitRunnable {
 
 			for (int x = cx; x < cx + 16; x++) {
 				for (int z = cz; z < cz + 16; z++) {
-					for (int y = 0; y < 128; y++) {
-						final Block potential50Y = this.world.getBlockAt(x, y, z);
-
-						if (potential50Y.getY() == 50) {
-							potential50Y.setType(Material.BEDROCK);
-						}
-					}
+					this.world.getBlockAt(x, 50, z).setType(Material.BEDROCK);
 				}
 			}
 		}
@@ -114,7 +104,7 @@ public class WorldGenTask extends BukkitRunnable {
 			if (files != null) {
 				for (File file : files) {
 					if (file.isDirectory()) {
-						deleteDirectory(file);
+						this.deleteDirectory(file);
 					} else {
 						file.delete();
 					}
