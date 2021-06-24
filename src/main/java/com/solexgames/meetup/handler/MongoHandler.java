@@ -1,15 +1,12 @@
 package com.solexgames.meetup.handler;
 
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.solexgames.core.CorePlugin;
-import com.solexgames.meetup.UHCMeetup;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.Document;
-import org.bukkit.Bukkit;
 
 /**
  * @author GrowlyX

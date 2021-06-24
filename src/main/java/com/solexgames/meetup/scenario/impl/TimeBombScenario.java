@@ -1,11 +1,10 @@
 package com.solexgames.meetup.scenario.impl;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.scenario.Scenario;
 import com.solexgames.meetup.util.CC;
-import com.solexgames.meetup.util.MeetupUtils;
+import com.solexgames.meetup.util.MeetupUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,7 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,7 +38,7 @@ public class TimeBombScenario extends Scenario {
 
 		items.stream().filter(stack -> stack != null && stack.getType() != Material.AIR).forEach(stack -> chest.getBlockInventory().addItem(stack));
 
-		chest.getInventory().addItem(MeetupUtils.getGoldenHead());
+		chest.getInventory().addItem(MeetupUtil.getGoldenHead());
 
 		new BukkitRunnable() {
 			private int time = 30;
@@ -61,7 +59,7 @@ public class TimeBombScenario extends Scenario {
 
 				this.time--;
 			}
-		}.runTaskTimer(UHCMeetup.getInstance(), 0L, 20L);
+		}.runTaskTimer(Meetup.getInstance(), 0L, 20L);
 	}
 
 	@Override

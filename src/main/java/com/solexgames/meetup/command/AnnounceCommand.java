@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.core.util.RedisUtil;
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.game.Game;
 import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.handler.GameHandler;
@@ -23,9 +23,9 @@ import java.util.concurrent.TimeUnit;
 public class AnnounceCommand extends BaseCommand {
 
     @CommandAlias("announce|a|gamealert|gameannounce")
-    @CommandPermission("uhcmeetup.command.announce")
+    @CommandPermission("game.command.announce")
     public void execute(Player player) {
-        final GameHandler gameHandler = UHCMeetup.getInstance().getGameHandler();
+        final GameHandler gameHandler = Meetup.getInstance().getGameHandler();
         final Game game = gameHandler.getGame();
 
         if (game.getState().equals(GameState.IN_GAME)) {

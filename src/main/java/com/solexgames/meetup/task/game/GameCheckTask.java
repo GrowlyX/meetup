@@ -1,6 +1,6 @@
 package com.solexgames.meetup.task.game;
 
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.game.GameState;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -13,10 +13,10 @@ public class GameCheckTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (!UHCMeetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
+        if (!Meetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
             return;
         }
 
-        UHCMeetup.getInstance().getGameHandler().checkWinners();
+        Meetup.getInstance().getGameHandler().checkWinners();
     }
 }

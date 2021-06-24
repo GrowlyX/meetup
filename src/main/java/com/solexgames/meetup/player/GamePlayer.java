@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import com.solexgames.core.CorePlugin;
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.factory.GsonFactory;
 import com.solexgames.meetup.model.Loadout;
 import com.solexgames.meetup.task.NoCleanTimer;
@@ -39,9 +39,7 @@ public class GamePlayer {
     private int wins;
     private int reRolls;
 
-    private PlayerState state;
     private NoCleanTimer noCleanTimer;
-
     private Loadout loadout;
 
     public GamePlayer(UUID player, String name) {
@@ -52,10 +50,10 @@ public class GamePlayer {
     }
 
     public void savePlayerData(boolean remove) {
-        CompletableFuture.runAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("_id", this.uuid), this.getDocument(), new ReplaceOptions().upsert(true)));
+        CompletableFuture.runAsync(() -> Meetup.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("_id", this.uuid), this.getDocument(), new ReplaceOptions().upsert(true)));
 
         if (remove) {
-            UHCMeetup.getInstance().getPlayerHandler().remove(this.getUuid());
+            Meetup.getInstance().getPlayerHandler().remove(this.getUuid());
         }
     }
 
@@ -77,10 +75,10 @@ public class GamePlayer {
     }
 
     private void loadPlayerData() {
-        CompletableFuture.supplyAsync(() -> UHCMeetup.getInstance().getMongoHandler().getPlayerCollection().find(Filters.eq("_id", this.uuid)).first())
+        CompletableFuture.supplyAsync(() -> Meetup.getInstance().getMongoHandler().getPlayerCollection().find(Filters.eq("_id", this.uuid)).first())
                 .thenAccept(document -> {
                     if (document == null) {
-                        UHCMeetup.getInstance().getServer().getScheduler()
+                        Meetup.getInstance().getServer().getScheduler()
                                 .runTaskLaterAsynchronously(CorePlugin.getInstance(), () -> this.savePlayerData(false), 20L);
                     } else {
                         if (document.getInteger("kills") != null) {
@@ -118,10 +116,10 @@ public class GamePlayer {
     }
 
     public boolean isSpectating() {
-        return this.state.equals(PlayerState.SPECTATING);
+        return Meetup.getInstance().getGameHandler().getSpectators().contains(this);
     }
 
     public boolean isPlaying() {
-        return this.state.equals(PlayerState.PLAYING);
+        return Meetup.getInstance().getGameHandler().getRemaining().contains(this);
     }
 }

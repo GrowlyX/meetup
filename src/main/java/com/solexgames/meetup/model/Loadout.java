@@ -1,7 +1,7 @@
 package com.solexgames.meetup.model;
 
 import com.google.gson.annotations.SerializedName;
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
@@ -27,7 +27,7 @@ public class Loadout {
     private final Map<Integer, ItemStack> inventoryLocationMap = new HashMap<>();
 
     public void setupDefaultInventory() {
-        UHCMeetup.getInstance().getKitManager().setupDefaultInventory(this.inventoryLocationMap);
+        Meetup.getInstance().getKitHandler().setupDefaultInventory(this.inventoryLocationMap);
     }
 
     public int getLocationOf(Material material) {

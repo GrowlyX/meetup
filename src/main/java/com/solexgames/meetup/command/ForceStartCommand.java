@@ -3,7 +3,7 @@ package com.solexgames.meetup.command;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.game.Game;
 import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.handler.GameHandler;
@@ -20,9 +20,9 @@ import org.bukkit.entity.Player;
 public class ForceStartCommand extends BaseCommand {
 
 	@CommandAlias("forcestart|fs")
-	@CommandPermission("uhcmeetup.command.forcestart")
+	@CommandPermission("game.command.forcestart")
 	public void execute(CommandSender sender) {
-		final GameHandler gameHandler = UHCMeetup.getInstance().getGameHandler();
+		final GameHandler gameHandler = Meetup.getInstance().getGameHandler();
 		final Game game = gameHandler.getGame();
 
 		if (!gameHandler.isCanPlay()) {
@@ -32,14 +32,14 @@ public class ForceStartCommand extends BaseCommand {
 
 		if (!game.isState(GameState.STARTING)) {
 			if (Bukkit.getOnlinePlayers().size() < 2) {
-				sender.sendMessage(ChatColor.RED + "There must be at least two players online for you to forcestart the game.");
+				sender.sendMessage(ChatColor.RED + "There must be at least two players online for you to force-start the game.");
 				return;
 			}
 
 			gameHandler.handleStarting();
 			game.setGameStartTime(10);
 
-			Bukkit.broadcastMessage((sender instanceof Player ? ((Player) sender).getDisplayName() : CC.D_RED + "Console") + CC.SEC + " force started the game.");
+			Bukkit.broadcastMessage((sender instanceof Player ? ((Player) sender).getDisplayName() : CC.D_RED + "Console") + CC.SEC + " force-started the game.");
 			return;
 		}
 
@@ -49,6 +49,6 @@ public class ForceStartCommand extends BaseCommand {
 		}
 
 		game.setGameStartTime(10);
-		Bukkit.broadcastMessage((sender instanceof Player ? ((Player) sender).getDisplayName() : CC.D_RED + "Console") + CC.SEC + " force started the game.");
+		Bukkit.broadcastMessage((sender instanceof Player ? ((Player) sender).getDisplayName() : CC.D_RED + "Console") + CC.SEC + " force-started the game.");
 	}
 }

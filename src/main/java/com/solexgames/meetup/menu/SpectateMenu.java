@@ -3,18 +3,12 @@ package com.solexgames.meetup.menu;
 import com.solexgames.core.util.builder.ItemBuilder;
 import com.solexgames.core.util.external.Button;
 import com.solexgames.core.util.external.pagination.PaginatedMenu;
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.util.CC;
-import lombok.AllArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +36,7 @@ public class SpectateMenu extends PaginatedMenu {
 	public Map<Integer, Button> getAllPagesButtons(Player player) {
 		final Map<Integer, Button> buttons = new HashMap<>();
 
-		for (GamePlayer gamePlayer : UHCMeetup.getInstance().getGameHandler().getRemainingPlayers()) {
+		for (GamePlayer gamePlayer : Meetup.getInstance().getGameHandler().getRemaining()) {
 			buttons.put(buttons.size(), new ItemBuilder(Material.SKULL_ITEM)
 					.setDurability(3)
 					.setDisplayName(gamePlayer.getPlayer().getDisplayName())
@@ -53,6 +47,7 @@ public class SpectateMenu extends PaginatedMenu {
 
 						if (target != null) {
 							player.teleport(target);
+							player.sendMessage(CC.SEC + "You've teleported to " + target.getDisplayName() + CC.SEC + ".");
 						}
 					})
 			);

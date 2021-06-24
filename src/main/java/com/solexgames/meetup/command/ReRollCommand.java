@@ -7,7 +7,7 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Subcommand;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.core.player.PotPlayer;
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.game.Game;
 import com.solexgames.meetup.game.GameState;
 import com.solexgames.meetup.player.GamePlayer;
@@ -24,7 +24,7 @@ public class ReRollCommand extends BaseCommand {
 
     @Default
     public void onDefault(Player player) {
-        final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
+        final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 
         player.sendMessage(CC.SEC + "You currently have " + CC.PRI + gamePlayer.getReRolls() + CC.SEC + " re-roll credits.");
         player.sendMessage(CC.I_GRAY + "You can redeem these by using " + CC.I_YELLOW + "/rr redeem" + CC.I_GRAY + ".");
@@ -33,14 +33,14 @@ public class ReRollCommand extends BaseCommand {
 
     @Subcommand("redeem")
     public void onRedeem(Player player) {
-        final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
+        final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 
         if (gamePlayer.getReRolls() == 0) {
             player.sendMessage(CC.RED + "Error: You cannot redeem a kit re-roll when you have no credits.");
             return;
         }
 
-        final Game game = UHCMeetup.getInstance().getGameHandler().getGame();
+        final Game game = Meetup.getInstance().getGameHandler().getGame();
 
         if (!game.isState(GameState.STARTING)) {
             player.sendMessage(CC.RED + "Error: You can only redeem re-roll credits when the game is starting.");
@@ -48,7 +48,7 @@ public class ReRollCommand extends BaseCommand {
         }
 
         gamePlayer.setReRolls(gamePlayer.getReRolls() - 1);
-        UHCMeetup.getInstance().getKitManager().handleItems(player);
+        Meetup.getInstance().getKitHandler().handleItems(player);
 
         player.sendMessage(CC.GREEN + "You've used one re-roll credit to regen your kit.");
     }
@@ -57,7 +57,7 @@ public class ReRollCommand extends BaseCommand {
     @CommandCompletion("@purchasable")
     public void onPurchase(Player player, Integer amount) {
         final PotPlayer potPlayer = CorePlugin.getInstance().getPlayerManager().getPlayer(player);
-        final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
+        final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
         final int decrementBy = amount * 100;
 
         if (potPlayer.getExperience() < amount) {

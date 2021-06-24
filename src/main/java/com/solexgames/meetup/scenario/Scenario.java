@@ -1,6 +1,6 @@
 package com.solexgames.meetup.scenario;
 
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
@@ -18,7 +18,7 @@ public abstract class Scenario {
 
 	private void setupListeners() {
 		this.getListeners()
-				.forEach(listener -> Bukkit.getPluginManager().registerEvents(listener, UHCMeetup.getInstance()));
+				.forEach(listener -> Bukkit.getPluginManager().registerEvents(listener, Meetup.getInstance()));
 	}
 
 	public abstract List<Listener> getListeners();

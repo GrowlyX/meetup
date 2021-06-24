@@ -1,18 +1,14 @@
 package com.solexgames.meetup.scenario.impl.listener;
 
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.scenario.impl.NoCleanScenario;
 import com.solexgames.meetup.util.CC;
-import com.solexgames.meetup.util.TimeUtil;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.projectiles.ProjectileSource;
 
 /**
  * @author GrowlyX
@@ -45,14 +41,14 @@ public class NoCleanListener implements Listener {
 
         final Player entity = (Player) event.getEntity();
 
-        final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(entity);
-        final GamePlayer damagingPlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(damaging);
+        final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(entity);
+        final GamePlayer damagingPlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(damaging);
 
         if (damagingPlayer.isSpectating()) {
             return;
         }
 
-        final NoCleanScenario noCleanScenario = UHCMeetup.getInstance()
+        final NoCleanScenario noCleanScenario = Meetup.getInstance()
                 .getScenario(NoCleanScenario.class);
 
         if (damagingPlayer.getNoCleanTimer() != null) {

@@ -1,6 +1,6 @@
 package com.solexgames.meetup.task;
 
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.util.JedisUtil;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -16,7 +16,7 @@ public class ServerUpdateTask extends BukkitRunnable {
     @Override
     public void run() {
         CompletableFuture.runAsync(() ->
-                UHCMeetup.getInstance().getJedisManager().publish(JedisUtil.getServerUpdateJson())
+                Meetup.getInstance().getJedisManager().publish(JedisUtil.getServerUpdateJson())
         );
     }
 }

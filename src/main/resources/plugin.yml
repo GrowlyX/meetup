@@ -1,6 +1,6 @@
 name: UHCMeetup
 version: ${git.commit.id.abbrev}
-main: com.solexgames.meetup.UHCMeetup
+main: com.solexgames.meetup.Meetup
 
 author: SolexGames
 website: https://solexgames.com

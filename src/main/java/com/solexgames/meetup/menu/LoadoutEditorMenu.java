@@ -1,19 +1,16 @@
 package com.solexgames.meetup.menu;
 
-import com.solexgames.core.CorePlugin;
 import com.solexgames.core.util.builder.ItemBuilder;
 import com.solexgames.core.util.external.Button;
 import com.solexgames.core.util.external.Menu;
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.util.CC;
-import com.solexgames.meetup.util.PlayerUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +45,7 @@ public class LoadoutEditorMenu extends Menu {
     @Override
     public Map<Integer, Button> getButtons(Player player) {
         final Map<Integer, Button> buttonMap = new HashMap<>();
-        final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
+        final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 
         gamePlayer.getLoadout().getInventoryLocationMap()
                 .forEach((integer, itemStack) -> buttonMap.put(
@@ -75,7 +72,7 @@ public class LoadoutEditorMenu extends Menu {
 
     @Override
     public void onClose(Player player) {
-        final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
+        final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 
         for (int i = 0; i <= 35; i++) {
             gamePlayer.getLoadout().getInventoryLocationMap()

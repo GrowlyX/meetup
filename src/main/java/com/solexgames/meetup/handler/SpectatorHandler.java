@@ -3,18 +3,17 @@ package com.solexgames.meetup.handler;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.core.player.PotPlayer;
 import com.solexgames.core.util.builder.ItemBuilder;
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.board.Board;
 import com.solexgames.meetup.player.GamePlayer;
-import com.solexgames.meetup.game.GameState;
-import com.solexgames.meetup.player.PlayerState;
 import com.solexgames.meetup.util.CC;
-import com.solexgames.meetup.util.PlayerUtil;
+import com.solexgames.meetup.util.MeetupUtil;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 /**
@@ -31,28 +30,30 @@ public class SpectatorHandler {
 
 	public SpectatorHandler() {
 		this.spectateMenuItem = new ItemBuilder(Material.ITEM_FRAME)
-				.setDisplayName(CC.B_PRI + "Spectate Menu")
+				.setDisplayName(CC.SEC + "Spectate Menu")
 				.addLore(
-						CC.GRAY + "See a list of players",
-						CC.GRAY + "that you're able to",
-						CC.GRAY + "teleport to and spectate."
+						CC.SEC + "See a list of players",
+						CC.SEC + "that you're able to",
+						CC.SEC + "teleport to and spectate."
 				)
 				.create();
 		this.navigationCompassItem = new ItemBuilder(Material.COMPASS)
-				.setDisplayName(CC.B_PRI + "Navigation Compass")
+				.setDisplayName(CC.AQUA + "Navigation Compass")
 				.addLore(
-						CC.GRAY + "Left-Click: " + CC.WHITE + "Teleport to the block you're looking at!",
-						CC.GRAY + "Right-Click: " + CC.WHITE + "Teleport through walls!"
+						CC.PRI + "Left-Click: " + CC.SEC + "Teleport to the block you're looking at!",
+						CC.PRI + "Right-Click: " + CC.SEC + "Teleport through walls!"
 				)
 				.create();
 	}
 
 	public void setSpectator(GamePlayer gamePlayer, String reason, boolean title) {
 		final Player player = gamePlayer.getPlayer();
+		final GameHandler gameHandler = Meetup.getInstance().getGameHandler();
 
-		gamePlayer.setState(PlayerState.SPECTATING);
+		gameHandler.getRemaining().remove(gamePlayer);
+		gameHandler.getSpectators().add(gamePlayer);
 
-		Bukkit.getScheduler().runTask(UHCMeetup.getInstance(), () -> {
+		Bukkit.getScheduler().runTask(Meetup.getInstance(), () -> {
 			player.setAllowFlight(true);
 			player.setFlying(true);
 
@@ -67,15 +68,21 @@ public class SpectatorHandler {
 			}
 
 			if (title) {
-				PlayerUtil.sendTitle(player, CC.B_RED + "DEAD", "You are now a spectator!", 0, 80, 20);
+				MeetupUtil.sendTitle(player, CC.B_RED + "DEAD", "You are now a spectator!", 0, 80, 20);
 			}
 
 			Bukkit.getOnlinePlayers().forEach(other -> {
-				final GamePlayer gamePlayer1 = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(other);
-				final Board board = UHCMeetup.getInstance().getBoardManager().getPlayerBoards().get(other.getUniqueId());
-				final Team ghostTeam = board.getScoreboard().getTeam("ghost");
+				final GamePlayer otherPlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(other);
+				final Scoreboard board = Meetup.getInstance().getScoreboardHandler().getAdapter().getScoreboard(other);
 
-				if (!gamePlayer1.isSpectating()) {
+				Team ghostTeam = board.getTeam("ghost");
+
+				if (ghostTeam == null) {
+					ghostTeam = board.registerNewTeam("ghost");
+					ghostTeam.setCanSeeFriendlyInvisibles(true);
+				}
+
+				if (!otherPlayer.isSpectating()) {
 					other.hidePlayer(player);
 
 					if (ghostTeam.hasEntry(player.getName())) {
@@ -90,7 +97,7 @@ public class SpectatorHandler {
 				}
 			});
 
-			player.setPlayerListName(CC.GRAY + "[S] " + player.getName());
+			player.setPlayerListName(CC.GRAY + player.getName());
 
 			player.getInventory().setItem(0, this.spectateMenuItem);
 			player.getInventory().setItem(1, this.navigationCompassItem);
@@ -101,20 +108,22 @@ public class SpectatorHandler {
 
 	public void removeSpectator(GamePlayer gamePlayer) {
 		final Player player = gamePlayer.getPlayer();
-		final World lobbyWorld = Bukkit.getWorld("world");
+		final GameHandler gameHandler = Meetup.getInstance().getGameHandler();
 
-		PlayerUtil.resetPlayer(player);
+		MeetupUtil.resetPlayer(player);
 
-		Bukkit.getScheduler().runTask(UHCMeetup.getInstance(), () -> Bukkit.getOnlinePlayers().stream()
+		Bukkit.getScheduler().runTask(Meetup.getInstance(), () -> Bukkit.getOnlinePlayers().stream()
 				.filter(online -> !online.canSee(player)).forEach(online -> online.showPlayer(player)));
 
-		player.teleport(new Location(lobbyWorld, 0.5, lobbyWorld.getHighestBlockYAt(0, 0) + 4, 0.5));
+		player.teleport(gameHandler.getSpawnLocation());
 
 		final PotPlayer potPlayer = CorePlugin.getInstance().getPlayerManager().getPlayer(player);
 
 		potPlayer.setupPlayerList();
 
 		gamePlayer.getPlayer().sendMessage(CC.SEC + "You are no longer spectating the game.");
-		gamePlayer.setState(PlayerState.WAITING);
+
+		gameHandler.getRemaining().add(gamePlayer);
+		gameHandler.getSpectators().remove(gamePlayer);
 	}
 }

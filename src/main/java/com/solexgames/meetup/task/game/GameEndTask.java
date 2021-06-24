@@ -1,22 +1,17 @@
 package com.solexgames.meetup.task.game;
 
 import com.solexgames.core.CorePlugin;
-import com.solexgames.core.enums.NetworkServerType;
-import com.solexgames.core.player.PotPlayer;
-import com.solexgames.core.server.NetworkServer;
 import com.solexgames.core.util.BungeeUtil;
 import com.solexgames.core.util.ExperienceUtil;
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.game.Game;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.util.CC;
+import com.solexgames.meetup.util.MeetupUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.Comparator;
-import java.util.Objects;
 
 /**
  * @author GrowlyX
@@ -26,12 +21,12 @@ import java.util.Objects;
 public class GameEndTask extends BukkitRunnable {
 
 	public GameEndTask() {
-		this.runTaskTimer(UHCMeetup.getInstance(), 0L, 20L);
+		this.runTaskTimer(Meetup.getInstance(), 0L, 20L);
 	}
 
 	@Override
 	public void run() {
-		final Game game = UHCMeetup.getInstance().getGameHandler().getGame();
+		final Game game = Meetup.getInstance().getGameHandler().getGame();
 
 		if (game.getEndTime() == 8) {
 			CorePlugin.getInstance().getServerSettings().setCanJoin(false);
@@ -41,7 +36,7 @@ public class GameEndTask extends BukkitRunnable {
 
 				ExperienceUtil.addExperience(player, winner ? 150 : 15);
 
-				final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
+				final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 
 				if (winner) {
 					gamePlayer.setReRolls(gamePlayer.getReRolls() + 1);
@@ -51,15 +46,11 @@ public class GameEndTask extends BukkitRunnable {
 		}
 
 		if (game.getEndTime() == 5) {
-			final NetworkServer networkServer = this.getBestHub();
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				player.sendMessage(ChatColor.RED + "The server you were previously on is now down for:");
+				player.sendMessage(game.getWinner() + CC.GREEN + " has won the game, thanks for playing!");
 
-			if (networkServer != null) {
-				for (Player player : Bukkit.getOnlinePlayers()) {
-					player.sendMessage(ChatColor.RED + "The server you were previously on is now down for:");
-					player.sendMessage(game.getWinner() + CC.GREEN + " has won the game, thanks for playing!");
-
-					BungeeUtil.sendToServer(player, networkServer.getServerName(), CorePlugin.getInstance());
-				}
+				BungeeUtil.sendToServer(player, MeetupUtil.getBestHub().getServerName(), CorePlugin.getInstance());
 			}
 		}
 
@@ -70,12 +61,5 @@ public class GameEndTask extends BukkitRunnable {
 		}
 
 		game.setEndTime(game.getEndTime() - 1);
-	}
-
-	public NetworkServer getBestHub() {
-		return CorePlugin.getInstance().getServerManager().getNetworkServers().stream()
-				.filter(Objects::nonNull)
-				.filter(networkServer -> networkServer.getServerType().equals(NetworkServerType.HUB) && !networkServer.getServerName().contains("ds") && !networkServer.isWhitelistEnabled())
-				.min(Comparator.comparingInt(server -> (int) + (long) server.getOnlinePlayers())).orElse(null);
 	}
 }

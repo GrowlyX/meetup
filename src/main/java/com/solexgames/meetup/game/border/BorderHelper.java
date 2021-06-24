@@ -1,6 +1,6 @@
 package com.solexgames.meetup.game.border;
 
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,7 +22,7 @@ final class BorderHelper {
 
 	public static void addBedrockBorder(String world, int radius, int blocksHigh) {
 		for (int i = 0; i < blocksHigh; i++) {
-			Bukkit.getScheduler().runTaskLater(UHCMeetup.getInstance(), () -> addBedrockBorder(world, radius), i);
+			Bukkit.getScheduler().runTaskLater(Meetup.getInstance(), () -> addBedrockBorder(world, radius), i);
 		}
 	}
 
@@ -106,6 +106,6 @@ final class BorderHelper {
 					cancel();
 				}
 			}
-		}.runTaskTimer(UHCMeetup.getInstance(), 0L, 5L);
+		}.runTaskTimer(Meetup.getInstance(), 0L, 5L);
 	}
 }

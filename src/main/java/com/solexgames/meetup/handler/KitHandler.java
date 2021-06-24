@@ -1,11 +1,11 @@
-package com.solexgames.meetup.game.kit;
+package com.solexgames.meetup.handler;
 
 import com.solexgames.core.CorePlugin;
 import com.solexgames.core.util.builder.ItemBuilder;
-import com.solexgames.meetup.UHCMeetup;
+import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.model.Loadout;
 import com.solexgames.meetup.player.GamePlayer;
-import com.solexgames.meetup.util.MeetupUtils;
+import com.solexgames.meetup.util.MeetupUtil;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -18,11 +18,11 @@ import java.util.Map;
 import java.util.Random;
 
 @Getter
-public class KitManager {
+public class KitHandler {
 
 	private final Map<Integer, ItemStack> defaultInventory = new HashMap<>();
 
-	public KitManager() {
+	public KitHandler() {
 		this.setupDefaultInventory(this.defaultInventory);
 	}
 
@@ -30,7 +30,7 @@ public class KitManager {
 
 	public void handleItems(Player player) {
 		final PlayerInventory inventory = player.getInventory();
-		final GamePlayer gamePlayer = UHCMeetup.getInstance().getPlayerHandler().getByPlayer(player);
+		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 
 		inventory.setHelmet(new ItemBuilder(this.getRandomMaterial("helmet"))
 				.setEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, this.getLevel()).create());
@@ -94,16 +94,16 @@ public class KitManager {
 			bow.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
 		}
 
-		final ItemStack head = MeetupUtils.getGoldenHead();
+		final ItemStack head = MeetupUtil.getGoldenHead();
 		final Loadout loadout = gamePlayer.getLoadout();
 
-		head.setAmount(this.random.nextInt(3) + 1);
+		head.setAmount(this.random.nextInt(3) + 2);
 
 		inventory.setItem(loadout.getLocationOf(Material.DIAMOND_SWORD), sword);
 		inventory.setItem(loadout.getLocationOf(Material.FISHING_ROD), new ItemStack(Material.FISHING_ROD));
 		inventory.setItem(loadout.getLocationOf(Material.BOW), bow);
 		inventory.setItem(loadout.getLocationOf(Material.COOKED_BEEF), new ItemStack(Material.COOKED_BEEF, 64));
-		inventory.setItem(loadout.getLocationOf(Material.GOLDEN_APPLE), new ItemStack(Material.GOLDEN_APPLE, this.random.nextInt(7) + 1));
+		inventory.setItem(loadout.getLocationOf(Material.GOLDEN_APPLE), new ItemStack(Material.GOLDEN_APPLE, this.random.nextInt(4) + 4));
 		inventory.setItem(loadout.getLocationOf(Material.APPLE), head);
 		inventory.setItem(loadout.getLocationOf(Material.DIAMOND_AXE), new ItemStack(Material.DIAMOND_AXE));
 		inventory.setItem(loadout.getLocationOf(Material.FLINT_AND_STEEL), new ItemStack(Material.FLINT_AND_STEEL));

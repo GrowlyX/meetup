@@ -5,35 +5,33 @@ import co.aikar.commands.PaperCommandManager;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.lib.commons.redis.JedisBuilder;
 import com.solexgames.lib.commons.redis.JedisManager;
-import com.solexgames.meetup.board.BoardManager;
 import com.solexgames.meetup.command.*;
-import com.solexgames.meetup.game.GameListener;
-import com.solexgames.meetup.game.kit.KitManager;
+import com.solexgames.meetup.listener.GameListener;
+import com.solexgames.meetup.handler.KitHandler;
 import com.solexgames.meetup.handler.*;
 import com.solexgames.meetup.listener.PlayerListener;
+import com.solexgames.meetup.provider.ScoreboardProvider;
 import com.solexgames.meetup.scenario.Scenario;
-import com.solexgames.meetup.scoreboard.ScoreboardAdapter;
 import com.solexgames.meetup.task.game.GameCheckTask;
 import com.solexgames.meetup.task.ServerUpdateTask;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.JedisUtil;
-import com.solexgames.meetup.util.MeetupUtils;
+import com.solexgames.meetup.util.MeetupUtil;
+import io.github.nosequel.scoreboard.ScoreboardHandler;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @Getter
-public final class UHCMeetup extends JavaPlugin {
+public final class Meetup extends JavaPlugin {
 
     @Getter
-    private static UHCMeetup instance;
+    private static Meetup instance;
 
     private GameHandler gameHandler;
     private MongoHandler mongoHandler;
@@ -41,10 +39,12 @@ public final class UHCMeetup extends JavaPlugin {
     private LoadoutHandler loadoutHandler;
     private SpectatorHandler spectatorHandler;
     private ScenarioHandler scenarioHandler;
+    private KitHandler kitHandler;
+    private BorderHandler borderHandler;
+    private DeathMessageHandler deathMessageHandler;
+    private ScoreboardHandler scoreboardHandler;
 
-    private BoardManager boardManager;
     private JedisManager jedisManager;
-    private KitManager kitManager;
 
     @Override
     public void onEnable() {
@@ -58,22 +58,22 @@ public final class UHCMeetup extends JavaPlugin {
         this.loadoutHandler = new LoadoutHandler();
         this.spectatorHandler = new SpectatorHandler();
         this.scenarioHandler = new ScenarioHandler();
-
-        this.kitManager = new KitManager();
+        this.kitHandler = new KitHandler();
+        this.borderHandler = new BorderHandler();
+        this.deathMessageHandler = new DeathMessageHandler();
+        this.scoreboardHandler = new ScoreboardHandler(this, new ScoreboardProvider(), 5L);
 
         this.setupJedis();
 
         this.registerCommands();
         this.registerListeners();
-
-        this.setBoardManager(new BoardManager(new ScoreboardAdapter()));
     }
 
     @Override
     public void onDisable() {
         this.jedisManager.publish(JedisUtil.getServerOfflineJson());
 
-        MeetupUtils.deleteWorld();
+        MeetupUtil.deleteWorld();
     }
 
     private void registerCommands() {
@@ -118,14 +118,6 @@ public final class UHCMeetup extends JavaPlugin {
 
     public <T extends Scenario> T getScenario(Class<T> scenarioClass) {
         return this.scenarioHandler.getScenario(scenarioClass);
-    }
-
-    public void setBoardManager(BoardManager boardManager) {
-        this.boardManager = boardManager;
-
-        final long interval = this.boardManager.getAdapter().getInterval();
-
-        this.getServer().getScheduler().runTaskTimerAsynchronously(this, this.boardManager, 0L, interval);
     }
 
     public void setWorldProperties() {
