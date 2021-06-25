@@ -63,7 +63,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
-		if (this.isSpectator((Player) event.getWhoClicked())) event.setCancelled(true);
+		if (this.isSpectator((Player) event.getWhoClicked()) || Meetup.getInstance().getGameHandler().getGame().isState(GameState.WAITING)) event.setCancelled(true);
 	}
 
 	@EventHandler
