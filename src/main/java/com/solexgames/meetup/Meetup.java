@@ -5,6 +5,7 @@ import co.aikar.commands.PaperCommandManager;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.lib.commons.redis.JedisBuilder;
 import com.solexgames.lib.commons.redis.JedisManager;
+import com.solexgames.meetup.chat.UHCMeetupSpectatorChatCheckImpl;
 import com.solexgames.meetup.command.*;
 import com.solexgames.meetup.listener.GameListener;
 import com.solexgames.meetup.handler.KitHandler;
@@ -67,6 +68,8 @@ public final class Meetup extends JavaPlugin {
 
         this.registerCommands();
         this.registerListeners();
+
+        CorePlugin.getInstance().getChatCheckList().add(new UHCMeetupSpectatorChatCheckImpl());
     }
 
     @Override

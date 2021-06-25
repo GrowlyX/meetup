@@ -34,15 +34,6 @@ import org.bukkit.event.weather.WeatherChangeEvent;
  */
 public class PlayerListener implements Listener {
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerChat(AsyncPlayerChatEvent event) {
-		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(event.getPlayer());
-
-		if (!event.isCancelled() && gamePlayer.isSpectating()) {
-			event.setFormat(CC.GRAY + "[Spectator] " + CC.WHITE + event.getFormat());
-		}
-	}
-
 	@EventHandler
 	public void onPreDisguise(PreDisguiseEvent event) {
 		final Game game = Meetup.getInstance().getGameHandler().getGame();

@@ -17,13 +17,9 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 public class PlayerHandler extends PlayerCache<GamePlayer> {
 
-	private final ItemStack kitSelector;
 	private final ItemStack backToLobby;
 
 	public PlayerHandler() {
-		this.kitSelector = new ItemBuilder(Material.BOOK)
-				.setDisplayName(CC.PRI + "Kit Selector " + CC.GRAY + "(Right Click)")
-				.create();
 		this.backToLobby = new ItemBuilder(Material.BED)
 				.setDisplayName(CC.RED + "Back to Lobby " + CC.GRAY + "(Right Click)")
 				.create();
@@ -32,9 +28,7 @@ public class PlayerHandler extends PlayerCache<GamePlayer> {
 	public void setupInventory(Player player) {
 		MeetupUtil.resetPlayer(player, true);
 
-		player.getInventory().setItem(0, this.kitSelector);
 		player.getInventory().setItem(8, this.backToLobby);
-
 		player.updateInventory();
 	}
 }
