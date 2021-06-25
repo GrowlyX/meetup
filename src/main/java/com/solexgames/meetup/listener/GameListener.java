@@ -11,6 +11,7 @@ import com.solexgames.meetup.scenario.impl.TimeBombScenario;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
@@ -112,15 +113,15 @@ public class GameListener implements Listener {
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		final Player player = event.getEntity();
 		final Player killer = event.getEntity().getKiller();
+		final Location deathLoc = player.getLocation();
+
+		MeetupUtil.resetPlayer(player, true);
+		MeetupUtil.respawnPlayer(event);
 
 		final DeathMessageHandler deathMessageHandler = Meetup.getInstance().getDeathMessageHandler();
 		final CraftEntity craftKiller = deathMessageHandler.getKiller(player);
 
 		event.setDeathMessage(deathMessageHandler.getDeathMessage(player, craftKiller));
-
-		player.spigot().respawn();
-		player.setHealth(20.0D);
-		player.teleport(player.getLocation());
 
 		final List<ItemStack> items = new ArrayList<>();
 
@@ -146,11 +147,12 @@ public class GameListener implements Listener {
 			playerKiller.setGameKills(playerKiller.getGameKills() + 1);
 			playerKiller.setKills(playerKiller.getKills() + 1);
 
-			Meetup.getInstance().getGameHandler().getKillTrackerMap().put(killer.getDisplayName(), playerKiller.getKills());
+			Meetup.getInstance().getGameHandler().getKillTrackerMap().put(killer.getDisplayName(), playerKiller.getGameKills());
 
 			Meetup.getInstance().getScenario(NoCleanScenario.class).handleNoClean(playerKiller);
 		}
 
+		Meetup.getInstance().getServer().getScheduler().runTaskLater(Meetup.getInstance(), () -> player.teleport(deathLoc), 2L);
 		Meetup.getInstance().getGameHandler().checkWinners();
 		Meetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "died", true);
 	}

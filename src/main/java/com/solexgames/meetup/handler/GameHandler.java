@@ -13,6 +13,7 @@ import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtil;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -64,24 +65,24 @@ public class GameHandler {
 		this.hasEnded = true;
 
 		final List<String> topKills = new ArrayList<>();
-		final List<Map.Entry<String, Integer>> sorted = this.killTrackerMap.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).collect(Collectors.toList());
+		final List<Map.Entry<String, Integer>> sorted = this.killTrackerMap.entrySet().stream()
+				.sorted(Comparator.comparingInt(entry -> -entry.getValue())).collect(Collectors.toList());
 
 		for (int i = 0; i < Math.min(3, sorted.size()); i++) {
-			Map.Entry<String, Integer> entry = sorted.get(i);
+			final Map.Entry<String, Integer> entry = sorted.get(i);
 
-			topKills.add(StringUtil.getCentered(CC.SEC + (i == 0 ? "1st" : i == 1 ? "2nd" : "3rd") + " - " + entry.getKey() + CC.SEC + " - " + entry.getValue()));
+			topKills.add(StringUtil.getCentered(CC.SEC + (i == 0 ? "1st" : i == 1 ? "2nd" : "3rd") + CC.GRAY + " - " + entry.getKey() + CC.GRAY + " - " + CC.PRI + entry.getValue()));
 		}
 
 		final List<String> messages = new ArrayList<>();
 
-		messages.add(CC.GRAY + CC.S + "-----------------------------------------------------");
-		messages.add(StringUtil.getCentered(CC.SEC + CC.BOLD + "UHC Meetup Results"));
+		messages.add(CC.GRAY + CC.S + StringUtils.repeat("-", 53));
+		messages.add(StringUtil.getCentered(CC.PRI + CC.BOLD + "Meetup Game Results"));
+		messages.add(StringUtil.getCentered(CC.GRAY + "Winner: " + winner.getPlayer().getDisplayName()));
 		messages.add("");
-		messages.add(StringUtil.getCentered(CC.SEC + "Winner - " + winner.getPlayer().getDisplayName()));
-		messages.add("");
-		messages.add(StringUtil.getCentered(CC.SEC + "Top Kills:"));
+		messages.add(StringUtil.getCentered(CC.PRI + CC.BOLD + "Top Kills"));
 		messages.addAll(topKills);
-		messages.add(CC.GRAY + CC.S + "-----------------------------------------------------");
+		messages.add(CC.GRAY + CC.S + StringUtils.repeat("-", 53));
 
 		Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(messages.toArray(new String[0])));
 
@@ -157,6 +158,11 @@ public class GameHandler {
 					}
 				}
 			}
+
+			final World meetupWorld = Bukkit.getWorld("meetup_game");
+			final Location location = new Location(meetupWorld, 0.5D, meetupWorld.getHighestBlockYAt(0, 0) + 15, 0.5D);
+
+			this.setMeetupSpectatorLocation(location);
 
 			this.canPlay = true;
 		}, 100L);

@@ -14,10 +14,14 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Random;
@@ -134,6 +138,30 @@ public class MeetupUtil {
 		}
 
 		return file.delete();
+	}
+
+	public static void respawnPlayer(PlayerDeathEvent event) {
+		new BukkitRunnable() {
+			public void run() {
+				try {
+					Object nmsPlayer = event.getEntity().getClass().getMethod("getHandle").invoke(event.getEntity());
+					Object con = nmsPlayer.getClass().getDeclaredField("playerConnection").get(nmsPlayer);
+
+					Class<?> EntityPlayer = Class.forName(nmsPlayer.getClass().getPackage().getName() + ".EntityPlayer");
+
+					Field minecraftServer = con.getClass().getDeclaredField("minecraftServer");
+					minecraftServer.setAccessible(true);
+					Object mcserver = minecraftServer.get(con);
+
+					Object playerlist = mcserver.getClass().getDeclaredMethod("getPlayerList").invoke(mcserver);
+					Method moveToWorld = playerlist.getClass().getMethod("moveToWorld", EntityPlayer, int.class, boolean.class);
+
+					moveToWorld.invoke(playerlist, nmsPlayer, 0, false);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}.runTaskLater(Meetup.getInstance(), 2L);
 	}
 
 	public static Location getScatterLocation() {

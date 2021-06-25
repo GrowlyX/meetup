@@ -94,10 +94,6 @@ public class WorldGenTask extends BukkitRunnable {
 				}
 			}
 		}
-
-		final Location location = new Location(this.world, 0, this.world.getHighestBlockYAt(0, 0) + 15, 0);
-
-		this.gameHandler.setMeetupSpectatorLocation(location);
 		this.hasGenerated = true;
 	}
 
