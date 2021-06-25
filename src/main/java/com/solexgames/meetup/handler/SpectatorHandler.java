@@ -4,7 +4,6 @@ import com.solexgames.core.CorePlugin;
 import com.solexgames.core.player.PotPlayer;
 import com.solexgames.core.util.builder.ItemBuilder;
 import com.solexgames.meetup.Meetup;
-import com.solexgames.meetup.board.Board;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtil;
@@ -96,6 +95,10 @@ public class SpectatorHandler {
 					}
 				}
 			});
+
+			if (reason != null && reason.equals("chose to watch")) {
+				player.teleport(Meetup.getInstance().getGameHandler().getSpawnLocation());
+			}
 
 			player.setPlayerListName(CC.GRAY + player.getName());
 

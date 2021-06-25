@@ -38,7 +38,7 @@ public class ScoreboardProvider implements ScoreboardElementHandler {
 
 				if (remaining.size() < gameHandler.getMinPlayers()) {
 					final int more = gameHandler.getMinPlayers() - remaining.size();
-					element.add(CC.PRI + more + CC.SEC + " more player" + (more == 1 ? "" : "s") + " required.");
+					element.add(CC.PRI + more + CC.WHITE + " more player" + (more == 1 ? "" : "s") + ".");
 				}
 				break;
 			case STARTING:

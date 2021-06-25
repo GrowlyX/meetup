@@ -4,6 +4,7 @@ import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.scenario.impl.NoCleanScenario;
 import com.solexgames.meetup.util.CC;
+import com.solexgames.meetup.util.MeetupUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -54,7 +55,7 @@ public class NoCleanListener implements Listener {
         if (damagingPlayer.getNoCleanTimer() != null) {
             noCleanScenario.handleCancelNoClean(damagingPlayer);
         } else if (gamePlayer.getNoCleanTimer() != null) {
-            damaging.sendMessage(entity.getDisplayName() + "'s " + CC.RED + "no clean timer expires in " + TimeUtil.secondsToRoundedTime(gamePlayer.getNoCleanTimer().getTime()) + ".");
+            damaging.sendMessage(entity.getDisplayName() + "'s " + CC.RED + "no clean timer expires in " + MeetupUtil.secondsToRoundedTime(gamePlayer.getNoCleanTimer().getTime()) + ".");
             event.setCancelled(true);
         }
     }

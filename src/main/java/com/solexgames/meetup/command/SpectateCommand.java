@@ -52,7 +52,7 @@ public class SpectateCommand extends BaseCommand {
 			Meetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "chose to watch", true);
 		} else {
 			if (Meetup.getInstance().getGameHandler().getGame().isState(GameState.STARTING)) {
-				player.sendMessage(CC.RED + "You can't do this anymore.");
+				player.sendMessage(CC.RED + "Error: You cannot stop spectating when there is a game starting.");
 				return;
 			}
 

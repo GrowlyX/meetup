@@ -3,6 +3,7 @@ package com.solexgames.meetup.task;
 import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.handler.GameHandler;
 import com.solexgames.meetup.game.border.Border;
+import lombok.SneakyThrows;
 import net.minecraft.server.v1_8_R3.BiomeBase;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
@@ -83,9 +84,9 @@ public class WorldGenTask extends BukkitRunnable {
 
 		Meetup.getInstance().setWorldProperties();
 
-		for (final Chunk c : this.world.getLoadedChunks()) {
-			final int cx = c.getX() << 4;
-			final int cz = c.getZ() << 4;
+		for (final Chunk chunk : this.world.getLoadedChunks()) {
+			final int cx = chunk.getX() << 4;
+			final int cz = chunk.getZ() << 4;
 
 			for (int x = cx; x < cx + 16; x++) {
 				for (int z = cz; z < cz + 16; z++) {
@@ -94,6 +95,9 @@ public class WorldGenTask extends BukkitRunnable {
 			}
 		}
 
+		final Location location = new Location(this.world, 0, this.world.getHighestBlockYAt(0, 0) + 15, 0);
+
+		this.gameHandler.setMeetupSpectatorLocation(location);
 		this.hasGenerated = true;
 	}
 

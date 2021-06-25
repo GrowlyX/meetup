@@ -74,7 +74,7 @@ public class GameListener implements Listener {
 				break;
 			case IN_GAME:
 				player.sendMessage(CC.SEC + "You've been made a spectator as you've joined too late into the game.");
-				player.teleport(gameHandler.getSpawnLocation());
+				player.teleport(gameHandler.getMeetupSpectatorLocation());
 
 				Meetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, null, false);
 				break;

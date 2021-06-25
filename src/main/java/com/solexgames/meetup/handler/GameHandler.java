@@ -37,6 +37,8 @@ public class GameHandler {
 	private final Map<String, Integer> killTrackerMap = new HashMap<>();
 
 	private Location spawnLocation;
+	private Location meetupSpectatorLocation;
+
 	private long lastAnnouncement;
 	private String lastAnnouncer;
 
@@ -46,6 +48,9 @@ public class GameHandler {
 	private boolean canPlay;
 
 	public void setupGame() {
+		final World world = Bukkit.getWorld("world");
+		this.spawnLocation = new Location(world, 0, world.getHighestBlockYAt(0, 0) + 5, 0);
+
 		new WorldGenTask(this).runTaskTimer(Meetup.getInstance(), 0L, 20L);
 	}
 
