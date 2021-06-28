@@ -67,10 +67,9 @@ public class GameListener implements Listener {
 				break;
 			case STARTING:
 				gameHandler.getRemaining().add(gamePlayer);
-
 				player.teleport(MeetupUtil.getScatterLocation());
-				MeetupUtil.sitPlayer(player);
 
+				MeetupUtil.sitPlayer(player);
 				Meetup.getInstance().getKitHandler().handleItems(player);
 				break;
 			case IN_GAME:

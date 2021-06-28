@@ -1,6 +1,8 @@
 package com.solexgames.meetup.handler;
 
+import com.solexgames.core.util.Color;
 import com.solexgames.core.util.StringUtil;
+import com.solexgames.lib.commons.CommonLibsBukkit;
 import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.game.Game;
 import com.solexgames.meetup.game.GameState;
@@ -13,6 +15,12 @@ import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtil;
 import lombok.Getter;
 import lombok.Setter;
+import me.lucko.helper.Services;
+import me.lucko.helper.hologram.BukkitHologramFactory;
+import me.lucko.helper.hologram.Hologram;
+import me.lucko.helper.hologram.HologramFactory;
+import me.lucko.helper.scheduler.threadlock.ServerThreadLock;
+import me.lucko.helper.serialize.Position;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,6 +38,8 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class GameHandler {
+
+	private final Map<Player, Hologram> statHologramMap = new HashMap<>();
 
 	private Game game = new Game();
 
@@ -106,8 +116,16 @@ public class GameHandler {
 			MeetupUtil.unsitPlayer(player);
 		});
 		this.getSpectators().forEach(gamePlayer -> gamePlayer.getPlayer().sendMessage(CC.SEC + "You've been made a spectator as you're not playing."));
+		this.clearHolograms();
 
 		new GameBorderTask();
+	}
+
+	private void clearHolograms() {
+		this.statHologramMap.forEach((player, hologram) -> {
+			hologram.despawn();
+		});
+		this.statHologramMap.clear();
 	}
 
 	public void handleStarting() {
@@ -145,6 +163,31 @@ public class GameHandler {
 		}, 40L);
 
 		new GameStartTask();
+	}
+
+	public void handleSetupHolo(Player player) {
+		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
+		final HologramFactory hologramFactory = CommonLibsBukkit.getInstance().getHologramManager().getHologramFactory();
+
+		final Location newLocation = player.getLocation().clone().add(1.9D, 2.0D, 1.9D);
+		final Position position = Position.of(newLocation);
+		final List<String> stringList = new ArrayList<>(Arrays.asList(
+				CC.UB_PRI + "Your Stats",
+				"Kills: " + gamePlayer.getKills(),
+				"Deaths: " + gamePlayer.getDeaths(),
+				"KDR: " + (gamePlayer.getKills() != 0 && gamePlayer.getDeaths() != 0 ? (gamePlayer.getKills() / gamePlayer.getDeaths()) : 0.0),
+				"Game Wins: " + gamePlayer.getWins(),
+				"Games Played: " + gamePlayer.getPlayed()
+
+		));
+
+		final Hologram hologram = hologramFactory.newHologram(position, stringList);
+
+		try (ServerThreadLock serverThreadLock = ServerThreadLock.obtain()) {
+			hologram.spawn();
+		}
+
+		this.statHologramMap.put(player, hologram);
 	}
 
 	public void handleLoadChunks() {

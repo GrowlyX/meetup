@@ -65,6 +65,8 @@ public class MeetupUtil {
 
 		final PacketPlayOutAttachEntity sitPacket = new PacketPlayOutAttachEntity(0, craftPlayer.getHandle(), bat);
 		craftPlayer.getHandle().playerConnection.sendPacket(sitPacket);
+
+		Meetup.getInstance().getGameHandler().handleSetupHolo(player);
 	}
 
 	public static void unsitPlayer(Player player) {
@@ -94,6 +96,7 @@ public class MeetupUtil {
 		player.setFlying(false);
 		player.setGameMode(GameMode.SURVIVAL);
 		player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+
 		if (resetHeldItemSlot) player.getInventory().setHeldItemSlot(0);
 		player.updateInventory();
 	}

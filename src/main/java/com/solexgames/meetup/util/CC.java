@@ -13,6 +13,7 @@ public class CC {
 	public static final String SEC = Color.SECONDARY_COLOR;
 
 	public static final String B_PRI = PRI + ChatColor.BOLD;
+	public static final String UB_PRI = PRI + ChatColor.UNDERLINE + ChatColor.BOLD;
 
 	public static final String WHITE = ChatColor.WHITE.toString();
 	public static final String RED = ChatColor.RED.toString();
