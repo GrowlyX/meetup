@@ -23,8 +23,11 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 /**
  * @author puugz
@@ -34,11 +37,11 @@ import java.util.Random;
 public class MeetupUtil {
 
 	public static NetworkServer getBestHub() {
-		return CorePlugin.getInstance().getServerManager().getNetworkServers().stream()
-				.filter(Objects::nonNull)
+		final List<NetworkServer> serverList = CorePlugin.getInstance().getServerManager().getNetworkServers().stream().filter(Objects::nonNull)
 				.filter(networkServer -> networkServer.getServerType().equals(NetworkServerType.HUB) && !networkServer.getServerName().contains("ds"))
-				.min(Comparator.comparingInt(server -> (int) + (long) server.getOnlinePlayers()))
-				.orElse(null);
+				.collect(Collectors.toList());
+
+		return serverList.get(ThreadLocalRandom.current().nextInt(serverList.size()));
 	}
 
 	public static String millisToRoundedTime(long millis) {

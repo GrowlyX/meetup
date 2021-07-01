@@ -86,7 +86,7 @@
             </resource>
         </resources>
 
-        <finalName>UHCMeetup-${sg.build}</finalName>
+        <finalName>UHCMeetup</finalName>
     </build>
 
     <repositories>
