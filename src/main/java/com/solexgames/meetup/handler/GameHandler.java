@@ -1,6 +1,5 @@
 package com.solexgames.meetup.handler;
 
-import com.solexgames.core.util.Color;
 import com.solexgames.core.util.StringUtil;
 import com.solexgames.lib.commons.CommonLibsBukkit;
 import com.solexgames.meetup.Meetup;
@@ -15,8 +14,6 @@ import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtil;
 import lombok.Getter;
 import lombok.Setter;
-import me.lucko.helper.Services;
-import me.lucko.helper.hologram.BukkitHologramFactory;
 import me.lucko.helper.hologram.Hologram;
 import me.lucko.helper.hologram.HologramFactory;
 import me.lucko.helper.scheduler.threadlock.ServerThreadLock;
@@ -39,7 +36,7 @@ import java.util.stream.Collectors;
 @Setter
 public class GameHandler {
 
-	private final Map<Player, Hologram> statHologramMap = new HashMap<>();
+	private final Map<UUID, Hologram> statHologramMap = new HashMap<>();
 
 	private Game game = new Game();
 
@@ -177,8 +174,8 @@ public class GameHandler {
 				"Deaths: " + gamePlayer.getDeaths(),
 				"KDR: " + (gamePlayer.getKills() != 0 && gamePlayer.getDeaths() != 0 ? (gamePlayer.getKills() / gamePlayer.getDeaths()) : 0.0),
 				"Game Wins: " + gamePlayer.getWins(),
-				"Games Played: " + gamePlayer.getPlayed()
-
+				"Games Played: " + gamePlayer.getPlayed(),
+				"Re-rolls: " + gamePlayer.getReRolls()
 		));
 
 		final Hologram hologram = hologramFactory.newHologram(position, stringList);
@@ -187,7 +184,7 @@ public class GameHandler {
 			hologram.spawn();
 		}
 
-		this.statHologramMap.put(player, hologram);
+		this.statHologramMap.put(player.getUniqueId(), hologram);
 	}
 
 	public void handleLoadChunks() {
