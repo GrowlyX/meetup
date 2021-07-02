@@ -111,6 +111,8 @@ public class GameHandler {
 
 			gamePlayer.setPlayed(gamePlayer.getPlayed() + 1);
 			MeetupUtil.unsitPlayer(player);
+
+			this.killTrackerMap.put(player.getDisplayName(), 0);
 		});
 		this.getSpectators().forEach(gamePlayer -> gamePlayer.getPlayer().sendMessage(CC.SEC + "You've been made a spectator as you're not playing."));
 		this.clearHolograms();
