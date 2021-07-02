@@ -127,16 +127,8 @@ public class GameListener implements Listener {
 		final Player player = event.getEntity();
 		final Player killer = event.getEntity().getKiller();
 		final Location deathLoc = player.getLocation();
+
 		final List<ItemStack> drops = event.getDrops();
-
-		MeetupUtil.resetPlayer(player, true);
-		MeetupUtil.respawnPlayer(event);
-
-		final DeathMessageHandler deathMessageHandler = Meetup.getInstance().getDeathMessageHandler();
-		final CraftEntity craftKiller = deathMessageHandler.getKiller(player);
-
-		event.setDeathMessage(deathMessageHandler.getDeathMessage(player, craftKiller));
-
 		final List<ItemStack> items = new ArrayList<>();
 
 		Stream.of(player.getInventory().getArmorContents())
@@ -146,8 +138,16 @@ public class GameListener implements Listener {
 				.filter(stack -> stack != null && stack.getType() != Material.AIR)
 				.forEach(items::add);
 
+		final DeathMessageHandler deathMessageHandler = Meetup.getInstance().getDeathMessageHandler();
+		final CraftEntity craftKiller = deathMessageHandler.getKiller(player);
+
+		event.setDeathMessage(deathMessageHandler.getDeathMessage(player, craftKiller));
+
 		Meetup.getInstance().getScenario(TimeBombScenario.class)
 				.handleTimeBomb(player, drops, items);
+
+		MeetupUtil.resetPlayer(player, true);
+		MeetupUtil.respawnPlayer(event);
 
 		event.setDroppedExp(0);
 
@@ -165,8 +165,8 @@ public class GameListener implements Listener {
 			Meetup.getInstance().getScenario(NoCleanScenario.class).handleNoClean(playerKiller);
 		}
 
-		Meetup.getInstance().getServer().getScheduler().runTaskLater(Meetup.getInstance(), () -> player.teleport(deathLoc), 2L);
 		Meetup.getInstance().getGameHandler().checkWinners();
+		Meetup.getInstance().getServer().getScheduler().runTaskLater(Meetup.getInstance(), () -> player.teleport(deathLoc), 4L);
 		Meetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "died", true);
 	}
 

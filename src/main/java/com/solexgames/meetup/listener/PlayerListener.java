@@ -10,7 +10,7 @@ import com.solexgames.meetup.menu.SpectateMenu;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtil;
-import org.bukkit.ChatColor;
+import org.bukkit.*;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -111,6 +111,13 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
+		if (event.getBlock().getType().equals(Material.CHEST)) {
+			if (Meetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
+				event.setCancelled(true);
+				event.getPlayer().sendMessage(ChatColor.RED + "You cannot break chests when they are in time bomb mode.");
+			}
+		}
+
 		if (this.shouldCancel(event.getPlayer())) {
 			event.setCancelled(true);
 		}
@@ -118,6 +125,14 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
+		final World gameWorld = Bukkit.getWorld("meetup_game");
+
+		if (event.getBlock().getLocation().getY() >= gameWorld.getHighestBlockYAt(0, 0) + 30) {
+			event.getPlayer().sendMessage(ChatColor.RED + "You cannot place blocks higher than this point.");
+			event.setCancelled(true);
+			return;
+		}
+
 		if (this.shouldCancel(event.getPlayer())) {
 			event.setCancelled(true);
 		}
