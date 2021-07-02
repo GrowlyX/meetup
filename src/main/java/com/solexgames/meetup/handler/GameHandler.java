@@ -171,7 +171,7 @@ public class GameHandler {
 		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 		final HologramFactory hologramFactory = CommonLibsBukkit.getInstance().getHologramManager().getHologramFactory();
 
-		final Location newLocation = player.getLocation().clone().add(1.9D, 2.0D, 1.9D);
+		final Location newLocation = player.getLocation().clone().add(0.0D, 2.0D, 1.9D);
 		final Position position = Position.of(newLocation);
 		final List<String> stringList = new ArrayList<>(Arrays.asList(
 				CC.UB_PRI + "Your Stats",

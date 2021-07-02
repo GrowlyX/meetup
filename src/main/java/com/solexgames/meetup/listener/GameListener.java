@@ -127,6 +127,7 @@ public class GameListener implements Listener {
 		final Player player = event.getEntity();
 		final Player killer = event.getEntity().getKiller();
 		final Location deathLoc = player.getLocation();
+		final List<ItemStack> drops = event.getDrops();
 
 		MeetupUtil.resetPlayer(player, true);
 		MeetupUtil.respawnPlayer(event);
@@ -146,7 +147,7 @@ public class GameListener implements Listener {
 				.forEach(items::add);
 
 		Meetup.getInstance().getScenario(TimeBombScenario.class)
-				.handleTimeBomb(player, event.getDrops(), items);
+				.handleTimeBomb(player, drops, items);
 
 		event.setDroppedExp(0);
 
