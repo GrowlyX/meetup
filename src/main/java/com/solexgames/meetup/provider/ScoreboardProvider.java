@@ -29,7 +29,6 @@ public class ScoreboardProvider implements ScoreboardElementHandler {
 		final List<GamePlayer> remaining = gameHandler.getRemaining();
 
 		element.setTitle(CC.B_PRI + "PvPBar" + CC.GRAY + " ┃ " + CC.WHITE + "Meetup");
-
 		element.add(CC.GRAY + CC.S + "--------------------");
 
 		switch (game.getState()) {

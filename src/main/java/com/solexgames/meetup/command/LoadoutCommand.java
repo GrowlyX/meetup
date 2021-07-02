@@ -1,7 +1,7 @@
 package com.solexgames.meetup.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
+import com.solexgames.lib.acf.BaseCommand;
+import com.solexgames.lib.acf.annotation.CommandAlias;
 import com.solexgames.meetup.menu.LoadoutEditorMenu;
 import org.bukkit.entity.Player;
 

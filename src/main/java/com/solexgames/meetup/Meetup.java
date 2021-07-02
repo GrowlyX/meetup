@@ -1,7 +1,7 @@
 package com.solexgames.meetup;
 
-import co.aikar.commands.InvalidCommandArgument;
-import co.aikar.commands.PaperCommandManager;
+import com.solexgames.lib.acf.InvalidCommandArgument;
+import com.solexgames.lib.acf.PaperCommandManager;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.lib.commons.redis.JedisBuilder;
 import com.solexgames.lib.commons.redis.JedisManager;

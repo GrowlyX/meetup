@@ -1,9 +1,9 @@
 package com.solexgames.meetup.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Subcommand;
+import com.solexgames.lib.acf.BaseCommand;
+import com.solexgames.lib.acf.annotation.CommandAlias;
+import com.solexgames.lib.acf.annotation.Default;
+import com.solexgames.lib.acf.annotation.Subcommand;
 import com.solexgames.core.util.clickable.Clickable;
 import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.game.GameState;

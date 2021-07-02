@@ -50,7 +50,9 @@ public class GamePlayer {
     }
 
     public void savePlayerData(boolean remove) {
-        CompletableFuture.runAsync(() -> Meetup.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("_id", this.uuid), this.getDocument(), new ReplaceOptions().upsert(true)));
+        CompletableFuture.runAsync(() -> { try {
+            Meetup.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("_id", this.uuid), this.getDocument(), new ReplaceOptions().upsert(true));
+        } catch (Exception e) {e.printStackTrace();}});
 
         if (remove) {
             Meetup.getInstance().getPlayerHandler().remove(this.getUuid());

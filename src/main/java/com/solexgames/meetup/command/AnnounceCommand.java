@@ -1,8 +1,8 @@
 package com.solexgames.meetup.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
+import com.solexgames.lib.acf.BaseCommand;
+import com.solexgames.lib.acf.annotation.CommandAlias;
+import com.solexgames.lib.acf.annotation.CommandPermission;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.core.util.RedisUtil;
 import com.solexgames.meetup.Meetup;

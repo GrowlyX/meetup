@@ -1,10 +1,10 @@
 package com.solexgames.meetup.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Subcommand;
+import com.solexgames.lib.acf.BaseCommand;
+import com.solexgames.lib.acf.annotation.CommandAlias;
+import com.solexgames.lib.acf.annotation.CommandCompletion;
+import com.solexgames.lib.acf.annotation.Default;
+import com.solexgames.lib.acf.annotation.Subcommand;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.core.player.PotPlayer;
 import com.solexgames.meetup.Meetup;
