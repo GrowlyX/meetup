@@ -120,7 +120,10 @@ public class GameHandler {
 
 	private void clearHolograms() {
 		this.statHologramMap.forEach((player, hologram) -> {
-			hologram.despawn();
+			if (hologram != null) {
+				hologram.despawn();
+				hologram.closeAndReportException();
+			}
 		});
 		this.statHologramMap.clear();
 	}

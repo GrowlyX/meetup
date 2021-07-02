@@ -10,6 +10,7 @@ import com.solexgames.meetup.scenario.impl.NoCleanScenario;
 import com.solexgames.meetup.scenario.impl.TimeBombScenario;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtil;
+import me.lucko.helper.hologram.Hologram;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -100,6 +101,15 @@ public class GameListener implements Listener {
 
 			gameHandler.getRemaining().remove(gamePlayer);
 			gameHandler.getSpectators().remove(gamePlayer);
+		}
+
+		final Hologram hologram = Meetup.getInstance().getGameHandler().getStatHologramMap().getOrDefault(player.getUniqueId(), null);
+
+		if (hologram != null) {
+			hologram.despawn();
+			hologram.closeAndReportException();
+
+			Meetup.getInstance().getGameHandler().getStatHologramMap().remove(player.getUniqueId());
 		}
 
 		event.setQuitMessage(null);
