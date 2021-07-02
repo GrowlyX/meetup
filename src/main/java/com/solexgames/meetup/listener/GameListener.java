@@ -96,20 +96,20 @@ public class GameListener implements Listener {
 			if (gamePlayer.isPlaying() && Meetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
 				Bukkit.broadcastMessage(player.getDisplayName() + CC.SEC + " has disconnected and was disqualified.");
 
-				Meetup.getInstance().getGameHandler().checkWinners();
+				gameHandler.checkWinners();
 			}
 
 			gameHandler.getRemaining().remove(gamePlayer);
 			gameHandler.getSpectators().remove(gamePlayer);
 		}
 
-		final Hologram hologram = Meetup.getInstance().getGameHandler().getStatHologramMap().getOrDefault(player.getUniqueId(), null);
+		final Hologram hologram = gameHandler.getStatHologramMap().getOrDefault(player.getUniqueId(), null);
 
 		if (hologram != null) {
 			hologram.despawn();
 			hologram.closeAndReportException();
 
-			Meetup.getInstance().getGameHandler().getStatHologramMap().remove(player.getUniqueId());
+			gameHandler.getStatHologramMap().remove(player.getUniqueId());
 		}
 
 		event.setQuitMessage(null);
