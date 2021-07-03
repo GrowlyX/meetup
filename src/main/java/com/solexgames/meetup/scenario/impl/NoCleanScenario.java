@@ -18,8 +18,6 @@ public class NoCleanScenario extends Scenario {
 
 	public void handleNoClean(GamePlayer gamePlayer) {
 		new NoCleanTimer(gamePlayer);
-
-		gamePlayer.getPlayer().sendMessage(CC.GREEN + "You now have no clean timer.");
 	}
 
 	public void handleCancelNoClean(GamePlayer gamePlayer) {

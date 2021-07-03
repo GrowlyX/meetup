@@ -30,6 +30,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +51,15 @@ public class GameListener implements Listener {
 		final Player player = event.getPlayer();
 		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 		final GameHandler gameHandler = Meetup.getInstance().getGameHandler();
+
+		final Scoreboard board = Meetup.getInstance().getScoreboardHandler().getAdapter().getScoreboard(player);
+
+		final Objective tabHealthObjective = board.registerNewObjective("tabHealth", "health");
+		tabHealthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+
+		final Objective nameHealthObjective = board.registerNewObjective("nameHealth", "health");
+		nameHealthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+		nameHealthObjective.setDisplayName(CC.D_RED + "\u2764");
 
 		Meetup.getInstance().getPlayerHandler().setupInventory(player);
 
@@ -218,7 +231,7 @@ public class GameListener implements Listener {
 		final double health = Math.ceil(entity.getHealth() - event.getFinalDamage()) / 2.0D;
 
 		if (health > 0.0D) {
-			shooter.sendMessage(entity.getDisplayName() + CC.SEC + " is now at " + CC.PRI + health + "\u2764" + CC.SEC + ".");
+			shooter.sendMessage(entity.getDisplayName() + CC.SEC + " is now at " + CC.RED + health + "\u2764" + CC.SEC + ".");
 		}
 	}
 }

@@ -57,7 +57,7 @@ public class GameHandler {
 
 	public void setupGame() {
 		final World world = Bukkit.getWorld("world");
-		this.spawnLocation = new Location(world, 0, world.getHighestBlockYAt(0, 0) + 5, 0);
+		this.spawnLocation = new Location(world, 0.5, world.getHighestBlockYAt(0, 0) + 5, 0.5);
 
 		new WorldGenTask(this).runTaskTimer(Meetup.getInstance(), 0L, 20L);
 	}
