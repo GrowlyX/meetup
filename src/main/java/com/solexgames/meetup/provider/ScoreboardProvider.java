@@ -29,7 +29,7 @@ public class ScoreboardProvider implements ScoreboardElementHandler {
 		final List<GamePlayer> remaining = gameHandler.getRemaining();
 
 		element.setTitle(CC.B_PRI + "UHC Meetup");
-		element.add(CC.GRAY + CC.S + "--------------------");
+		element.add(CC.GRAY + CC.S + "-------------------");
 
 		switch (game.getState()) {
 			case WAITING:
@@ -52,14 +52,14 @@ public class ScoreboardProvider implements ScoreboardElementHandler {
 
 				if (gamePlayer.getNoCleanTimer() != null) {
 					element.add("");
-					element.add(CC.RED + "No Clean: " + CC.WHITE + gamePlayer.getNoCleanTimer().getTime());
+					element.add(CC.RED + "No Clean: " + CC.PRI + gamePlayer.getNoCleanTimer().getTime());
 				}
 				break;
 		}
 
 		element.add("");
 		element.add(CC.PRI + "pvp.bar");
-		element.add(CC.GRAY + CC.S + "--------------------");
+		element.add(CC.GRAY + CC.S + "-------------------");
 
 		return element;
 	}
