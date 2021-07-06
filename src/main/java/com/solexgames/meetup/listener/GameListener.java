@@ -52,15 +52,6 @@ public class GameListener implements Listener {
 		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 		final GameHandler gameHandler = Meetup.getInstance().getGameHandler();
 
-		final Scoreboard board = Meetup.getInstance().getScoreboardHandler().getAdapter().getScoreboard(player);
-
-		final Objective tabHealthObjective = board.registerNewObjective("tabHealth", "health");
-		tabHealthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
-
-		final Objective nameHealthObjective = board.registerNewObjective("nameHealth", "health");
-		nameHealthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
-		nameHealthObjective.setDisplayName(CC.D_RED + "\u2764");
-
 		Meetup.getInstance().getPlayerHandler().setupInventory(player);
 
 		switch (gameHandler.getGame().getState()) {
@@ -170,7 +161,6 @@ public class GameListener implements Listener {
 			playerKiller.setKills(playerKiller.getKills() + 1);
 
 			Meetup.getInstance().getGameHandler().getKillTrackerMap().put(killer.getDisplayName(), playerKiller.getGameKills());
-
 			Meetup.getInstance().getScenario(NoCleanScenario.class).handleNoClean(playerKiller);
 		}
 
@@ -186,6 +176,27 @@ public class GameListener implements Listener {
 		final Player player = (Player) event.getEntity();
 		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 
+		for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+			final Scoreboard board = Meetup.getInstance().getScoreboardHandler().getAdapter().getScoreboard(onlinePlayer);
+
+			Objective tabHealthObjective = board.getObjective("tabHealth");
+
+			if (tabHealthObjective == null) {
+				tabHealthObjective = board.registerNewObjective("tabHealth", "health");
+				tabHealthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+			}
+			tabHealthObjective.getScore(player.getName()).setScore(this.getHealth(player));
+
+			Objective nameHealthObjective = board.getObjective("nameHealth");
+
+			if (nameHealthObjective == null) {
+				nameHealthObjective = board.registerNewObjective("nameHealth", "health");
+				nameHealthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+				nameHealthObjective.setDisplayName(CC.D_RED + "\u2764");
+			}
+			nameHealthObjective.getScore(player.getName()).setScore(this.getHealth(player));
+		}
+
 		if (event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
 			if (gamePlayer.isPlaying() && Meetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
 				player.setHealth(0);
@@ -194,6 +205,20 @@ public class GameListener implements Listener {
 				player.teleport(player.getWorld().getSpawnLocation());
 			}
 		}
+	}
+
+	private int getHealth(Player player) {
+		int health = (int) player.getHealth();
+
+		final PotionEffect effect = player.getActivePotionEffects().stream()
+				.filter(potionEffect -> potionEffect.getType().equals(PotionEffectType.ABSORPTION))
+				.findFirst().orElse(null);
+
+		if (effect != null) {
+			health += effect.getAmplifier() * 2 + 2;
+		}
+
+		return health;
 	}
 
 	@EventHandler
