@@ -25,7 +25,7 @@ public class MongoHandler {
     public MongoHandler() {
         this.client = CorePlugin.getInstance().getCoreDatabase().getClient();
 
-        this.database = this.client.getDatabase("admin");
+        this.database = this.client.getDatabase("SGSoftware");
         this.playerCollection = this.database.getCollection("UHCMeetup");
     }
 }

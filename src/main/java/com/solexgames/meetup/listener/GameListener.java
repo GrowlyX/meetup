@@ -54,6 +54,15 @@ public class GameListener implements Listener {
 
 		Meetup.getInstance().getPlayerHandler().setupInventory(player);
 
+		final Scoreboard board = Meetup.getInstance().getScoreboardHandler().getAdapter().getScoreboard(player);
+
+		final Objective tabHealthObjective = board.registerNewObjective("tabHealth", "health");
+		tabHealthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+
+		final Objective nameHealthObjective = board.registerNewObjective("nameHealth", "health");
+		nameHealthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+		nameHealthObjective.setDisplayName(CC.D_RED + "\u2764");
+
 		switch (gameHandler.getGame().getState()) {
 			case WAITING:
 				gameHandler.getRemaining().add(gamePlayer);
@@ -196,6 +205,11 @@ public class GameListener implements Listener {
 				nameHealthObjective.setDisplayName(CC.D_RED + "\u2764");
 			}
 			nameHealthObjective.getScore(player.getName()).setScore(this.getHealth(player));
+		}
+
+		if (gamePlayer.getNoCleanTimer() != null) {
+			event.setCancelled(true);
+			return;
 		}
 
 		if (event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
