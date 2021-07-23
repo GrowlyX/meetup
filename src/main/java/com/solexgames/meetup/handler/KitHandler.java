@@ -78,9 +78,9 @@ public class KitHandler {
 
 		sword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, getLevel());
 
-		if (this.random.nextInt(4) == 2) {
-			sword.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 1);
-		}
+//		if (this.random.nextInt(4) == 2) {
+//			sword.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 1);
+//		}
 
 		final ItemStack bow = new ItemStack(Material.BOW);
 

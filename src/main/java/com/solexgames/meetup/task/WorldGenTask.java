@@ -94,6 +94,7 @@ public class WorldGenTask extends BukkitRunnable {
 				}
 			}
 		}
+
 		this.hasGenerated = true;
 	}
 

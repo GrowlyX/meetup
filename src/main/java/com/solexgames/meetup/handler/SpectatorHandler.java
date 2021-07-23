@@ -7,6 +7,7 @@ import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtil;
+import io.papermc.lib.PaperLib;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -97,7 +98,7 @@ public class SpectatorHandler {
 			});
 
 			if (reason != null && reason.equals("chose to watch")) {
-				player.teleport(Meetup.getInstance().getGameHandler().getSpawnLocation());
+				PaperLib.teleportAsync(player, Meetup.getInstance().getGameHandler().getSpawnLocation());
 			}
 
 			player.setPlayerListName(CC.GRAY + player.getName());
@@ -118,7 +119,7 @@ public class SpectatorHandler {
 		Bukkit.getScheduler().runTask(Meetup.getInstance(), () -> Bukkit.getOnlinePlayers().stream()
 				.filter(online -> !online.canSee(player)).forEach(online -> online.showPlayer(player)));
 
-		player.teleport(gameHandler.getSpawnLocation());
+		PaperLib.teleportAsync(player, gameHandler.getSpawnLocation());
 
 		final PotPlayer potPlayer = CorePlugin.getInstance().getPlayerManager().getPlayer(player);
 

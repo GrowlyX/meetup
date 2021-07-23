@@ -12,6 +12,7 @@ import com.solexgames.meetup.task.game.GameStartTask;
 import com.solexgames.meetup.task.WorldGenTask;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtil;
+import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.Setter;
 import me.lucko.helper.hologram.Hologram;
@@ -145,21 +146,23 @@ public class GameHandler {
 			this.getRemaining().forEach(gamePlayer -> {
 				final Player player = gamePlayer.getPlayer();
 
-				Bukkit.getScheduler().runTask(Meetup.getInstance(), () -> {
-					MeetupUtil.resetPlayer(player);
-					MeetupUtil.sitPlayer(player);
+				PaperLib.teleportAsync(player, MeetupUtil.getScatterLocation())
+						.whenComplete((aBoolean, throwable) -> {
+							MeetupUtil.callSync(() -> {
+								MeetupUtil.resetPlayer(player);
+								MeetupUtil.sitPlayer(player);
 
-					Meetup.getInstance().getKitHandler().handleItems(player);
-				});
-
-				player.teleport(MeetupUtil.getScatterLocation());
+								Meetup.getInstance().getKitHandler().handleItems(player);
+							});
+						});
 			});
 
 			this.getSpectators().forEach(gamePlayer -> {
 				final Player player = gamePlayer.getPlayer();
 				final World gameWorld = Bukkit.getWorld("meetup_game");
 
-				player.teleport(new Location(gameWorld, 0.5, gameWorld.getHighestBlockYAt(0, 0) + 15, 0.5));
+				PaperLib.teleportAsync(player, new Location(gameWorld, 0.5, gameWorld.getHighestBlockYAt(0, 0) + 15, 0.5));
+
 				player.sendMessage(CC.SEC + "You've been teleported the the arena as a spectator.");
 			});
 		}, 40L);
@@ -184,10 +187,7 @@ public class GameHandler {
 		));
 
 		final Hologram hologram = hologramFactory.newHologram(position, stringList);
-
-		try (ServerThreadLock serverThreadLock = ServerThreadLock.obtain()) {
-			hologram.spawn();
-		}
+		MeetupUtil.callSync(hologram::spawn);
 
 		this.statHologramMap.put(player.getUniqueId(), hologram);
 	}
@@ -208,6 +208,9 @@ public class GameHandler {
 			final Location location = new Location(meetupWorld, 0.5D, meetupWorld.getHighestBlockYAt(0, 0) + 15, 0.5D);
 
 			this.setMeetupSpectatorLocation(location);
+
+			final BorderHandler borderHandler = Meetup.getInstance().getBorderHandler();
+			borderHandler.setBorder(100);
 
 			this.canPlay = true;
 		}, 100L);

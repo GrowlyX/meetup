@@ -6,6 +6,7 @@ import com.solexgames.core.server.NetworkServer;
 import com.solexgames.core.util.builder.ItemBuilder;
 import com.solexgames.core.util.Color;
 import com.solexgames.meetup.Meetup;
+import me.lucko.helper.scheduler.threadlock.ServerThreadLock;
 import net.minecraft.server.v1_8_R3.*;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.*;
@@ -46,6 +47,12 @@ public class MeetupUtil {
 
 	public static String millisToRoundedTime(long millis) {
 		return DurationFormatUtils.formatDurationWords(millis, true, true);
+	}
+
+	public static void callSync(Runnable runnable) {
+		try (ServerThreadLock threadLock = ServerThreadLock.obtain()) {
+			runnable.run();
+		}
 	}
 
 	public static String secondsToRoundedTime(int seconds) {

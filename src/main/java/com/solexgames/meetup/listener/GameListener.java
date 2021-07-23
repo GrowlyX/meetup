@@ -10,7 +10,9 @@ import com.solexgames.meetup.scenario.impl.NoCleanScenario;
 import com.solexgames.meetup.scenario.impl.TimeBombScenario;
 import com.solexgames.meetup.util.CC;
 import com.solexgames.meetup.util.MeetupUtil;
+import io.papermc.lib.PaperLib;
 import me.lucko.helper.hologram.Hologram;
+import me.lucko.helper.scheduler.threadlock.ServerThreadLock;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,237 +43,243 @@ import java.util.stream.Stream;
 
 public class GameListener implements Listener {
 
-	@EventHandler
-	public void onAsyncJoin(AsyncPlayerPreLoginEvent event) {
-		Meetup.getInstance().getPlayerHandler().insert(event.getUniqueId(), new GamePlayer(event.getUniqueId(), event.getName()));
-	}
+    @EventHandler
+    public void onAsyncJoin(AsyncPlayerPreLoginEvent event) {
+        Meetup.getInstance().getPlayerHandler().insert(event.getUniqueId(), new GamePlayer(event.getUniqueId(), event.getName()));
+    }
 
-	@EventHandler
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		final Player player = event.getPlayer();
-		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
-		final GameHandler gameHandler = Meetup.getInstance().getGameHandler();
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        final Player player = event.getPlayer();
+        final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
+        final GameHandler gameHandler = Meetup.getInstance().getGameHandler();
 
-		Meetup.getInstance().getPlayerHandler().setupInventory(player);
+        Meetup.getInstance().getPlayerHandler().setupInventory(player);
 
-		final Scoreboard board = Meetup.getInstance().getScoreboardHandler().getAdapter().getScoreboard(player);
+        final Scoreboard board = Meetup.getInstance().getScoreboardHandler().getAdapter().getScoreboard(player);
 
-		final Objective tabHealthObjective = board.registerNewObjective("tabHealth", "health");
-		tabHealthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+        final Objective tabHealthObjective = board.registerNewObjective("tabHealth", "health");
+        tabHealthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
 
-		final Objective nameHealthObjective = board.registerNewObjective("nameHealth", "health");
-		nameHealthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
-		nameHealthObjective.setDisplayName(CC.D_RED + "\u2764");
+        final Objective nameHealthObjective = board.registerNewObjective("nameHealth", "health");
+        nameHealthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+        nameHealthObjective.setDisplayName(CC.D_RED + "\u2764");
 
-		switch (gameHandler.getGame().getState()) {
-			case WAITING:
-				gameHandler.getRemaining().add(gamePlayer);
+        switch (gameHandler.getGame().getState()) {
+            case WAITING:
+                gameHandler.getRemaining().add(gamePlayer);
 
-				player.teleport(gameHandler.getSpawnLocation());
+                PaperLib.teleportAsync(player, gameHandler.getSpawnLocation());
 
-				final int waiting = gameHandler.getRemaining().size();
-				final int minPlayers = gameHandler.getMinPlayers();
+                final int waiting = gameHandler.getRemaining().size();
+                final int minPlayers = gameHandler.getMinPlayers();
 
-				if (waiting >= minPlayers) {
-					gameHandler.handleStarting();
-				} else {
-					final int more = minPlayers - waiting;
-					Bukkit.broadcastMessage(CC.SEC + "The game requires " + CC.PRI + more + CC.SEC + " player" + (more == 1 ? "" : "s") + " to start.");
-				}
-				break;
-			case STARTING:
-				gameHandler.getRemaining().add(gamePlayer);
-				player.teleport(MeetupUtil.getScatterLocation());
+                if (waiting >= minPlayers) {
+                    gameHandler.handleStarting();
+                } else {
+                    final int more = minPlayers - waiting;
+                    Bukkit.broadcastMessage(CC.SEC + "The game requires " + CC.PRI + more + CC.SEC + " player" + (more == 1 ? "" : "s") + " to start.");
+                }
+                break;
+            case STARTING:
+                gameHandler.getRemaining().add(gamePlayer);
 
-				MeetupUtil.sitPlayer(player);
-				Meetup.getInstance().getKitHandler().handleItems(player);
-				break;
-			case IN_GAME:
-				player.sendMessage(CC.SEC + "You've been made a spectator as you've joined too late into the game.");
-				player.teleport(gameHandler.getMeetupSpectatorLocation());
+                PaperLib.teleportAsync(player, MeetupUtil.getScatterLocation())
+                        .whenComplete((aBoolean, throwable) -> {
+                            MeetupUtil.callSync(() -> {
+                                MeetupUtil.sitPlayer(player);
+                            });
+                        });
 
-				Meetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, null, false);
-				break;
-		}
+                Meetup.getInstance().getKitHandler().handleItems(player);
+                break;
+            case IN_GAME:
+                player.sendMessage(CC.SEC + "You've been made a spectator as you've joined too late into the game.");
 
-		event.setJoinMessage(null);
-	}
+                PaperLib.teleportAsync(player, gameHandler.getMeetupSpectatorLocation());
+                Meetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, null, false);
+                break;
+        }
 
-	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		final Player player = event.getPlayer();
-		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
-		final GameHandler gameHandler = Meetup.getInstance().getGameHandler();
+        event.setJoinMessage(null);
+    }
 
-		if (gamePlayer != null) {
-			gamePlayer.savePlayerData(true);
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        final Player player = event.getPlayer();
+        final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
+        final GameHandler gameHandler = Meetup.getInstance().getGameHandler();
 
-			if (gamePlayer.isPlaying() && Meetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
-				Bukkit.broadcastMessage(player.getDisplayName() + CC.SEC + " has disconnected and was disqualified.");
+        if (gamePlayer != null) {
+            gamePlayer.savePlayerData(true);
 
-				gameHandler.checkWinners();
-			}
+            if (gamePlayer.isPlaying() && Meetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
+                Bukkit.broadcastMessage(player.getDisplayName() + CC.SEC + " has disconnected and was disqualified.");
 
-			gameHandler.getRemaining().remove(gamePlayer);
-			gameHandler.getSpectators().remove(gamePlayer);
-		}
+                gameHandler.checkWinners();
+            }
 
-		final Hologram hologram = gameHandler.getStatHologramMap().getOrDefault(player.getUniqueId(), null);
+            gameHandler.getRemaining().remove(gamePlayer);
+            gameHandler.getSpectators().remove(gamePlayer);
+        }
 
-		if (hologram != null) {
-			hologram.despawn();
-			hologram.closeAndReportException();
+        final Hologram hologram = gameHandler.getStatHologramMap().getOrDefault(player.getUniqueId(), null);
 
-			gameHandler.getStatHologramMap().remove(player.getUniqueId());
-		}
+        if (hologram != null) {
+            hologram.despawn();
+            hologram.closeAndReportException();
 
-		event.setQuitMessage(null);
- 	}
+            gameHandler.getStatHologramMap().remove(player.getUniqueId());
+        }
 
-	@EventHandler(
-			priority = EventPriority.LOWEST,
-			ignoreCancelled = true
-	)
-	public void onPlayerDeath(PlayerDeathEvent event) {
-		final Player player = event.getEntity();
-		final Player killer = event.getEntity().getKiller();
-		final Location deathLoc = player.getLocation();
+        event.setQuitMessage(null);
+    }
 
-		final List<ItemStack> drops = event.getDrops();
-		final List<ItemStack> items = new ArrayList<>();
+    @EventHandler(
+            priority = EventPriority.LOWEST,
+            ignoreCancelled = true
+    )
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        final Player player = event.getEntity();
+        final Player killer = event.getEntity().getKiller();
+        final Location deathLoc = player.getLocation();
 
-		Stream.of(player.getInventory().getArmorContents())
-				.filter(stack -> stack != null && stack.getType() != Material.AIR)
-				.forEach(items::add);
-		Stream.of(player.getInventory().getContents())
-				.filter(stack -> stack != null && stack.getType() != Material.AIR)
-				.forEach(items::add);
+        final List<ItemStack> drops = event.getDrops();
+        final List<ItemStack> items = new ArrayList<>();
 
-		final DeathMessageHandler deathMessageHandler = Meetup.getInstance().getDeathMessageHandler();
-		final CraftEntity craftKiller = deathMessageHandler.getKiller(player);
+        Stream.of(player.getInventory().getArmorContents())
+                .filter(stack -> stack != null && stack.getType() != Material.AIR)
+                .forEach(items::add);
+        Stream.of(player.getInventory().getContents())
+                .filter(stack -> stack != null && stack.getType() != Material.AIR)
+                .forEach(items::add);
 
-		event.setDeathMessage(deathMessageHandler.getDeathMessage(player, craftKiller));
+        final DeathMessageHandler deathMessageHandler = Meetup.getInstance().getDeathMessageHandler();
+        final CraftEntity craftKiller = deathMessageHandler.getKiller(player);
 
-		Meetup.getInstance().getScenario(TimeBombScenario.class)
-				.handleTimeBomb(player, drops, items);
+        event.setDeathMessage(deathMessageHandler.getDeathMessage(player, craftKiller));
 
-		MeetupUtil.resetPlayer(player, true);
-		MeetupUtil.respawnPlayer(event);
+        Meetup.getInstance().getScenario(TimeBombScenario.class)
+                .handleTimeBomb(player, drops, items);
 
-		event.setDroppedExp(0);
+        MeetupUtil.resetPlayer(player, true);
+        MeetupUtil.respawnPlayer(event);
 
-		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
+        event.setDroppedExp(0);
 
-		gamePlayer.setDeaths(gamePlayer.getDeaths() + 1);
+        final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 
-		if (killer != null) {
-			final GamePlayer playerKiller = Meetup.getInstance().getPlayerHandler().getByPlayer(killer);
+        gamePlayer.setDeaths(gamePlayer.getDeaths() + 1);
 
-			playerKiller.setGameKills(playerKiller.getGameKills() + 1);
-			playerKiller.setKills(playerKiller.getKills() + 1);
+        if (killer != null) {
+            final GamePlayer playerKiller = Meetup.getInstance().getPlayerHandler().getByPlayer(killer);
 
-			Meetup.getInstance().getGameHandler().getKillTrackerMap().put(killer.getDisplayName(), playerKiller.getGameKills());
-			Meetup.getInstance().getScenario(NoCleanScenario.class).handleNoClean(playerKiller);
-		}
+            playerKiller.setGameKills(playerKiller.getGameKills() + 1);
+            playerKiller.setKills(playerKiller.getKills() + 1);
 
-		Meetup.getInstance().getGameHandler().checkWinners();
-		Meetup.getInstance().getServer().getScheduler().runTaskLater(Meetup.getInstance(), () -> player.teleport(deathLoc), 4L);
-		Meetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "died", true);
-	}
+            Meetup.getInstance().getGameHandler().getKillTrackerMap().put(killer.getDisplayName(), playerKiller.getGameKills());
+            Meetup.getInstance().getScenario(NoCleanScenario.class).handleNoClean(playerKiller);
+        }
 
-	@EventHandler
-	public void onEntityDamage(EntityDamageEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
+        Meetup.getInstance().getGameHandler().checkWinners();
+        Meetup.getInstance().getServer().getScheduler().runTaskLater(Meetup.getInstance(), () -> player.teleport(deathLoc), 4L);
+        Meetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "died", true);
+    }
 
-		final Player player = (Player) event.getEntity();
-		final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player)) return;
 
-		for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-			final Scoreboard board = Meetup.getInstance().getScoreboardHandler().getAdapter().getScoreboard(onlinePlayer);
+        final Player player = (Player) event.getEntity();
+        final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 
-			Objective tabHealthObjective = board.getObjective("tabHealth");
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            final Scoreboard board = Meetup.getInstance().getScoreboardHandler().getAdapter().getScoreboard(onlinePlayer);
 
-			if (tabHealthObjective == null) {
-				tabHealthObjective = board.registerNewObjective("tabHealth", "health");
-				tabHealthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
-			}
-			tabHealthObjective.getScore(player.getName()).setScore(this.getHealth(player));
+            Objective tabHealthObjective = board.getObjective("tabHealth");
 
-			Objective nameHealthObjective = board.getObjective("nameHealth");
+            if (tabHealthObjective == null) {
+                tabHealthObjective = board.registerNewObjective("tabHealth", "health");
+                tabHealthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+            }
+            tabHealthObjective.getScore(player.getName()).setScore(this.getHealth(player));
 
-			if (nameHealthObjective == null) {
-				nameHealthObjective = board.registerNewObjective("nameHealth", "health");
-				nameHealthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
-				nameHealthObjective.setDisplayName(CC.D_RED + "\u2764");
-			}
-			nameHealthObjective.getScore(player.getName()).setScore(this.getHealth(player));
-		}
+            Objective nameHealthObjective = board.getObjective("nameHealth");
 
-		if (gamePlayer.getNoCleanTimer() != null) {
-			event.setCancelled(true);
-			return;
-		}
+            if (nameHealthObjective == null) {
+                nameHealthObjective = board.registerNewObjective("nameHealth", "health");
+                nameHealthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+                nameHealthObjective.setDisplayName(CC.D_RED + "\u2764");
+            }
+            nameHealthObjective.getScore(player.getName()).setScore(this.getHealth(player));
+        }
 
-		if (event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
-			if (gamePlayer.isPlaying() && Meetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
-				player.setHealth(0);
-			} else {
-				event.setCancelled(true);
-				player.teleport(player.getWorld().getSpawnLocation());
-			}
-		}
-	}
+        if (gamePlayer.getNoCleanTimer() != null) {
+            event.setCancelled(true);
+            return;
+        }
 
-	private int getHealth(Player player) {
-		int health = (int) player.getHealth();
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
+            if (gamePlayer.isPlaying() && Meetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
+                player.setHealth(0);
+            } else {
+                event.setCancelled(true);
 
-		final PotionEffect effect = player.getActivePotionEffects().stream()
-				.filter(potionEffect -> potionEffect.getType().equals(PotionEffectType.ABSORPTION))
-				.findFirst().orElse(null);
+                PaperLib.teleportAsync(player, player.getWorld().getSpawnLocation());
+            }
+        }
+    }
 
-		if (effect != null) {
-			health += effect.getAmplifier() * 2 + 2;
-		}
+    private int getHealth(Player player) {
+        int health = (int) player.getHealth();
 
-		return health;
-	}
+        final PotionEffect effect = player.getActivePotionEffects().stream()
+                .filter(potionEffect -> potionEffect.getType().equals(PotionEffectType.ABSORPTION))
+                .findFirst().orElse(null);
 
-	@EventHandler
-	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
-		final ItemStack item = event.getItem();
+        if (effect != null) {
+            health += effect.getAmplifier() * 2 + 2;
+        }
 
-		if (item == null || item.getType() != Material.GOLDEN_APPLE
-				|| item.getItemMeta() == null || !item.getItemMeta().hasDisplayName()
-				|| !item.getItemMeta().getDisplayName().equalsIgnoreCase(Color.translate("&6Golden Head"))) {
-			return;
-		}
+        return health;
+    }
 
-		final Player player = event.getPlayer();
+    @EventHandler
+    public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
+        final ItemStack item = event.getItem();
 
-		player.removePotionEffect(PotionEffectType.REGENERATION);
-		player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 1));
-	}
+        if (item == null || item.getType() != Material.GOLDEN_APPLE
+                || item.getItemMeta() == null || !item.getItemMeta().hasDisplayName()
+                || !item.getItemMeta().getDisplayName().equalsIgnoreCase(Color.translate("&6Golden Head"))) {
+            return;
+        }
 
-	@EventHandler
-	public void onEntityDamageByEntityBow(EntityDamageByEntityEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
+        final Player player = event.getPlayer();
 
-		final Player entity = (Player) event.getEntity();
+        player.removePotionEffect(PotionEffectType.REGENERATION);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 1));
+    }
 
-		if (!(event.getDamager() instanceof Arrow)) return;
+    @EventHandler
+    public void onEntityDamageByEntityBow(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player)) return;
 
-		final Arrow arrow = (Arrow) event.getDamager();
+        final Player entity = (Player) event.getEntity();
 
-		if (!(arrow.getShooter() instanceof Player)) return;
+        if (!(event.getDamager() instanceof Arrow)) return;
 
-		final Player shooter = (Player) arrow.getShooter();
+        final Arrow arrow = (Arrow) event.getDamager();
 
-		if (entity.getName().equals(shooter.getName())) return;
+        if (!(arrow.getShooter() instanceof Player)) return;
 
-		final double health = Math.ceil(entity.getHealth() - event.getFinalDamage()) / 2.0D;
+        final Player shooter = (Player) arrow.getShooter();
 
-		if (health > 0.0D) {
-			shooter.sendMessage(entity.getDisplayName() + CC.SEC + " is now at " + CC.RED + health + "\u2764" + CC.SEC + ".");
-		}
-	}
+        if (entity.getName().equals(shooter.getName())) return;
+
+        final double health = Math.ceil(entity.getHealth() - event.getFinalDamage()) / 2.0D;
+
+        if (health > 0.0D) {
+            shooter.sendMessage(entity.getDisplayName() + CC.SEC + " is now at " + CC.RED + health + "\u2764" + CC.SEC + ".");
+        }
+    }
 }

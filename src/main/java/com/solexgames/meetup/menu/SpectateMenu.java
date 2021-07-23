@@ -6,6 +6,7 @@ import com.solexgames.core.util.external.pagination.PaginatedMenu;
 import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.player.GamePlayer;
 import com.solexgames.meetup.util.CC;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -46,8 +47,10 @@ public class SpectateMenu extends PaginatedMenu {
 						final Player target = gamePlayer.getPlayer();
 
 						if (target != null) {
-							player.teleport(target);
-							player.sendMessage(CC.SEC + "You've teleported to " + target.getDisplayName() + CC.SEC + ".");
+							PaperLib.teleportAsync(player, target.getLocation())
+									.whenComplete((aBoolean, throwable) -> {
+										player.sendMessage(CC.SEC + "You've teleported to " + target.getDisplayName() + CC.SEC + ".");
+									});
 						}
 					})
 			);
