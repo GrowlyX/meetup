@@ -199,7 +199,22 @@ public class GameHandler {
 					final Location location = new Location(Bukkit.getWorld("meetup_game"), x, 60, z);
 
 					if (!location.getChunk().isLoaded()) {
-						location.getWorld().loadChunk(x, z);
+						int finalX = x;
+						int finalZ = z;
+
+						PaperLib.getChunkAtAsync(location).whenComplete((chunk, throwable) -> {
+							if (throwable != null) {
+								Meetup.getInstance().getLogger().info("Failed to load chunk async, fallbacking to sync loading. (" + throwable.getMessage() + ")");
+
+								try (ServerThreadLock threadLock = ServerThreadLock.obtain()) {
+									location.getWorld().loadChunk(finalX, finalZ);
+								} catch (Exception exception) {
+									Meetup.getInstance().getLogger().info("Failed to load chunk sync. (" + exception.getMessage() + ")");
+								}
+							} else {
+								Meetup.getInstance().getLogger().info("Loaded chunk at " + chunk.getX() + ", " + chunk.getZ() + ".");
+							}
+						});
 					}
 				}
 			}
