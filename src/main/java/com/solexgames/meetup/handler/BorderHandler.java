@@ -32,7 +32,7 @@ public class BorderHandler {
 		final World world = Bukkit.getWorld("meetup_game");
 
 		game.setBorder(border);
-		this.addBedrockBorder(world.getName(), border, 2);
+		this.addBedrockBorder(world.getName(), border, 6);
 
 		world.getWorldBorder().setCenter(0, 0);
 		world.getWorldBorder().setSize(border * 2);

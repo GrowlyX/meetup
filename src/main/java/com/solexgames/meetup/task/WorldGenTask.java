@@ -2,8 +2,6 @@ package com.solexgames.meetup.task;
 
 import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.handler.GameHandler;
-import com.solexgames.meetup.game.border.Border;
-import lombok.SneakyThrows;
 import net.minecraft.server.v1_8_R3.BiomeBase;
 import org.bukkit.*;
 import org.bukkit.block.Biome;

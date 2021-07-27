@@ -122,7 +122,6 @@ public class SpectatorHandler {
 		PaperLib.teleportAsync(player, gameHandler.getSpawnLocation());
 
 		final PotPlayer potPlayer = CorePlugin.getInstance().getPlayerManager().getPlayer(player);
-
 		potPlayer.setupPlayerList();
 
 		gamePlayer.getPlayer().sendMessage(CC.SEC + "You are no longer spectating the game.");
