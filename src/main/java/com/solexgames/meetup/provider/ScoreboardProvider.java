@@ -33,10 +33,12 @@ public class ScoreboardProvider implements ScoreboardElementHandler {
 
 		switch (game.getState()) {
 			case WAITING:
-				final int more = gameHandler.getMinPlayers() - remaining.size();
+				element.add("Waiting for players");
 
-				element.add("Waiting for " + CC.PRI + more + CC.WHITE + " more player" + (more == 1 ? "" : "s"));
-				element.add("to join the game.");
+				if (remaining.size() < gameHandler.getMinPlayers()) {
+					final int more = gameHandler.getMinPlayers() - remaining.size();
+					element.add(CC.PRI + more + CC.WHITE + " more player" + (more == 1 ? "" : "s") + ".");
+				}
 				break;
 			case STARTING:
 				element.add("The game will start in:");
@@ -44,14 +46,19 @@ public class ScoreboardProvider implements ScoreboardElementHandler {
 				break;
 			case IN_GAME:
 				element.add("Border: " + CC.PRI + game.getNextBorder() + game.getFormattedBorderStatus());
-				element.add("Players: " + CC.PRI + gameHandler.getRemaining().size());
-				element.add("Ping: " + CC.PRI + PlayerUtil.getPing(player) + " ms");
+				element.add("Remaining: " + CC.PRI + gameHandler.getRemaining().size() + "/" + gameHandler.getInitialPlayers());
+				element.add("Your Ping: " + CC.PRI + this.getFormattedPing(PlayerUtil.getPing(player)));
 				element.add("Kills: " + CC.PRI + gamePlayer.getGameKills());
 
 				if (gamePlayer.getNoCleanTimer() != null) {
 					element.add(CC.B_PRI + "Cooldowns:");
 					element.add(CC.GRAY + " * " + CC.WHITE + "No Clean: " + CC.PRI + gamePlayer.getNoCleanTimer().getTime());
+
 				}
+				break;
+			case ENDING:
+				element.add(CC.B_PRI + "Top 3 kills:");
+				gameHandler.getScoreboardEndingLines().forEach(element::add);
 				break;
 		}
 
@@ -60,5 +67,17 @@ public class ScoreboardProvider implements ScoreboardElementHandler {
 		element.add(CC.GRAY + CC.S + "-------------------");
 
 		return element;
+	}
+
+	private String getFormattedPing(int ping) {
+		if (ping > 300) {
+			return CC.D_RED + ping + " ms";
+		} else if (ping > 150){
+			return CC.PRI + ping + " ms";
+		} else if (ping > 80){
+			return CC.YELLOW + ping + " ms";
+		} else {
+			return CC.GREEN + ping + " ms";
+		}
 	}
 }

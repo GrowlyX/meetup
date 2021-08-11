@@ -54,7 +54,7 @@ public class TimeBombScenario extends Scenario {
 
 					where.getWorld().createExplosion(where, 3.0F);
 
-					Bukkit.broadcastMessage(player.getDisplayName() + "'s " + CC.SEC + "corpse has exploded!");
+					Bukkit.broadcastMessage(player.getDisplayName() + CC.SEC + "'s corpse has exploded!");
 				}
 
 				this.time--;

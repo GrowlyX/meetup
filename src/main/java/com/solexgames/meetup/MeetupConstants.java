@@ -10,5 +10,5 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class MeetupConstants {
 
-    public final String JEDIS_GAMEMODE_STATS_CACHE = "agf:statistics:uhcmeetup"
+    public final String JEDIS_GAMEMODE_STATS_CACHE = "agf:statistics:UHCMeetup";
 }

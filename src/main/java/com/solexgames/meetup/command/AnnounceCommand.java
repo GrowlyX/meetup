@@ -43,7 +43,7 @@ public class AnnounceCommand extends BaseCommand {
         player.sendMessage(CC.GREEN + "You've announced the game.");
 
         RedisUtil.publishAsync(RedisUtil.sendClickable(
-                CC.B_PRI + "Alert " + CC.B_GRAY + "» " + player.getDisplayName() + CC.SEC + " wants you to play " + CC.PRI + "UHC Meetup" + CC.SEC + "!" + CC.B_GREEN + " [Click to Connect]",
+                CC.B_PRI + "Alert " + CC.B_GRAY + "» " + player.getDisplayName() + CC.SEC + " wants you to play " + CC.PRI + "UHC Meetup" + CC.SEC + "!" + CC.B_GREEN + " [Join]",
                 CC.SEC + "Click to join " + CC.PRI + CorePlugin.getInstance().getServerName() + CC.SEC + "!\n\n" + CC.B_RED + "Warning: " + CC.RED + "This will switch your server!",
                 "/join " + CorePlugin.getInstance().getServerName()
         ));

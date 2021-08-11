@@ -26,6 +26,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +44,8 @@ public class GameHandler {
 
 	private final List<GamePlayer> remaining = new ArrayList<>();
 	private final List<GamePlayer> spectators = new ArrayList<>();
+	private final List<String> scoreboardEndingLines = new ArrayList<>();
+
 	private final Map<String, Integer> killTrackerMap = new HashMap<>();
 
 	private Location spawnLocation;
@@ -55,6 +58,8 @@ public class GameHandler {
 
 	private boolean hasEnded;
 	private boolean canPlay;
+
+	private int initialPlayers = 0;
 
 	public void setupGame() {
 		final World world = Bukkit.getWorld("world");
@@ -101,10 +106,19 @@ public class GameHandler {
 		this.game.setWinner(winner.getPlayer().getDisplayName());
 		this.game.setWinnerId(winner.getUuid());
 
+		final AtomicInteger atomicInteger = new AtomicInteger(1);
+
+		this.getKillTrackerMap().forEach((s, integer) -> {
+			this.scoreboardEndingLines.add(CC.PRI + " #" + atomicInteger.getAndIncrement() + CC.WHITE + ": " + s + CC.GRAY + " - " + CC.YELLOW + integer);
+		});
+
+		this.game.setState(GameState.ENDING);
+
 		new GameEndTask();
 	}
 
 	public void handleGameStarted() {
+		this.initialPlayers = Bukkit.getOnlinePlayers().size();
 		this.game.setState(GameState.IN_GAME);
 
 		this.getRemaining().forEach(gamePlayer -> {

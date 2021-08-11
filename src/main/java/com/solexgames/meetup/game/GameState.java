@@ -9,6 +9,7 @@ public enum GameState {
 
     WAITING,
     STARTING,
-    IN_GAME
+    IN_GAME,
+    ENDING
 
 }

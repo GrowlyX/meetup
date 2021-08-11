@@ -42,7 +42,7 @@ public class Game {
     }
 
     public String getFormattedBorderStatus() {
-        return this.borderTime > 0 ? CC.WHITE + " (" + CC.PRI + this.borderTime + CC.WHITE + ")" : "";
+        return this.borderTime > 0 ? CC.GRAY + " (" + CC.RED + this.borderTime + CC.GRAY + ")" : "";
     }
 
     public void decrementBorderTime() {

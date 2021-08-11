@@ -93,6 +93,7 @@ public class GameListener implements Listener {
 
                 Meetup.getInstance().getKitHandler().handleItems(player);
                 break;
+            case ENDING:
             case IN_GAME:
                 player.sendMessage(CC.SEC + "You've been made a spectator as you've joined too late into the game.");
 
@@ -157,8 +158,6 @@ public class GameListener implements Listener {
         final DeathMessageHandler deathMessageHandler = Meetup.getInstance().getDeathMessageHandler();
         final CraftEntity craftKiller = deathMessageHandler.getKiller(player);
 
-        event.setDeathMessage(deathMessageHandler.getDeathMessage(player, craftKiller));
-
         Meetup.getInstance().getScenario(TimeBombScenario.class)
                 .handleTimeBomb(player, drops, items);
 
@@ -168,7 +167,6 @@ public class GameListener implements Listener {
         event.setDroppedExp(0);
 
         final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
-
         gamePlayer.setDeaths(gamePlayer.getDeaths() + 1);
 
         if (killer != null) {
@@ -180,6 +178,8 @@ public class GameListener implements Listener {
             Meetup.getInstance().getGameHandler().getKillTrackerMap().put(killer.getDisplayName(), playerKiller.getGameKills());
             Meetup.getInstance().getScenario(NoCleanScenario.class).handleNoClean(playerKiller);
         }
+
+        event.setDeathMessage(deathMessageHandler.getDeathMessage(player, craftKiller));
 
         Meetup.getInstance().getGameHandler().checkWinners();
         Meetup.getInstance().getServer().getScheduler().runTaskLater(Meetup.getInstance(), () -> player.teleport(deathLoc), 4L);
