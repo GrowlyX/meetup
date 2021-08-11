@@ -1,6 +1,7 @@
 package com.solexgames.meetup.command;
 
 import com.solexgames.lib.acf.BaseCommand;
+import com.solexgames.lib.acf.ConditionFailedException;
 import com.solexgames.lib.acf.annotation.CommandAlias;
 import com.solexgames.lib.acf.annotation.CommandPermission;
 import com.solexgames.meetup.Meetup;
@@ -26,14 +27,12 @@ public class ForceStartCommand extends BaseCommand {
 		final Game game = gameHandler.getGame();
 
 		if (!gameHandler.isCanPlay()) {
-			sender.sendMessage(ChatColor.RED + "The map's currently generating, sorry.");
-			return;
+			throw new ConditionFailedException("The map is currently generating.");
 		}
 
 		if (!game.isState(GameState.STARTING)) {
 			if (Bukkit.getOnlinePlayers().size() < 2) {
-				sender.sendMessage(ChatColor.RED + "There must be at least two players online for you to force-start the game.");
-				return;
+				throw new ConditionFailedException("There must be at least two players online for you to force-start the game.");
 			}
 
 			gameHandler.handleStarting();
@@ -44,8 +43,7 @@ public class ForceStartCommand extends BaseCommand {
 		}
 
 		if (game.getGameStartTime() < 10) {
-			sender.sendMessage(CC.RED + "Error: The game has already started, or is starting soon.");
-			return;
+			throw new ConditionFailedException("The game will be starting in less than 10 seconds.");
 		}
 
 		game.setGameStartTime(10);

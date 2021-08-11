@@ -33,12 +33,10 @@ public class ScoreboardProvider implements ScoreboardElementHandler {
 
 		switch (game.getState()) {
 			case WAITING:
-				element.add("Waiting for players");
+				final int more = gameHandler.getMinPlayers() - remaining.size();
 
-				if (remaining.size() < gameHandler.getMinPlayers()) {
-					final int more = gameHandler.getMinPlayers() - remaining.size();
-					element.add(CC.PRI + more + CC.WHITE + " more player" + (more == 1 ? "" : "s") + ".");
-				}
+				element.add("Waiting for " + CC.PRI + more + CC.WHITE + " more player" + (more == 1 ? "" : "s"));
+				element.add("to join the game.");
 				break;
 			case STARTING:
 				element.add("The game will start in:");
@@ -51,8 +49,8 @@ public class ScoreboardProvider implements ScoreboardElementHandler {
 				element.add("Kills: " + CC.PRI + gamePlayer.getGameKills());
 
 				if (gamePlayer.getNoCleanTimer() != null) {
-					element.add("");
-					element.add(CC.RED + "No Clean: " + CC.PRI + gamePlayer.getNoCleanTimer().getTime());
+					element.add(CC.B_PRI + "Cooldowns:");
+					element.add(CC.GRAY + " * " + CC.WHITE + "No Clean: " + CC.PRI + gamePlayer.getNoCleanTimer().getTime());
 				}
 				break;
 		}

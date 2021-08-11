@@ -5,6 +5,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import com.solexgames.core.CorePlugin;
 import com.solexgames.meetup.Meetup;
+import com.solexgames.meetup.MeetupConstants;
 import com.solexgames.meetup.factory.GsonFactory;
 import com.solexgames.meetup.model.Loadout;
 import com.solexgames.meetup.task.NoCleanTimer;
@@ -20,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Long-term player profile where data is saved
  * <p>
+ *
  * @author GrowlyX
  * @since 5/31/2021
  */
@@ -50,9 +52,17 @@ public class GamePlayer {
     }
 
     public void savePlayerData(boolean remove) {
-        CompletableFuture.runAsync(() -> { try {
-            Meetup.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("_id", this.uuid), this.getDocument(), new ReplaceOptions().upsert(true));
-        } catch (Exception e) {e.printStackTrace();}});
+        CompletableFuture.runAsync(() -> {
+            Meetup.getInstance().getMongoHandler().getPlayerCollection().replaceOne(Filters.eq("uuid", this.uuid.toString()), this.getDocument(), new ReplaceOptions().upsert(true));
+
+            CorePlugin.getInstance().getJedisManager().runCommand(jedis -> {
+                jedis.hset(MeetupConstants.JEDIS_GAMEMODE_STATS_CACHE, this.uuid.toString(), GsonFactory.getCompactGson().toJson(this));
+            });
+        }).whenComplete((unused, throwable) -> {
+            if (throwable != null) {
+                throwable.printStackTrace();
+            }
+        });
 
         if (remove) {
             Meetup.getInstance().getPlayerHandler().remove(this.getUuid());
@@ -77,40 +87,39 @@ public class GamePlayer {
     }
 
     private void loadPlayerData() {
-        CompletableFuture.supplyAsync(() -> Meetup.getInstance().getMongoHandler().getPlayerCollection().find(Filters.eq("_id", this.uuid)).first())
-                .thenAccept(document -> {
-                    if (document == null) {
-                        Meetup.getInstance().getServer().getScheduler()
-                                .runTaskLaterAsynchronously(CorePlugin.getInstance(), () -> this.savePlayerData(false), 20L);
-                    } else {
-                        if (document.getInteger("kills") != null) {
-                            this.kills = document.getInteger("kills");
-                        }
-                        if (document.getInteger("deaths") != null) {
-                            this.deaths = document.getInteger("deaths");
-                        }
-                        if (document.getInteger("played") != null) {
-                            this.played = document.getInteger("played");
-                        }
-                        if (document.getInteger("wins") != null) {
-                            this.wins = document.getInteger("wins");
-                        }
-                        if (document.getInteger("reRolls") != null) {
-                            this.deaths = document.getInteger("reRolls");
-                        }
+        CompletableFuture.supplyAsync(() -> Meetup.getInstance().getMongoHandler().getPlayerCollection().find(Filters.eq("uuid", this.uuid.toString())).first()).thenAccept(document -> {
+            if (document == null) {
+                Meetup.getInstance().getServer().getScheduler()
+                        .runTaskLaterAsynchronously(CorePlugin.getInstance(), () -> this.savePlayerData(false), 20L);
+            } else {
+                if (document.getInteger("kills") != null) {
+                    this.kills = document.getInteger("kills");
+                }
+                if (document.getInteger("deaths") != null) {
+                    this.deaths = document.getInteger("deaths");
+                }
+                if (document.getInteger("played") != null) {
+                    this.played = document.getInteger("played");
+                }
+                if (document.getInteger("wins") != null) {
+                    this.wins = document.getInteger("wins");
+                }
+                if (document.getInteger("reRolls") != null) {
+                    this.deaths = document.getInteger("reRolls");
+                }
 
-                        final String inventory = document.getString("inventory");
+                final String inventory = document.getString("inventory");
 
-                        if (inventory != null) {
-                            this.loadout = GsonFactory.getPrettyGson().fromJson(inventory, Loadout.class);
-                        }
-                    }
+                if (inventory != null) {
+                    this.loadout = GsonFactory.getPrettyGson().fromJson(inventory, Loadout.class);
+                }
+            }
 
-                    if (this.loadout == null) {
-                        this.loadout = new Loadout(this.uuid);
-                        this.loadout.setupDefaultInventory();
-                    }
-                });
+            if (this.loadout == null) {
+                this.loadout = new Loadout(this.uuid);
+                this.loadout.setupDefaultInventory();
+            }
+        });
     }
 
     public Player getPlayer() {

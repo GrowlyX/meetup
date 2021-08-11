@@ -2,6 +2,7 @@ package com.solexgames.meetup.task;
 
 import com.solexgames.meetup.Meetup;
 import com.solexgames.meetup.handler.GameHandler;
+import lombok.SneakyThrows;
 import net.minecraft.server.v1_8_R3.BiomeBase;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
@@ -48,6 +49,7 @@ public class WorldGenTask extends BukkitRunnable {
 		}
 	}
 
+	@SneakyThrows
 	private void generateNewWorld() {
 		this.isGenerating = true;
 
@@ -67,18 +69,9 @@ public class WorldGenTask extends BukkitRunnable {
 		}
 
 		final File lock = new File("meetup_game", "gen.lock");
-
-		try {
-			lock.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-			Bukkit.shutdown();
-			return;
-		}
+		lock.createNewFile();
 
 		this.gameHandler.handleLoadChunks();
-
-		new Border(Bukkit.getWorld("meetup_game"), 100);
 
 		Meetup.getInstance().setWorldProperties();
 

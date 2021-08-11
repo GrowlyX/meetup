@@ -1,6 +1,7 @@
 package com.solexgames.meetup.command;
 
 import com.solexgames.lib.acf.BaseCommand;
+import com.solexgames.lib.acf.ConditionFailedException;
 import com.solexgames.lib.acf.annotation.CommandAlias;
 import com.solexgames.lib.acf.annotation.CommandCompletion;
 import com.solexgames.lib.acf.annotation.Default;
@@ -36,15 +37,13 @@ public class ReRollCommand extends BaseCommand {
         final GamePlayer gamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player);
 
         if (gamePlayer.getReRolls() == 0) {
-            player.sendMessage(CC.RED + "Error: You cannot redeem a kit re-roll when you have no credits.");
-            return;
+            throw new ConditionFailedException("You cannot redeem a kit re-roll when you have no credits.");
         }
 
         final Game game = Meetup.getInstance().getGameHandler().getGame();
 
         if (!game.isState(GameState.STARTING)) {
-            player.sendMessage(CC.RED + "Error: You can only redeem re-roll credits when the game is starting.");
-            return;
+            throw new ConditionFailedException("You can only redeem re-roll credits when the game is starting.");
         }
 
         gamePlayer.setReRolls(gamePlayer.getReRolls() - 1);
@@ -61,8 +60,7 @@ public class ReRollCommand extends BaseCommand {
         final int decrementBy = amount * 100;
 
         if (potPlayer.getExperience() < amount) {
-            player.sendMessage(CC.RED + "Error: You do not have enough experience to purchase " + CC.SEC + amount + CC.RED + " re-rolls (" + decrementBy + " experience needed).");
-            return;
+            throw new ConditionFailedException("You do not have enough experience to purchase " + CC.SEC + amount + CC.RED + " re-rolls (" + decrementBy + " experience needed).");
         }
 
         gamePlayer.setReRolls(gamePlayer.getReRolls() + amount);

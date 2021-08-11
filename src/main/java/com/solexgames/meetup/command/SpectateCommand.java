@@ -1,6 +1,7 @@
 package com.solexgames.meetup.command;
 
 import com.solexgames.lib.acf.BaseCommand;
+import com.solexgames.lib.acf.ConditionFailedException;
 import com.solexgames.lib.acf.annotation.CommandAlias;
 import com.solexgames.lib.acf.annotation.Default;
 import com.solexgames.lib.acf.annotation.Subcommand;
@@ -44,16 +45,14 @@ public class SpectateCommand extends BaseCommand {
 		final boolean spectating = gamePlayer.isSpectating();
 
 		if (Meetup.getInstance().getGameHandler().getGame().isState(GameState.IN_GAME)) {
-			player.sendMessage(CC.RED + "Error: You cannot stop spectating when there is a game running.");
-			return;
+			throw new ConditionFailedException("You cannot spectate the game while it's running.");
 		}
 
 		if (!spectating) {
 			Meetup.getInstance().getSpectatorHandler().setSpectator(gamePlayer, "chose to watch", true);
 		} else {
 			if (Meetup.getInstance().getGameHandler().getGame().isState(GameState.STARTING)) {
-				player.sendMessage(CC.RED + "Error: You cannot stop spectating when there is a game starting.");
-				return;
+				throw new ConditionFailedException("You cannot spectate the game while it's starting.");
 			}
 
 			Meetup.getInstance().getSpectatorHandler().removeSpectator(gamePlayer);
